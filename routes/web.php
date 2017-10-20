@@ -11,10 +11,17 @@
 |
 */
 
+/* Login Route */
 Route::get('/', function () {
     return view('login');
 });
 
+/* Dashboard Route */
+Route::get('/dashboard', function () {
+    return view('dashboard');
+});
+
+/* Submit Form Route */
 Route::get('/submit', function () {
     return view('submit');
 });
