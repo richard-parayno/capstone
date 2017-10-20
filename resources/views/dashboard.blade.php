@@ -14,16 +14,16 @@
   <!-- side nav -->
   <div class="container u-pull-left" id="sidebar">
     <div class="twelve column bar">
-      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a >Richard Parayno</a>
+      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a href="{{ route('profile') }}">Richard Parayno</a>
     </div>
     <div class="twelve column bar">
-      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a>Emissions</a>
+      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a href="{{ route('emissions') }}">Emissions</a>
     </div>
     <div class="twelve column bar">
-      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a>Trips</a>
+      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a href="{{ route('trips') }}">Trips</a>
     </div>
     <div class="twelve column bar">
-      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a>Analytics</a>
+      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a href="{{ route('analytics') }}">Analytics</a>
     </div>
   </div>
   <!-- side nav -->
