@@ -21,7 +21,7 @@
   <div class="row">
     <div class="container">
       <div class="five columns" id="box">
-        <form action="">
+        <form action="/submit">
           <div class="twelve columns">
             <label for="username">Username</label>
             <input class="u-full-width" type="text" name="username" id="username">
