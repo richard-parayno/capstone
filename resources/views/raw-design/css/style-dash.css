@@ -6,6 +6,7 @@ body {
 .bar {
   padding: 20px;
   margin: 0px;
+
 }
 
 img {
@@ -22,9 +23,19 @@ img {
   position: fixed;
 }
 
+#sidebar ul {
+  list-style: none;
+}
+
 #sidebar a {
   color: white;
   margin-left: 10px;
+  text-decoration: none;
+  list-style: none;
+}
+
+#sidebar span {
+  color: white;
 }
 
 #main-content {

@@ -6,25 +6,35 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Carbon Emission Dashboard</title>
   <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" type="text/css" href="{{ url('/css/normalize.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url('/css/skeleton.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url('/css/style-dash.css') }}">
+  <link rel="stylesheet" type="text/css" href="../css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="../css/style-dash.css">
 </head>
 <body>
   <!-- side nav -->
   <div class="container u-pull-left" id="sidebar">
     <div class="twelve column bar">
-      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a href="#">Richard Parayno</a>
+      <img src="../images/favicon.png" alt="Icon"><a href="#">Systems Administrator</a>
     </div>
     <div class="twelve column bar">
-      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a href="#">Emissions</a>
+      <span>User Account Management</span>
+      <ul>
+        <li><a href="#">Add User</a></li>
+        <li><a href="#">Edit User</a></li>
+        <li><a href="#">Change Password</a></li>
+        <li><a href="#">Change Email</a></li>
+      </ul>
     </div>
     <div class="twelve column bar">
-      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a href="#">Trips</a>
+      <span>Campus Information Management</span>
+      <ul>
+        <li><a href="#">Add Campus/Institute</a></li>
+        <li><a href="#">Add Department</a></li>
+        <li><a href="#">Add Vehicle</a></li>
+        <li><a href="#">Decommission Vehicle</a></li>
+      </ul>
     </div>
-    <div class="twelve column bar">
-      <img src="{{ url('/images/favicon.png') }}" alt="Icon"><a href="#">Analytics</a>
-    </div>
+    
   </div>
   <!-- side nav -->
   <!-- main content -->
@@ -42,7 +52,7 @@
   <!-- main content -->
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js"></script>
-<script src="{{ url('/js/dashboard-trips.js') }}"></script>
+<script src="../js/dashboard-trips.js"></script>
   
 </script>
 </html>
