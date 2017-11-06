@@ -1,3 +1,5 @@
+/** TODO: Fix Sidebar links. They're too static atm. **/
+
 body {
   background: #FBFBFB;
   font-family: "Lato";  
@@ -40,10 +42,4 @@ img {
 
 #main-content {
   margin-left: 300px;
-}
-
-#trips-overview-div {
-  margin-top: 30px;
-  background: #363635;
-  box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);  
 }
