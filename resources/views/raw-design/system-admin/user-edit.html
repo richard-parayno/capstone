@@ -41,8 +41,6 @@
       <ul>
         <li><a href="user-add.html">Add User</a></li>
         <li><a href="user-edit.html">Edit User</a></li>
-        <li><a href="user-changepw.html">Change Password</a></li>
-        <li><a href="user-changemail.html">Change Email</a></li>
       </ul>
     </div>
     <div class="twelve column bar">
@@ -60,8 +58,14 @@
   <!-- main content -->
   <div class="container" id="main-content">
     <div class="seven columns" id="box-form">
-      <!-- TODO: Process add-user logic after submitting form. -->
-      <h1>Add User</h1>    
+      <!-- TODO: Process edit-user logic after submitting form. -->
+      <h1>Edit User Information</h1>
+      <!-- Find User by Name, or output a table with a search function. AJAX -->
+      <div class="twelve columns">
+        <label for="find-user">Find User</label>
+        <select class="u-full-width" id="find-user"></select>
+      </div>
+
       <form action="/add-user">
         <div class="twelve columns">
           <label for="username">Username</label>
@@ -83,7 +87,7 @@
           <label for="password">Password</label>
           <input class="u-full-width" type="password" name="password" id="password" placeholder="Password">
         </div>
-        <input class="button-primary u-pull-right" type="submit" value="Add User">
+        <input class="button-primary u-pull-right" type="submit" value="Update">
       </form>
     </div>
   </div>
