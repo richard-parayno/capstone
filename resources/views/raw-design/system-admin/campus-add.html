@@ -58,30 +58,26 @@
   <!-- main content -->
   <div class="container" id="main-content">
     <div class="seven columns" id="box-form">
-      <!-- TODO: Process add-user logic after submitting form. -->
-      <h1>Add Campus</h1>    
-      <form action="/add-user">
+      <!-- TODO: Process add-campus logic after submitting form. -->
+      <h1>Add Campus/Institute</h1>    
+      <form action="/add-campus">
+        <label>
+          <label>Campus or Institute?</label>
+          <input type="radio" name="ci-type" id="type-campus" value="Campus">
+          <span class="label-body">Campus</span>
+          <br>
+          <input type="radio" name="ci-type" id="type-institute" value="Institute">
+          <span class="label-body">Institute</span>
+        </label>
         <div class="twelve columns">
-          <label for="username">Username</label>
-          <input class="u-full-width" type="text" name="username" id="username" placeholder="richard.parayno">
-        </div>
-        <div class="twelve columns">
-          <label for="username">E-mail</label>
-          <input class="u-full-width" type="email" name="email" id="email" placeholder="richard_parayno@dlsu.edu.ph">
-        </div>
-        <div class="six columns" style="margin: 0px;">
-          <label for="first-name">First Name</label>
-          <input class="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance">
-        </div>
-        <div class="six columns">
-          <label for="last-name">Last Name</label>
-          <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
+          <label for="ci-name">Campus/Institute Name</label>
+          <input class="u-full-width" type="text" name="ci-name" id="ci-name" placeholder="La Salle Greenhills">
         </div>
         <div class="twelve columns">
-          <label for="password">Password</label>
-          <input class="u-full-width" type="password" name="password" id="password" placeholder="Password">
+          <label for="ci-location">Location</label>
+          <input class="u-full-width" type="text" name="ci-location" id="email" placeholder="GH pare">
         </div>
-        <input class="button-primary u-pull-right" type="submit" value="Add User">
+        <input class="button-primary u-pull-right" type="submit" value="Add Campus/Institute">
       </form>
     </div>
   </div>
