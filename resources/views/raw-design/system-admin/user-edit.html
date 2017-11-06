@@ -9,6 +9,26 @@
   <link rel="stylesheet" type="text/css" href="../css/normalize.css">
   <link rel="stylesheet" type="text/css" href="../css/skeleton.css">
   <link rel="stylesheet" type="text/css" href="../css/style-dash.css">
+  <style>
+    /** TODO: Push margin more to the right. Make the box centered to the user. **/
+    #box-form {
+      background-color: #363635;
+      margin-top: 20px;
+      padding: 40px;
+      box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
+      border-radius: 20px;
+    }
+
+    #box-form h1 {
+      text-align: center;
+      color: white;
+    }
+
+    #box-form label {
+      color: white;
+    }
+
+  </style>
 </head>
 <body>
   <!-- side nav -->
@@ -39,14 +59,32 @@
   <!-- side nav -->
   <!-- main content -->
   <div class="container" id="main-content">
-    <div class="row">
-      <div class="seven column" id="trips-overview-div">
-        <canvas id="trips-overview"></canvas>
-      </div>
-    </div>
-    <div class="row">
-      <div class="seven column">
-      </div>
+    <div class="seven columns" id="box-form">
+      <!-- TODO: Process add-user logic after submitting form. -->
+      <h1>Add User</h1>    
+      <form action="/add-user">
+        <div class="twelve columns">
+          <label for="username">Username</label>
+          <input class="u-full-width" type="text" name="username" id="username" placeholder="richard.parayno">
+        </div>
+        <div class="twelve columns">
+          <label for="username">E-mail</label>
+          <input class="u-full-width" type="email" name="email" id="email" placeholder="richard_parayno@dlsu.edu.ph">
+        </div>
+        <div class="six columns" style="margin: 0px;">
+          <label for="first-name">First Name</label>
+          <input class="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance">
+        </div>
+        <div class="six columns">
+          <label for="last-name">Last Name</label>
+          <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
+        </div>
+        <div class="twelve columns">
+          <label for="password">Password</label>
+          <input class="u-full-width" type="password" name="password" id="password" placeholder="Password">
+        </div>
+        <input class="button-primary u-pull-right" type="submit" value="Add User">
+      </form>
     </div>
   </div>
   <!-- main content -->
