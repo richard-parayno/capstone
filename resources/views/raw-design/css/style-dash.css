@@ -22,21 +22,27 @@ img {
   width: 250px;
   height: 100%;
   position: fixed;
+  color: white;
 }
 
 #sidebar ul {
   list-style: none;
+  text-align: justify;
+}
+
+#sidebar li {
+
 }
 
 #sidebar a {
-  color: white;
-  margin-left: 10px;
+
   text-decoration: none;
   list-style: none;
+  text-align: justify;
 }
 
 #sidebar span {
-  color: white;
+
 }
 
 #main-content {
