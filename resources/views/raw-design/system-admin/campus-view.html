@@ -70,11 +70,13 @@
         <ul>
           <li><a href="campus-view.html">View Campuses/Institutes</a></li>
           <li><a href="campus-add.html">Add New Campus/Institute</a></li>
+          <li><a href="campus-editinfo.html">Edit Campus/Institute Info</a></li>
         </ul>
         <li>Department/Offices</li>
         <ul>
           <li><a href="department-view.html">View Departments/Offices</a></li>
           <li><a href="department-add.html">Add New Department/Offices</a></li>
+          <li><a href="department-editinfo.html">Edit Department/Offices Info</a></li>          
         </ul>
         <li>Vehicles</li>
         <ul>
@@ -90,40 +92,30 @@
   <!-- main content -->
   <div class="container" id="main-content">
     <div class="twelve columns" id="box-form">
-      <h1>View Users</h1>    
+      <h1>View Campuses/Institutes</h1>    
       <table class="u-full-width">
         <thead>
           <tr>
-            <th>User Type</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-            <th>E-mail</th>
-            <th>Account Status</th>
-            <th>Account Action</th>
+            <th>Campus/Institute Name</th>
+            <th>Location</th>
+            <th>Campus/Institute Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Systems Administrator</td>
-            <td>Richard</td>
-            <td>Parayno</td>
-            <td>richard.parayno</td>
-            <td>richard_parayno@dlsu.edu.ph</td>
-            <td>Active</td>
+            <td>De La Salle University - Manila</td>
+            <td>2401 Taft Avenue, Manila</td>
             <td style="text-align: center;">
-              <a href="user-editinfo.html">Edit User Info</a>
-              <br>
-              <a href="user-editcreds.html">Update Account Credentials</a>
+              <a href="campus-editinfo.html">Edit Campus/Institute Info</a>
             </td>
           </tr>
         </tbody>
         <!-- action shortcuts -->
         <span>Shortcuts: </span>
-        <a href="user-add.html">Create User Account</a>
+        <a href="campus-add.html">Add New Campus/Institute</a>
         <div class="u-pull-right">
-          <span>Search User: </span>
-          <input type="text" placeholder="Richard Parayno" id="searchBox">
+          <span>Search Campus/Institute: </span>
+          <input type="text" placeholder="De La Salle University" id="searchBox">
         </div>
         <!-- action shortcuts -->              
       </table>
