@@ -82,13 +82,17 @@
       <h1>Edit User Information</h1>
 
       <form action="/edit-user">
-        <div class="six columns" style="margin: 0px;">
-          <label for="first-name">First Name</label>
-          <input class="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance">
+        <div class="twelve columns">
+          <label for="username">Username</label>
+          <input class="u-full-width" type="text" name="username" id="username" placeholder="richard.parayno">
         </div>
-        <div class="six columns">
-          <label for="last-name">Last Name</label>
-          <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
+        <div class="twelve columns">
+          <label for="username">E-mail</label>
+          <input class="u-full-width" type="email" name="email" id="email" placeholder="richard_parayno@dlsu.edu.ph">
+        </div>
+        <div class="twelve columns">
+          <label for="password">Password</label>
+          <input class="u-full-width" type="password" name="password" id="password" placeholder="Password">
         </div>
         <input class="button-primary u-pull-right" type="submit" value="Update">
       </form>
@@ -96,7 +100,6 @@
   </div>
   <!-- main content -->
 </body>
-
   
 </script>
 </html>
