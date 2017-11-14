@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Carbon Emission Dashboard</title>
-  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
   <link rel="stylesheet" type="text/css" href="../css/normalize.css">
   <link rel="stylesheet" type="text/css" href="../css/skeleton.css">
   <link rel="stylesheet" type="text/css" href="../css/style-dash.css">
@@ -15,8 +14,7 @@
       background-color: #363635;
       margin-top: 20px;
       padding: 40px;
-      box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
-      border-radius: 20px;
+      border-radius: 10px;
     }
 
     #box-form h1 {
@@ -24,10 +22,13 @@
       color: white;
     }
 
-    #box-form label {
+    #box-form table {
       color: white;
     }
 
+    #box-form table th {
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -88,29 +89,55 @@
     </div>
   </div>
   <!-- side nav -->
+
   <!-- main content -->
   <div class="container" id="main-content">
-    <div class="nine columns" id="box-form">
-      <!-- TODO: Process edit-user logic after submitting form. -->
-      <h1>Edit User Account Information</h1>
-
-      <form action="/edit-user">
-        <div class="six columns" style="margin: 0px;">
-          <label for="first-name">First Name</label>
-          <input class="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance">
+    <div class="twelve columns" id="box-form">
+      <h1>View Vehicles</h1>    
+      <table class="u-full-width">
+        <thead>
+          <tr>
+            <th>Car Type</th>
+            <th>Car Brand</th>
+            <th>Car Model</th>
+            <th>Plate Number</th>
+            <th>Manufacturing Year</th>
+            <th>Home Campus/Institute</th>
+            <th>Fuel Type</th>
+            <th>Status</th>
+            <th>Vehicle Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Sedan</td>
+            <td>Toyota</td>
+            <td>Vios</td>
+            <td>ZAW-941</td>
+            <td>2015</td>
+            <td>De La Salle University - Manila</td>
+            <td>Diesel</td>
+            <td>Active</td>
+            <td style="text-align: center;">
+              <a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a> <br>
+              <a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a>
+            </td>
+          </tr>
+        </tbody>
+        <!-- action shortcuts -->
+        <span>Shortcuts: </span>
+        <a href="{{ route('vehicle-add') }}">Add New Vehicle</a>
+        <div class="u-pull-right">
+          <span>Search Vehicle: </span>
+          <input type="text" placeholder="LamborGHini" id="searchBox">
         </div>
-        <div class="six columns">
-          <label for="last-name">Last Name</label>
-          <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
-        </div>
-        <input class="button-primary u-pull-right" type="submit" value="Update">
-        <input class="button-primary u-pull-left" type="submit" value="Cancel">
-        
-      </form>
+        <!-- action shortcuts -->              
+      </table>
     </div>
   </div>
   <!-- main content -->
 </body>
+
 
   
 </script>

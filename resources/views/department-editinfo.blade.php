@@ -91,27 +91,22 @@
   <!-- main content -->
   <div class="container" id="main-content">
     <div class="nine columns" id="box-form">
-      <!-- TODO: Process edit-user logic after submitting form. -->
-      <h1>Edit User Account Information</h1>
-
-      <form action="/edit-user">
-        <div class="six columns" style="margin: 0px;">
-          <label for="first-name">First Name</label>
-          <input class="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance">
+      <!-- TODO: Process add-user logic after submitting form. -->
+      <h1>Edit Department/Offices Info</h1>    
+      <form action="/add-department">
+        <div class="twelve columns">
+          <label for="find-campus">Select Campus/Institute</label>
+          <select class="u-full-width" id="find-campus"></select>
         </div>
-        <div class="six columns">
-          <label for="last-name">Last Name</label>
-          <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
+        <div class="twelve columns">
+          <label for="department-name">Department Name</label>
+          <input class="u-full-width" type="text" name="department-name" id="username" placeholder="College of Computer Studies">
         </div>
-        <input class="button-primary u-pull-right" type="submit" value="Update">
-        <input class="button-primary u-pull-left" type="submit" value="Cancel">
-        
+        <input class="button-primary u-pull-right" type="submit" value="Edit Department/Offices Info">
       </form>
     </div>
   </div>
   <!-- main content -->
 </body>
 
-  
-</script>
 </html>

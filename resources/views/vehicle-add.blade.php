@@ -90,28 +90,35 @@
   <!-- side nav -->
   <!-- main content -->
   <div class="container" id="main-content">
-    <div class="nine columns" id="box-form">
-      <!-- TODO: Process edit-user logic after submitting form. -->
-      <h1>Edit User Account Information</h1>
-
-      <form action="/edit-user">
+    <div class="seven columns" id="box-form">
+      <!-- TODO: Process add-user logic after submitting form. -->
+      <h1>Add Vehicle</h1>    
+      <form action="/add-vehicle">
+        <div class="twelve columns">
+          <label for="vehicle-campus">Select Campus/Institute</label>
+          <select class="u-full-width" id="vehicle-campus"></select>
+        </div>
         <div class="six columns" style="margin: 0px;">
-          <label for="first-name">First Name</label>
-          <input class="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance">
+          <label for="vehicle-fuel">Fuel Type</label>
+          <select class="u-full-width" id="vehicle-fuel"></select>
         </div>
         <div class="six columns">
-          <label for="last-name">Last Name</label>
-          <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
+          <label for="vehicle-brand">Vehicle Brand</label>
+          <select class="u-full-width" id="vehicle-brand"></select>
         </div>
-        <input class="button-primary u-pull-right" type="submit" value="Update">
-        <input class="button-primary u-pull-left" type="submit" value="Cancel">
-        
+        <div class="eight columns" style="margin: 0px;">
+          <label for="vehicle-model">Model Name</label>
+          <input class="u-full-width" type="text" name="vehicle-model" id="vehicle-model" placeholder="L300">
+        </div>
+        <div class="four columns">
+          <label for="vehicle-year">Manufacturing Year</label>
+          <input class="u-full-width" type="number" name="vehicle-year" id="email" placeholder="2017">
+        </div>
+        <input class="button-primary u-pull-right" type="submit" value="Add Vehicle">
       </form>
     </div>
   </div>
   <!-- main content -->
 </body>
 
-  
-</script>
 </html>
