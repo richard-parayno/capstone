@@ -1,3 +1,5 @@
+/** TODO: Fix Sidebar links. They're too static atm. **/
+
 body {
   background: #FBFBFB;
   font-family: "Lato";  
@@ -5,7 +7,10 @@ body {
 
 .bar {
   padding: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   margin: 0px;
+
 }
 
 img {
@@ -16,23 +21,41 @@ img {
 
 #sidebar {
   background: #363635;
-  box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
   width: 250px;
   height: 100%;
-  position: fixed;
+  position: relative;
+  color: white;
+}
+
+#sidebar ul {
+  list-style: none;
+  text-align: justify;
+}
+
+#sidebar li {
+
 }
 
 #sidebar a {
-  color: white;
-  margin-left: 10px;
+
+  text-decoration: none;
+  list-style: none;
+  text-align: justify;
+}
+
+#sidebar span {
+
 }
 
 #main-content {
   margin-left: 300px;
+  color: white;
 }
 
-#trips-overview-div {
-  margin-top: 30px;
-  background: #363635;
-  box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);  
+#main-content input {
+  color: black;
+}
+
+#searchBox {
+  color: black;
 }
