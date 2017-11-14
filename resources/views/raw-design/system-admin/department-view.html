@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Carbon Emission Dashboard</title>
-  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
   <link rel="stylesheet" type="text/css" href="../css/normalize.css">
   <link rel="stylesheet" type="text/css" href="../css/skeleton.css">
   <link rel="stylesheet" type="text/css" href="../css/style-dash.css">
@@ -15,8 +14,7 @@
       background-color: #363635;
       margin-top: 20px;
       padding: 40px;
-      box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
-      border-radius: 20px;
+      border-radius: 10px;
     }
 
     #box-form h1 {
@@ -24,10 +22,13 @@
       color: white;
     }
 
-    #box-form label {
+    #box-form table {
       color: white;
     }
 
+    #box-form table th {
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -87,28 +88,43 @@
     </div>
   </div>
   <!-- side nav -->
+
   <!-- main content -->
   <div class="container" id="main-content">
-    <div class="eight columns" id="box-form">
-      <!-- TODO: Process add-user logic after submitting form. -->
-      <h1>Add Department/Offices</h1>    
-      <form action="/add-department">
-        <div class="twelve columns">
-          <label for="find-campus">Select Campus/Institute</label>
-          <select class="u-full-width" id="find-campus"></select>
+    <div class="twelve columns" id="box-form">
+      <h1>View Department/Offices</h1>    
+      <table class="u-full-width">
+        <thead>
+          <tr>
+            <th>Department/Office Name</th>
+            <th>From Campus/Institute</th>
+            <th>Department/Office Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Information Technology Services</td>
+            <td>De La Salle University - Manila</td>
+            <td style="text-align: center;">
+              <a href="campus-editinfo.html">Edit Department/Office Info</a>
+            </td>
+          </tr>
+        </tbody>
+        <!-- action shortcuts -->
+        <span>Shortcuts: </span>
+        <a href="campus-add.html">Add New Department/Office</a>
+        <div class="u-pull-right">
+          <span>Search Department/Office: </span>
+          <input type="text" placeholder="Information Technology Services" id="searchBox">
         </div>
-        <div class="twelve columns">
-          <label for="department-name">Department Name</label>
-          <input class="u-full-width" type="text" name="department-name" id="username" placeholder="College of Computer Studies">
-        </div>
-        <input class="button-primary u-pull-right" type="submit" value="Add Department/Offices">
-      </form>
+        <!-- action shortcuts -->              
+      </table>
     </div>
   </div>
   <!-- main content -->
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js"></script>
-<script src="../js/dashboard-trips.js"></script>
+
+
   
 </script>
 </html>

@@ -51,3 +51,11 @@ img {
   margin-left: 300px;
   color: white;
 }
+
+#main-content input {
+  color: black;
+}
+
+#searchBox {
+  color: black;
+}
