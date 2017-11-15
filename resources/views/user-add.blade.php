@@ -92,29 +92,59 @@
     <div class="eight columns" id="box-form">
       <!-- TODO: Process add-user logic after submitting form. -->
       <h1>Create New User Account</h1>    
-      <form action="/add-user">
+      <form method="POST" action="{{ route('register') }}">
+        {{ csrf_field() }}
         <div class="twelve columns">
           <label for="username">Username</label>
-          <input class="u-full-width" type="text" name="username" id="username" placeholder="richard.parayno">
+          <input class="u-full-width" type="text" name="username" id="username" placeholder="richard.parayno" value="{{ old('username') }}" required>
+
+          @if ($errors->has('username'))
+            <span class="help-block">
+              <strong>{{ $errors->first('username') }}</strong>
+            </span>
+          @endif
+
         </div>
         <div class="twelve columns">
-          <label for="username">E-mail</label>
-          <input class="u-full-width" type="email" name="email" id="email" placeholder="richard_parayno@dlsu.edu.ph">
+          <label for="email">E-mail</label>
+          <input class="u-full-width" type="email" name="email" id="email" placeholder="richard_parayno@dlsu.edu.ph" value="{{ old('email') }}" required>
+
+          @if ($errors->has('email'))
+            <span class="help-block">
+              <strong>{{ $errors->first('email') }}</strong>
+            </span>
+          @endif
+
         </div>
         <div class="six columns" style="margin: 0px;">
-          <label for="first-name">First Name</label>
-          <input class="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance">
-        </div>
-        <div class="six columns">
-          <label for="last-name">Last Name</label>
-          <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
+          <label for="accountName">Full Name</label>
+          <input class="u-full-width" type="text" name="accountName" id="accountName" placeholder="Richard Lance Parayno" value="{{ old('accountName') }}" required>
+
+          @if ($errors->has('accountName'))
+            <span class="help-block">
+              <strong>{{ $errors->first('accountName') }}</strong>
+            </span>
+          @endif
+
         </div>
         <div class="twelve columns">
           <label for="password">Password</label>
-          <input class="u-full-width" type="password" name="password" id="password" placeholder="Password">
+          <input class="u-full-width" type="password" name="password" id="password" placeholder="Password" value="{{ old('password') }}" required>
+
+          @if ($errors->has('password'))
+            <span class="help-block">
+              <strong>{{ $errors->first('password') }}</strong>
+            </span>
+          @endif
+
+        </div>
+
+        <div class="twelve columns">
+          <label for="password">Confirm Password</label>
+          <input class="u-full-width" type="password" name="password_confirmation" id="password-confirm" placeholder="Password" required>
         </div>
         <input class="button-primary u-pull-right" type="submit" value="Add User">
-        <input class="button-primary u-pull-left" type="submit" value="Cancel">
+        <!--<input class="button-primary u-pull-left" type="submit" value="Cancel">-->
       </form>
     </div>
   </div>
