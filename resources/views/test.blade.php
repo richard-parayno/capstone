@@ -30,6 +30,7 @@
 </head>
 <body>
 	<form action="" method="POST" enctype="multipart/form-data">
+	{{ csrf_key() }}
 		<input type="file" name="excelFile">
 		<input type="submit" value="Submit">
 	</form>
