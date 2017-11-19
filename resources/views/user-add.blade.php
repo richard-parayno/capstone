@@ -128,6 +128,21 @@
 
         </div>
         <div class="twelve columns">
+          <label for="userTypeID">Select User Type</label>
+          <select class="u-full-width" name="userTypeID" id="userTypeID" style="color: black;">
+            @foreach($userTypes as $userType)
+              <option value="{{ (int)$userType->userTypeID }}">{{ $userType->userTypeName }}</option>
+            @endforeach
+          </select>
+
+          @if ($errors->has('userTypeID'))
+            <span class="help-block">
+              <strong>{{ $errors->first('userTypeID') }}</strong>
+            </span>
+          @endif
+
+        </div>
+        <div class="twelve columns">
           <label for="password">Password</label>
           <input class="u-full-width" type="password" name="password" id="password" placeholder="Password" value="{{ old('password') }}" required>
 
@@ -143,6 +158,18 @@
           <label for="password">Confirm Password</label>
           <input class="u-full-width" type="password" name="password_confirmation" id="password-confirm" placeholder="Password" required>
         </div>
+
+
+        @if($errors->any())
+        <div>
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li> {{ $error }} </li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
         <input class="button-primary u-pull-right" type="submit" value="Add User">
         <!--<input class="button-primary u-pull-left" type="submit" value="Cancel">-->
       </form>
