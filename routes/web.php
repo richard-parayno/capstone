@@ -16,6 +16,10 @@ Route::get('/', function () {
     return view('login');
 });
 
+Route::get('/test', function () {
+    return view('test');
+});
+
 /* Dashboard Route */
 Route::get('/dashboard', function () {
     return view('dashboard');
