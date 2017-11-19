@@ -23,18 +23,40 @@
       <div class="six columns offset-by-three" id="box">
         <div class="container">
           <!-- TODO: change the action to submit once logic is established -->
-          <form action="/dashboard">
+          <form method="POST" action="{{ route('login') }}">
+          {{ csrf_field() }}
             <div class="twelve columns">
               <label for="username">Username</label>
-              <input class="u-full-width" type="text" name="username" id="username">
+              <input class="u-full-width" type="text" name="username" id="username" value="{{ old('username') }}" required autofocus>
+
+              @if ($errors->has('username'))
+                  <span class="help-block">
+                      <strong>{{ $errors->first('username') }}</strong>
+                  </span>
+              @endif
             </div>
             <div class="twelve columns invisible-div">
             </div>
             <div class="twelve columns">
               <label for="password">Password</label>
-              <input class="u-full-width" type="password" name="password" id="password">
+              <input class="u-full-width" type="password" name="password" id="password" required>
+
+              @if ($errors->has('password'))
+                  <span class="help-block">
+                      <strong>{{ $errors->first('password') }}</strong>
+                  </span>
+              @endif
             </div>
             <div class="twelve columns invisible-div">
+              @if($errors->any())
+                <div>
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li> {{ $error }} </li>
+                        @endforeach
+                    </ul>
+                </div>
+              @endif
             </div>
             <input class="button-primary u-pull-right" type="submit" value="Login">
           </form>
