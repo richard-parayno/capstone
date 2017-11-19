@@ -32,9 +32,7 @@ Route::get('/dashboard/user-view', function() {
     return view('user-view');
 })->name('user-view');
 /* Create New User Account */
-Route::get('/dashboard/user-add', function() {
-    return view('user-add');
-})->name('user-add');
+Route::get('/dashboard/user-add', 'MyController@usertypes')->name('user-add');
 /* Edit User Account Information */
 Route::get('/dashboard/user-editinfo', function() {
     return view('user-editinfo');
