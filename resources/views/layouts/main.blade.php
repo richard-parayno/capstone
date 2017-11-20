@@ -22,7 +22,7 @@
 
       <div class="twelve column bar">
         <span><strong>Current User:</strong></span>
-        <p>Systems Administrator</p>
+        <p>{{ Auth::user()->accountName }} - {{ Auth::user()->accountName }}</p>
       </div>
       <div class="twelve column bar">
         <span><strong>Home</strong></span>
