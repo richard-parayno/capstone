@@ -29,4 +29,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    public function types() {
+        return $this->hasMany('App\Models\UsertypesRef', 'userTypeID');
+    }
 }

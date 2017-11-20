@@ -13,6 +13,7 @@
 
 @show
 <body>
+  @auth
   <!-- side nav -->
   @section('sidebar')
     <div class="container u-pull-left" id="sidebar">
@@ -22,7 +23,12 @@
 
       <div class="twelve column bar">
         <span><strong>Current User:</strong></span>
-        <p>Systems Administrator</p>
+        @php
+        $userTypeID = Auth::user()->userTypeID;
+        $result = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $userTypeID)->first();
+        @endphp
+        <p>{{ $result->userTypeName }} - {{ Auth::user()->accountName }}</p>
+        <a href="{{ route('logout' )}}">Logout</a>
       </div>
       <div class="twelve column bar">
         <span><strong>Home</strong></span>
@@ -72,6 +78,8 @@
     </div>
   @show
   <!-- side nav -->
+  @endauth
+  
   <!-- main content -->
   <div class="container" id="main-content">
     @yield('content')

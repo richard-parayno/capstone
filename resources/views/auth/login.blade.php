@@ -1,69 +1,69 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
-
-                <div class="panel-body">
-                    <form class="form-horizontal" method="POST" action="{{ route('login') }}">
-                        {{ csrf_field() }}
-
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label for="password" class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" required>
-
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-8 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Login
-                                </button>
-
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
-                                    Forgot Your Password?
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Carbon Emission Dashboard</title>
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href="{{ url('/css/normalize.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url('/css/skeleton.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url('/css/style.css') }}">
+</head>
+<body>
+  <div class="row">
+    <div class="container">
+      <div class="twelve columns">
+        <h1 style="text-align: center; color: white; margin-top: 8%; font-weight: 800;">Carbon Emission Dashboard</h1>
+      </div>
     </div>
-</div>
-@endsection
+  </div>
+  <div class="row">
+    <div class="container">
+      <div class="six columns offset-by-three" id="box">
+        <div class="container">
+          <!-- TODO: change the action to submit once logic is established -->
+          <form method="POST" action="{{ route('login') }}">
+          {{ csrf_field() }}
+            <div class="twelve columns">
+              <label for="username">Username</label>
+              <input class="u-full-width" type="text" name="username" id="username" value="{{ old('username') }}" required autofocus>
+
+              @if ($errors->has('username'))
+                  <span class="help-block">
+                      <strong>{{ $errors->first('username') }}</strong>
+                  </span>
+              @endif
+            </div>
+            <div class="twelve columns invisible-div">
+            </div>
+            <div class="twelve columns">
+              <label for="password">Password</label>
+              <input class="u-full-width" type="password" name="password" id="password" required>
+
+              @if ($errors->has('password'))
+                  <span class="help-block">
+                      <strong>{{ $errors->first('password') }}</strong>
+                  </span>
+              @endif
+            </div>
+            <div class="twelve columns invisible-div">
+              @if($errors->any())
+                <div>
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li> {{ $error }} </li>
+                        @endforeach
+                    </ul>
+                </div>
+              @endif
+            </div>
+            <input class="button-primary u-pull-right" type="submit" value="Login">
+            <a href="{{ route('user-add') }}" class="button button-primary u-pull-left">Create Account</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
