@@ -22,7 +22,11 @@
 
       <div class="twelve column bar">
         <span><strong>Current User:</strong></span>
-        <p>{{ Auth::user()->accountName }} - {{ Auth::user()->accountName }}</p>
+        @php
+        $userTypeID = Auth::user()->userTypeID;
+        $result = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $userTypeID)->first();
+        @endphp
+        <p>{{ $result->userTypeName }} - {{ Auth::user()->accountName }}</p>
       </div>
       <div class="twelve column bar">
         <span><strong>Home</strong></span>

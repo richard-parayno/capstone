@@ -31,6 +31,6 @@ class UsertypesRef extends Eloquent
 
 	public function users()
 	{
-		return $this->hasMany(\App\Models\User::class, 'userTypeID');
+		return $this->belongsTo('App\User', 'userID');
 	}
 }
