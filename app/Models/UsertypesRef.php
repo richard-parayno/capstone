@@ -25,6 +25,7 @@ class UsertypesRef extends Eloquent
 	protected $primaryKey = 'userTypeID';
 	public $timestamps = false;
 
+
 	protected $fillable = [
 		'userTypeName'
 	];

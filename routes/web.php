@@ -11,10 +11,12 @@
 |
 */
 
+
+
+
 /* Login Route */
-Route::get('/', function () {
-    return view('login');
-});
+Route::get('/', 'AuthController@getLogin')->name('login');
+
 
 Route::get('/test', function () {
     return view('test');
@@ -88,4 +90,6 @@ Route::get('/dashboard/vehicle-decommission', function() {
 
 Auth::routes();
 
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('/home', 'HomeController@index')->name('home');
+
