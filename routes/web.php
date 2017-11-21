@@ -22,6 +22,8 @@ Route::get('/test', function () {
     return view('test');
 });
 
+Route::resource('institution', 'InstitutionController');
+
 /* Dashboard Route */
 Route::get('/dashboard', function () {
     return view('dashboard');
