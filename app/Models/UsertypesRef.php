@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Mon, 20 Nov 2017 01:59:34 +0000.
+ * Date: Tue, 21 Nov 2017 09:25:44 +0000.
  */
 
 namespace App\Models;
@@ -25,13 +25,12 @@ class UsertypesRef extends Eloquent
 	protected $primaryKey = 'userTypeID';
 	public $timestamps = false;
 
-
 	protected $fillable = [
 		'userTypeName'
 	];
 
 	public function users()
 	{
-		return $this->belongsTo('App\User', 'userID');
+		return $this->hasMany(\App\Models\User::class, 'userTypeID');
 	}
 }

@@ -1,4 +1,4 @@
-@layouts('layouts.main')
+@extends('layouts.main')
 
 @section('styling')
 <style>
