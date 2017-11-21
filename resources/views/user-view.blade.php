@@ -59,7 +59,7 @@
         <td>{{ $user->accountName }}</td>
         <td>{{ $user->username }}</td>
         <td>{{ $user->email }}</td>
-        <td>Account Status</td>
+        <td>{{ $user->status }}</td>
         <td style="text-align: center;">
           <a href="{{ route('user-editinfo') }}">Edit User Info</a>
           <br>

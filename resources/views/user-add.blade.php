@@ -84,8 +84,12 @@
                 <li> {{ $error }} </li>
             @endforeach
         </ul>
-    </div>
+    </div> 
     @endif
+
+    <!-- hidden input for account status -->
+    <input type="hidden" name="status" id="status" value="Active">
+
     <input class="button-primary u-pull-right" type="submit" value="Add User">
     <!--<input class="button-primary u-pull-left" type="submit" value="Cancel">-->
   </form>
