@@ -16,8 +16,9 @@ class ViewUserController extends Controller
 
     public function viewCampus() {
         $institutions = DB::table('institutions')->get();
+        $schools = DB::table('schooltype_ref')->get();
 
-        return view('campus-view', compact('institutions'));
+        return view('campus-view', compact('institutions', 'schools'));
     }
 
     public function viewDepartments() {

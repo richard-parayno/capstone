@@ -56,7 +56,7 @@
 
         <td>{{ $vehicle->modelName }}</td>
         <td>{{ $vehicle->plateNumber }}</td>
-        <td>2015</td>
+        <td>TODO</td>
 
         @foreach($institutions as $institution)
           @if($vehicle->institutionID == $institution->institutionID)

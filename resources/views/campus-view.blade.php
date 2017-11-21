@@ -29,18 +29,26 @@
     <thead>
       <tr>
         <th>Campus/Institute Name</th>
+        <th>Type</th>
         <th>Location</th>
         <th>Campus/Institute Actions</th>
       </tr>
     </thead>
     <tbody>
+      @foreach($institutions as $institution)
       <tr>
-        <td>De La Salle University - Manila</td>
-        <td>2401 Taft Avenue, Manila</td>
+        <td>{{ $institution->institutionName }}</td>
+        @foreach($schools as $school)
+          @if($institution->schoolTypeID == $school->schoolTypeID)
+            <td>{{ $school->schoolTypeName }}</td>
+          @endif
+        @endforeach
+        <td>{{ $institution->location }}</td>
         <td style="text-align: center;">
           <a href="{{ route('campus-editinfo') }}">Edit Campus/Institute Info</a>
         </td>
       </tr>
+      @endforeach
     </tbody>
     <!-- action shortcuts -->
     <span>Shortcuts: </span>

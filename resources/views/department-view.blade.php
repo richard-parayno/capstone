@@ -34,13 +34,19 @@
       </tr>
     </thead>
     <tbody>
+      @foreach($departments as $department)
       <tr>
-        <td>Information Technology Services</td>
-        <td>De La Salle University - Manila</td>
+        <td>{{ $department->deptName }}</td>
+        @foreach($institutions as $institution)
+          @if($department->institutionID == $institution->institutionID)
+            <td>{{ $institution->institutionName }}</td>
+          @endif
+        @endforeach
         <td style="text-align: center;">
           <a href="{{ route('department-editinfo') }}">Edit Department/Office Info</a>
         </td>
       </tr>
+      @endforeach
     </tbody>
     <!-- action shortcuts -->
     <span>Shortcuts: </span>
