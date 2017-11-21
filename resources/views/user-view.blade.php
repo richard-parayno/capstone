@@ -29,8 +29,7 @@
     <thead>
       <tr>
         <th>User Type</th>
-        <th>First Name</th>
-        <th>Last Name</th>
+        <th>Account Name</th>
         <th>Username</th>
         <th>E-mail</th>
         <th>Account Status</th>
@@ -41,7 +40,6 @@
       <tr>
         <td>Systems Administrator</td>
         <td>Richard</td>
-        <td>Parayno</td>
         <td>richard.parayno</td>
         <td>richard_parayno@dlsu.edu.ph</td>
         <td>Active</td>
@@ -51,6 +49,24 @@
           <a href="{{ route('user-editcreds') }}">Update Account Credentials</a>
         </td>
       </tr>
+      @foreach($users as $user)
+      <tr>
+        @foreach($userTypes as $userType)
+          @if($user->userTypeID == $userType->userTypeID)
+            <td>{{ $userType->userTypeName }}</td>
+          @endif
+        @endforeach
+        <td>{{ $user->accountName }}</td>
+        <td>{{ $user->username }}</td>
+        <td>{{ $user->email }}</td>
+        <td>Account Status</td>
+        <td style="text-align: center;">
+          <a href="{{ route('user-editinfo') }}">Edit User Info</a>
+          <br>
+          <a href="{{ route('user-editcreds') }}">Update Account Credentials</a>
+        </td>
+      </tr>
+      @endforeach
     </tbody>
     <!-- action shortcuts -->
     <span>Shortcuts: </span>

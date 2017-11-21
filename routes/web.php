@@ -30,9 +30,7 @@ Route::get('/dashboard', function () {
 
 /* User Account Management Routes */
 /* View Users */
-Route::get('/dashboard/user-view', function() {
-    return view('user-view');
-})->name('user-view')->middleware('auth');
+Route::get('/dashboard/user-view', 'ViewUserController@viewUsers')->name('user-view')->middleware('auth');
 /* Create New User Account */
 Route::get('/dashboard/user-add', 'MyController@usertypes')->name('user-add');
 /* Edit User Account Information */
