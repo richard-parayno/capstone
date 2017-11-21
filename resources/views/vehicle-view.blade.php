@@ -40,20 +40,48 @@
       </tr>
     </thead>
     <tbody>
+      @foreach($vehicles as $vehicle)
       <tr>
-        <td>Sedan</td>
-        <td>Toyota</td>
-        <td>Vios</td>
-        <td>ZAW-941</td>
+        @foreach($cartypes as $cartype)
+          @if($vehicle->carTypeID == $cartype->carTypeID)
+            <td>{{ $cartype->carTypeName }}</td>
+          @endif
+        @endforeach
+
+        @foreach($brands as $brand)
+          @if($vehicle->carBrandID == $brand->carBrandID)
+            <td>{{ $brand->carBrandName }}</td>
+          @endif
+        @endforeach
+
+        <td>{{ $vehicle->modelName }}</td>
+        <td>{{ $vehicle->plateNumber }}</td>
         <td>2015</td>
-        <td>De La Salle University - Manila</td>
-        <td>Diesel</td>
-        <td>Active</td>
+
+        @foreach($institutions as $institution)
+          @if($vehicle->institutionID == $institution->institutionID)
+            <td>{{ $institution->institutionName }}</td>
+          @endif
+        @endforeach
+
+        @foreach($fueltype as $fuel)
+          @if($vehicle->fuelTypeID == $fuel->fuelTypeID)
+            <td>{{ $fuel->fuelTypeName }}</td>
+          @endif
+        @endforeach
+
+        @if($vehicle->active >= 1)
+          <td>Active</td>
+        @else
+          <td>Inactive</td>
+        @endif
+
         <td style="text-align: center;">
           <a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a> <br>
           <a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a>
         </td>
       </tr>
+      @endforeach
     </tbody>
     <!-- action shortcuts -->
     <span>Shortcuts: </span>

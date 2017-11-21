@@ -46,9 +46,7 @@ Route::get('/dashboard/user-editcreds', function() {
 
 /* Campus Information Management Routes */
 /* View Campus */
-Route::get('/dashboard/campus-view', function() {
-    return view('campus-view');
-})->name('campus-view')->middleware('auth');
+Route::get('/dashboard/campus-view', 'ViewUserController@viewCampus')->name('campus-view')->middleware('auth');
 /* Add New Campus/Institute */
 Route::get('/dashboard/campus-add', function() {
     return view('campus-add');
@@ -59,9 +57,7 @@ Route::get('/dashboard/campus-editinfo', function() {
 })->name('campus-editinfo')->middleware('auth');
 
 /* View Departments/Offices */
-Route::get('/dashboard/department-view', function() {
-    return view('department-view');
-})->name('department-view')->middleware('auth');
+Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->name('department-view')->middleware('auth');
 /* Add New Department/Offices */
 Route::get('/dashboard/department-add', function() {
     return view('department-add');
@@ -72,9 +68,7 @@ Route::get('/dashboard/department-editinfo', function() {
 })->name('department-editinfo')->middleware('auth');
 
 /* View Vehicles */
-Route::get('/dashboard/vehicle-view', function() {
-    return view('vehicle-view');
-})->name('vehicle-view')->middleware('auth');
+Route::get('/dashboard/vehicle-view', 'ViewUserController@viewVehicles')->name('vehicle-view')->middleware('auth');
 /* Add New Vehicle */
 Route::get('/dashboard/vehicle-add', function() {
     return view('vehicle-add');
