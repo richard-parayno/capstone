@@ -70,9 +70,8 @@ Route::get('/dashboard/department-editinfo', function() {
 /* View Vehicles */
 Route::get('/dashboard/vehicle-view', 'ViewUserController@viewVehicles')->name('vehicle-view')->middleware('auth');
 /* Add New Vehicle */
-Route::get('/dashboard/vehicle-add', function() {
-    return view('vehicle-add');
-})->name('vehicle-add')->middleware('auth');
+Route::get('/dashboard/vehicle-add', 'AddController@loadtoVehicle')->name('vehicle-add')->middleware('auth');
+Route::post('/dashboard/vehicle-add-process', 'VehicleController@create')->name('vehicle-add-process')->middleware('auth');
 /* Edit Vehicle */
 Route::get('/dashboard/vehicle-editinfo', function() {
     return view('vehicle-editinfo');

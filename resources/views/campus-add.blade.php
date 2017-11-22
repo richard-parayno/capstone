@@ -22,7 +22,7 @@
 @section('content')
 <div class="nine columns" id="box-form">
   @if(Session::has('success'))
-    <div style="color: green;">
+    <div class="twelve columns" style="color: green;">
       <strong>Success!</strong> {{ Session::get('message', '') }}
     </div>
   @endif

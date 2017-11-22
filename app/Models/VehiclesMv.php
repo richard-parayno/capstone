@@ -45,6 +45,7 @@ class VehiclesMv extends Eloquent
 
 	protected $fillable = [
 		'institutionID',
+		'plateNumber',
 		'carTypeID',
 		'carBrandID',
 		'fuelTypeID',
