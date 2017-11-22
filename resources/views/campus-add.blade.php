@@ -21,25 +21,46 @@
 
 @section('content')
 <div class="nine columns" id="box-form">
+  @if(Session::has('success'))
+    <div style="color: green;">
+      <strong>Success!</strong> {{ Session::get('message', '') }}
+    </div>
+  @endif
   <!-- TODO: Process add-campus logic after submitting form. -->
   <h1>Add New Campus/Institute</h1>    
-  <form action="/add-campus">
-    <label>
-      <label>Campus or Institute?</label>
-      <input type="radio" name="ci-type" id="type-campus" value="Campus">
-      <span class="label-body">Campus</span>
-      <br>
-      <input type="radio" name="ci-type" id="type-institute" value="Institute">
-      <span class="label-body">Institute</span>
-    </label>
+  <form method="POST" action="{{ route('campus-add-process') }}">
+    {{ csrf_field() }}
+    <div class="twelve columns">
+      <label for="schoolTypeID">Select Campus/Institute Type</label>
+      <select class="u-full-width" name="schoolTypeID" id="schoolTypeID" style="color: black;">
+        @foreach($schoolTypes as $schoolType)
+          <option value="{{ $schoolType->schoolTypeID }}">{{ $schoolType->schoolTypeName }}</option>
+        @endforeach
+      </select>
+      @if ($errors->has('schoolTypeID'))
+        <span class="help-block">
+          <strong>{{ $errors->first('schoolTypeID') }}</strong>
+        </span>
+      @endif
+    </div>
     <div class="twelve columns">
       <label for="ci-name">Campus/Institute Name</label>
-      <input class="u-full-width" type="text" name="ci-name" id="ci-name" placeholder="La Salle Greenhills">
+      <input class="u-full-width" type="text" name="institutionName" id="institutionName" placeholder="La Salle Greenhills">
+      @if ($errors->has('institutionName'))
+        <span class="help-block">
+          <strong>{{ $errors->first('institutionName') }}</strong>
+        </span>
+      @endif
     </div>
     <div class="twelve columns">
       <label for="ci-location">Location</label>
-      <input class="u-full-width" type="text" name="ci-location" id="email" placeholder="GH pare">
+      <input class="u-full-width" type="text" name="location" id="location" placeholder="GH pare">
     </div>
+    @if ($errors->has('location'))
+      <span class="help-block">
+        <strong>{{ $errors->first('location') }}</strong>
+      </span>
+    @endif
     <input class="button-primary u-pull-right" type="submit" value="Add New Campus/Institute">
   </form>
 </div>

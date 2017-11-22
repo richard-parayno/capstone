@@ -48,9 +48,9 @@ Route::get('/dashboard/user-editcreds', function() {
 /* View Campus */
 Route::get('/dashboard/campus-view', 'ViewUserController@viewCampus')->name('campus-view')->middleware('auth');
 /* Add New Campus/Institute */
-Route::get('/dashboard/campus-add', function() {
-    return view('campus-add');
-})->name('campus-add')->middleware('auth');
+Route::get('/dashboard/campus-add', 'AddController@loadToCampus')->name('campus-add')->middleware('auth');
+Route::post('/dashboard/campus-add-process', 'InstitutionController@create')->name('campus-add-process')->middleware('auth');
+
 /* Edit Campus/Institute */
 Route::get('/dashboard/campus-editinfo', function() {
     return view('campus-editinfo');
