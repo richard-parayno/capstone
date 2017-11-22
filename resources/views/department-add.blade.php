@@ -17,6 +17,10 @@
   #box-form label {
     color: white;
   }
+
+  #box-form select {
+    color: black;
+  }
 </style>
 @endsection
 
@@ -24,15 +28,47 @@
 <div class="eight columns" id="box-form">
   <!-- TODO: Process add-user logic after submitting form. -->
   <h1>Add Department/Offices</h1>    
-  <form action="/add-department">
-    <div class="twelve columns">
-      <label for="find-campus">Select Campus/Institute</label>
-      <select class="u-full-width" id="find-campus"></select>
+  <form method="post" action="{{ route('department-add-process') }}">
+    {{ csrf_field() }}
+    @if(Session::has('success'))
+    <div class="twelve columns" style="color: green;">
+      <strong>Success!</strong> {{ Session::get('message', '') }}
     </div>
+    @endif
     <div class="twelve columns">
-      <label for="department-name">Department Name</label>
-      <input class="u-full-width" type="text" name="department-name" id="username" placeholder="College of Computer Studies">
+      <label for="institutionID">Select Campus/Institute</label>
+      <select class="u-full-width" name="institutionID" id="institution">
+        @foreach($institutions as $institution)
+          <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
+        @endforeach
+      </select>
     </div>
+    @if ($errors->has('institutionID'))
+      <span class="help-block">
+        <strong>{{ $errors->first('institutionID') }}</strong>
+      </span>
+    @endif
+    <div class="twelve columns">
+      <label for="deptName">Department Name</label>
+      <input class="u-full-width" type="text" name="deptName" id="deptName" placeholder="College of Computer Studies">
+    </div>
+    @if ($errors->has('deptName'))
+      <span class="help-block">
+        <strong>{{ $errors->first('deptName') }}</strong>
+      </span>
+    @endif
+
+
+    @if($errors->any())
+    <div>
+        <ul>
+            @foreach($errors->all() as $error)
+                <li> {{ $error }} </li>
+            @endforeach
+        </ul>
+    </div> 
+    @endif
+
     <input class="button-primary u-pull-right" type="submit" value="Add Department/Offices">
   </form>
 </div>

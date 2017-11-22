@@ -21,4 +21,11 @@ class AddController extends Controller
 
         return view('vehicle-add', compact('brands', 'institutions', 'fuelTypes', 'carTypes'));
     }
+
+    public function loadToDepartment() {
+        $institutions = DB::table('institutions')->get();         
+
+        return view('department-add', compact('institutions'));
+        
+    }
 }

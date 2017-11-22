@@ -26,13 +26,6 @@ class VehicleController extends Controller
         }
 
         else if ($validator->passes()) {
-          /** 
-          $institution = Institution::create([
-            'institutionName' => $data['institutionName'],
-            'location' => $data['location'],
-            'schoolTypeID' => $data['schoolTypeID'],
-          ]); */
-
           $vehicle = new VehiclesMv;
           $vehicle->plateNumber = $data['plateNumber'];
           $vehicle->modelName = $data['modelName'];
