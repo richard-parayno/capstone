@@ -7,19 +7,31 @@ var chart = new Chart(ctx, {
 
     // The data for our dataset
     data: {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
+        labels: ["Dec 16", "Jan 17", "Feb 17", "Mar 17", "Apr 17", "May 17", "Jun 17", "Jul 17", "Aug 17", "Sep 17", "Oct 17", "Nov 17", "Dec 17"],
         datasets: [{
-            label: "In-house Trips",
+            label: "Carbon Emissions in Tonnes",
             backgroundColor: 'rgb(1, 151, 246)',              
             borderColor: 'rgb(1, 151, 246)',
             fill: false,
-            data: [0, 20, 30, 40, 50, 30, 60],
+            data: [1.5504, 1.1371, 1.2101, 1.701, 1.3407, 1.2123, 1.5433, 1.4343, 1.4566, 1.6876, 1.834, 1.79, 1.3208],
         }, {
-            label: "Outsourced Trips",
-            backgroundColor: 'rgb(255, 90, 95)',
-            borderColor: 'rgb(255, 90, 95)',
+            label: "Analytics Values",
+            backgroundColor: 'rgb(255, 165, 0)',
+            borderColor: 'rgb(255, 165, 0)',
             fill: false,
-            data: [0, 70, 50, 25, 80, 90, 25],
+            data: [101.22, 2.66, 11.62, 20.58, 29.54, 38.50, 47.46, 56.42, 65.38, 74.34, 83.30, 92.26, 101.22],
+        }, {
+            label: "Carbon Sequestrated in Tonnes",
+            backgroundColor: 'rgb(211, 211, 211)',
+            borderColor: 'rgb(211, 211, 211)',
+            fill: false,
+            data: [120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873],
+        }, {
+            label: "25% Threshold",
+            backgroundColor: 'rgb(255, 255, 0)',
+            borderColor: 'rgb(255, 255, 0)',
+            fill: false,
+            data: [4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8],
         }]
     },
 
@@ -33,7 +45,7 @@ var chart = new Chart(ctx, {
       },
       title: {
         display: true,
-        text: "Trips",
+        text: "Analytics",
         fontColor: "#FBFBFB"
       },
       layout: {
