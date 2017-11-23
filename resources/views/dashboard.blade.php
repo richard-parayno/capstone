@@ -2,7 +2,7 @@
 
 @section('styling')
 <style>
-  #trips-overview-div {
+  #analytics {
     margin-top: 30px;
     background: #363635;
     box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);  
@@ -23,40 +23,159 @@
 @endsection
 
 @section('scripts')
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js"></script>
-  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="{{ asset('/js/jquery-3.2.1.min.js') }}"></script>
+  <script src="{{ asset('/js/highcharts/code/highcharts.js') }}"></script>
+  <script src="{{ asset('/js/highcharts/code/modules/drilldown.js') }}"></script>
   <script type="text/javascript">
-    $(function () { 
-    var myChart = Highcharts.chart('analytics', {
-            chart: {
-                type: 'line'
-            },
+    $(function () {
+      // Create the chart
+      $('#analytics').highcharts({
+        chart: {
+          type: 'line',
+          events: {
+            drilldown: function (e) {
+              if (!e.seriesOptions) {
+                var chart = this,
+                  drilldowns = {
+                    'December': {
+                        name: 'Trips',
+                        data: [
+                            ['Cows', 10],
+                            ['Sheep', 20]
+                        ]
+                    },
+                    'December2': {
+                        name: 'Cars',
+                        colors: Highcharts.getOptions().colors[1],
+                        data: [
+                            ['Apples', 15],
+                            ['Oranges', 25],
+                            ['Bananas', 30]
+                        ]
+                    },
+                    'January': {
+                        name: 'Trips',
+                        data: [
+                            ['Cows', 2],
+                            ['Sheep', 3]
+                        ]
+                    },
+                    'January2': {
+                        name: 'Cars',
+                        data: [
+                            ['Apples', 5],
+                            ['Oranges', 7],
+                            ['Bananas', 2]
+                        ]
+                    },
+                    'February': {
+                        name: 'Trips',
+                        data: [
+                            ['Cows', 2],
+                            ['Sheep', 3]
+                        ]
+                    },
+                    'February2': {
+                        name: 'Cars',
+                        data: [
+                            ['Apples', 5],
+                            ['Oranges', 7],
+                            ['Bananas', 2]
+                        ]
+                    },
+                  },
+                  series = [drilldowns[e.point.name], drilldowns[e.point.name + '2']];
+
+                chart.addSingleSeriesAsDrilldown(e.point, series[0]);
+                chart.addSingleSeriesAsDrilldown(e.point, series[1]);
+                chart.applyDrilldown();
+              }
+
+            }
+          }
+        },
+        title: {
+            text: 'Async drilldown'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
             title: {
-                text: 'Analytics'
-            },
-            xAxis: {
-                categories: ["Dec 16", "Jan 17", "Feb 17", "Mar 17", "Apr 17", "May 17", "Jun 17", "Jul 17", "Aug 17", "Sep 17", "Oct 17", "Nov 17", "Dec 17"]
-            },
-            yAxis: {
-                title: {
-                    text: 'Tonnes'
+              text: 'Tonnes'
+            }
+        },
+
+        legend: {
+            enabled: true
+        },
+
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true
                 }
-            },
-            series: [{
-                name: 'Carbon Emissions in Tonnes',
-                data: [1.5504, 1.1371, 1.2101, 1.701, 1.3407, 1.2123, 1.5433, 1.4343, 1.4566, 1.6876, 1.834, 1.79, 1.3208]
+            }
+        },
+
+        series: [{
+            name: 'Carbon Emissions in Tonnes',
+            data: [{
+              name: 'December',
+              y: 1.5504,
+              drilldown: true
             }, {
-                name: 'Analytics Values',
-                data: [101.22, 2.66, 11.62, 20.58, 29.54, 38.50, 47.46, 56.42, 65.38, 74.34, 83.30, 92.26, 101.22]
+              name: 'January',
+              y: 1.1371,
+              drilldown: true
             }, {
-                name: 'Carbon Sequestrated in Tonnes',
-                data: [120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873, 120.958873]
-            }, {
-                name: '25% Threshold',
-                data: [4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8, 4.8]
+              name: 'February',
+              y: 1.2101,
+              drilldown: true                  
             }]
-        });
+        }, {
+          name: 'Analytics Values',
+          data: [{
+              name: 'December',
+              y: 101.22,
+            }, {
+              name: 'January',
+              y: 2.66,
+            }, {
+              name: 'February',
+              y: 11.62,
+            }]
+        }, {
+          name: 'Carbon Sequestrated in Tonnes',
+          data: [{
+              name: 'December',
+              y: 120.958873
+            }, {
+              name: 'January',
+              y: 120.958873
+            }, {
+              name: 'February',
+              y: 120.958873
+            }]
+        }, {
+          name: 'Threshold (25%)',
+          data: [{
+              name: 'December',
+              y: 4.8
+            }, {
+              name: 'January',
+              y: 4.8
+            }, {
+              name: 'February',
+              y: 4.8
+            }]
+        }],
+
+        drilldown: {
+            series: []
+        }
+      });
     });
   </script>
 @endsection
