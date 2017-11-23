@@ -26,9 +26,9 @@
   <script src="{{ asset('/js/jquery-3.2.1.min.js') }}"></script>
   <script src="{{ asset('/js/highcharts/code/highcharts.js') }}"></script>
   <script src="{{ asset('/js/highcharts/code/modules/drilldown.js') }}"></script>
+  <script src="{{ asset('/js/highcharts/code/modules/exporting.js') }}"></script>
   <script type="text/javascript">
     $(function () {
-      // Create the chart
       $('#analytics').highcharts({
         chart: {
           type: 'line',
@@ -37,14 +37,14 @@
               if (!e.seriesOptions) {
                 var chart = this,
                   drilldowns = {
-                    'December': {
+                    'December 2017': {
                         name: 'Trips',
                         data: [
                             ['Cows', 10],
                             ['Sheep', 20]
                         ]
                     },
-                    'December2': {
+                    'December 2017-2': {
                         name: 'Cars',
                         colors: Highcharts.getOptions().colors[1],
                         data: [
@@ -53,14 +53,14 @@
                             ['Bananas', 30]
                         ]
                     },
-                    'January': {
+                    'January 2018': {
                         name: 'Trips',
                         data: [
                             ['Cows', 2],
                             ['Sheep', 3]
                         ]
                     },
-                    'January2': {
+                    'January 2018-2': {
                         name: 'Cars',
                         data: [
                             ['Apples', 5],
@@ -68,14 +68,14 @@
                             ['Bananas', 2]
                         ]
                     },
-                    'February': {
+                    'February 2018': {
                         name: 'Trips',
                         data: [
                             ['Cows', 2],
                             ['Sheep', 3]
                         ]
                     },
-                    'February2': {
+                    'February 2018-2': {
                         name: 'Cars',
                         data: [
                             ['Apples', 5],
@@ -84,18 +84,16 @@
                         ]
                     },
                   },
-                  series = [drilldowns[e.point.name], drilldowns[e.point.name + '2']];
-
+                  series = [drilldowns[e.point.name], drilldowns[e.point.name + '-2']];
                 chart.addSingleSeriesAsDrilldown(e.point, series[0]);
                 chart.addSingleSeriesAsDrilldown(e.point, series[1]);
                 chart.applyDrilldown();
               }
-
             }
           }
         },
         title: {
-            text: 'Async drilldown'
+            text: 'Analytics'
         },
         xAxis: {
             type: 'category'
@@ -119,55 +117,68 @@
             }
         },
 
+        exporting: {
+            chartOptions: { // specific options for the exported image
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                }
+            },
+            fallbackToExportServer: false
+        },
+
         series: [{
             name: 'Carbon Emissions in Tonnes',
             data: [{
-              name: 'December',
+              name: 'December 2017',
               y: 1.5504,
               drilldown: true
             }, {
-              name: 'January',
+              name: 'January 2018',
               y: 1.1371,
               drilldown: true
             }, {
-              name: 'February',
+              name: 'February 2018',
               y: 1.2101,
               drilldown: true                  
             }]
         }, {
           name: 'Analytics Values',
           data: [{
-              name: 'December',
+              name: 'December 2017',
               y: 101.22,
             }, {
-              name: 'January',
+              name: 'January 2018',
               y: 2.66,
             }, {
-              name: 'February',
+              name: 'February 2018',
               y: 11.62,
             }]
         }, {
           name: 'Carbon Sequestrated in Tonnes',
           data: [{
-              name: 'December',
+              name: 'December 2017',
               y: 120.958873
             }, {
-              name: 'January',
+              name: 'January 2018',
               y: 120.958873
             }, {
-              name: 'February',
+              name: 'February 2018',
               y: 120.958873
             }]
         }, {
           name: 'Threshold (25%)',
           data: [{
-              name: 'December',
+              name: 'December 2017',
               y: 4.8
             }, {
-              name: 'January',
+              name: 'January 2018',
               y: 4.8
             }, {
-              name: 'February',
+              name: 'February 2018',
               y: 4.8
             }]
         }],
