@@ -28,6 +28,10 @@ Route::resource('institution', 'InstitutionController');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard')->middleware('auth');
+/* Excel Upload Route */
+Route::get('/dashboard/upload-files', 'ExcelController@show')->name('upload-files')->middleware('auth');
+Route::post('/dashboard/process-file', 'ExcelController@process')->name('process-file')->middleware('auth');
+
 
 
 /* User Account Management Routes */

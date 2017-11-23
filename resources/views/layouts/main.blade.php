@@ -36,6 +36,7 @@
           <li>Dashboard</li>
           <ul>
             <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
+            <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
           </ul>
         </ul>
       </div>
