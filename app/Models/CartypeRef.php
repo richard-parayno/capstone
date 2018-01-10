@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 22 Nov 2017 05:43:21 +0000.
+ * Date: Mon, 27 Nov 2017 16:20:51 +0000.
  */
 
 namespace App\Models;
@@ -14,6 +14,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * 
  * @property int $carTypeID
  * @property string $carTypeName
+ * @property float $mpg
  * 
  * @property \Illuminate\Database\Eloquent\Collection $vehicles_mvs
  *
@@ -25,8 +26,13 @@ class CartypeRef extends Eloquent
 	protected $primaryKey = 'carTypeID';
 	public $timestamps = false;
 
+	protected $casts = [
+		'mpg' => 'float'
+	];
+
 	protected $fillable = [
-		'carTypeName'
+		'carTypeName',
+		'mpg'
 	];
 
 	public function vehicles_mvs()

@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 22 Nov 2017 05:43:21 +0000.
+ * Date: Mon, 27 Nov 2017 16:20:51 +0000.
  */
 
 namespace App\Models;
@@ -16,6 +16,8 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $institutionName
  * @property int $schoolTypeID
  * @property string $location
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  * 
  * @property \App\Models\SchooltypeRef $schooltype_ref
  * @property \Illuminate\Database\Eloquent\Collection $deptsperinstitutions
@@ -27,15 +29,12 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  */
 class Institution extends Eloquent
 {
-	public $timestamps = false;
-
 	protected $casts = [
 		'schoolTypeID' => 'int'
 	];
 
 	protected $fillable = [
 		'schoolTypeID',
-		'institutionName',
 		'location'
 	];
 

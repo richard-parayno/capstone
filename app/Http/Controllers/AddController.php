@@ -28,4 +28,10 @@ class AddController extends Controller
         return view('department-add', compact('institutions'));
         
     }
+
+    public function loadToBatchPlant() {
+        $institutions = DB::table('institutions')->get();         
+
+        return view('tree-plant', compact('institutions'));
+    }
 }

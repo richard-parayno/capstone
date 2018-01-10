@@ -37,6 +37,7 @@
           <ul>
             <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
+            <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
           </ul>
         </ul>
       </div>

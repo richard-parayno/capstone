@@ -59,7 +59,7 @@
               @endif
             </div>
             <input class="button-primary u-pull-right" type="submit" value="Login">
-            <a href="{{ route('user-add') }}" class="button button-primary u-pull-left">Create Account</a>
+
           </form>
         </div>
       </div>

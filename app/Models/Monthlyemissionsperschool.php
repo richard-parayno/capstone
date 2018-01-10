@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 22 Nov 2017 05:43:21 +0000.
+ * Date: Mon, 27 Nov 2017 16:20:51 +0000.
  */
 
 namespace App\Models;
@@ -38,6 +38,7 @@ class Monthlyemissionsperschool extends Eloquent
 
 	protected $fillable = [
 		'institutionID',
+		'monthYear',
 		'emission'
 	];
 

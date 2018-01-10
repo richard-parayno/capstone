@@ -31,6 +31,9 @@ Route::get('/dashboard', function () {
 /* Excel Upload Route */
 Route::get('/dashboard/upload-files', 'ExcelController@show')->name('upload-files')->middleware('auth');
 Route::post('/dashboard/process-file', 'ExcelController@process')->name('process-file')->middleware('auth');
+Route::get('/dashboard/tree-plant', 'AddController@loadToBatchPlant')->name('tree-plant')->middleware('auth');
+Route::post('/dashboard/process-trees', 'InstitutionBatchPlantController@add')->name('process-trees')->middleware('auth');
+
 
 
 

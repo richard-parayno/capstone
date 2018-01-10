@@ -29,113 +29,166 @@
   <script src="{{ asset('/js/highcharts/code/modules/exporting.js') }}"></script>
   <script type="text/javascript"> 
   // Create the chart
-  Highcharts.chart('analytics', {
-      chart: {
-          type: 'line'
-      },
-      title: {
-          text: 'Analytics'
-      },
-      xAxis: {
-          type: 'category'
-      },
-      yAxis: {
-        title: {
-          text: 'Tonnes'
-        }
-      },
-
-      plotOptions: {
-          series: {
-              borderWidth: 0,
-              dataLabels: {
-                  enabled: true
+  $(function () {
+      $('#analytics').highcharts({
+        chart: {
+          type: 'line',
+          events: {
+            drilldown: function (e) {
+              if (!e.seriesOptions) {
+                var chart = this,
+                  drilldowns = {
+                    'December 2017': {
+                        name: 'Trips',
+                        data: [
+                            ['Cows', 10],
+                            ['Sheep', 20]
+                        ],
+                    },
+                    'December 2017-2': {
+                        name: 'Cars',
+                        colors: Highcharts.getOptions().colors[1],
+                        data: [
+                            ['Apples', 15],
+                            ['Oranges', 25],
+                            ['Bananas', 30]
+                        ],
+                        drilldown: true
+                    },
+                    'January 2018': {
+                        name: 'Trips',
+                        data: [
+                            ['Cows', 2],
+                            ['Sheep', 3]
+                        ]
+                    },
+                    'January 2018-2': {
+                        name: 'Cars',
+                        data: [
+                            ['Apples', 5],
+                            ['Oranges', 7],
+                            ['Bananas', 2]
+                        ]
+                    },
+                    'February 2018': {
+                        name: 'Trips',
+                        data: [
+                            ['Cows', 2],
+                            ['Sheep', 3]
+                        ]
+                    },
+                    'February 2018-2': {
+                        name: 'Cars',
+                        data: [
+                            ['Apples', 5],
+                            ['Oranges', 7],
+                            ['Bananas', 2]
+                        ]
+                    }
+                  },
+                  series = [drilldowns[e.point.name], drilldowns[e.point.name + '-2']];
+                  chart.addSingleSeriesAsDrilldown(e.point, series[0]);
+                  chart.addSingleSeriesAsDrilldown(e.point, series[1]);
+                  chart.applyDrilldown();
               }
+            }
           }
-      },
+        },
+        title: {
+            text: 'Analytics'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+              text: 'Tonnes'
+            }
+        },
 
-      series: [{
-          name: '2010',
+        legend: {
+            enabled: true
+        },
+
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+
+        exporting: {
+            chartOptions: { // specific options for the exported image
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                }
+            },
+            fallbackToExportServer: false
+        },
+
+        series: [{
+            name: 'Carbon Emissions in Tonnes',
+            data: [{
+              name: 'December 2017',
+              y: 1.5504,
+              drilldown: true
+            }, {
+              name: 'January 2018',
+              y: 1.1371,
+              drilldown: true
+            }, {
+              name: 'February 2018',
+              y: 1.2101,
+              drilldown: true                  
+            }]
+        }, {
+          name: 'Analytics Values',
           data: [{
-              name: 'Republican',
-              y: 5,
-              drilldown: 'republican-2010'
-          }, {
-              name: 'Democrats',
-              y: 2,
-              drilldown: 'democrats-2010'
-          }, {
-              name: 'Other',
-              y: 4,
-              drilldown: 'other-2010'
-          }]
-      }, {
-          name: '2014',
+              name: 'December 2017',
+              y: 101.22,
+            }, {
+              name: 'January 2018',
+              y: 2.66,
+            }, {
+              name: 'February 2018',
+              y: 11.62,
+            }]
+        }, {
+          name: 'Carbon Sequestrated in Tonnes',
           data: [{
-              name: 'Republican',
-              y: 4,
-              drilldown: 'republican-2014'
-          }, {
-              name: 'Democrats',
-              y: 4,
-              drilldown: 'democrats-2014'
-          }, {
-              name: 'Other',
-              y: 4,
-              drilldown: 'other-2014'
-          }]
-      }],
-      drilldown: {
-          series: [{
-              id: 'republican-2010',
-              data: [
-                  ['East', 4],
-                  ['West', 2],
-                  ['North', 1],
-                  ['South', 4]
-              ]
-          }, {
-              id: 'democrats-2010',
-              data: [
-                  ['East', 6],
-                  ['West', 2],
-                  ['North', 2],
-                  ['South', 4]
-              ]
-          }, {
-              id: 'other-2010',
-              data: [
-                  ['East', 2],
-                  ['West', 7],
-                  ['North', 3],
-                  ['South', 2]
-              ]
-          }, {
-              id: 'republican-2014',
-              data: [
-                  ['East', 2],
-                  ['West', 4],
-                  ['North', 1],
-                  ['South', 7]
-              ]
-          }, {
-              id: 'democrats-2014',
-              data: [
-                  ['East', 4],
-                  ['West', 2],
-                  ['North', 5],
-                  ['South', 3]
-              ]
-          }, {
-              id: 'other-2014',
-              data: [
-                  ['East', 7],
-                  ['West', 8],
-                  ['North', 2],
-                  ['South', 2]
-              ]
-          }]
-      }
-  });
+              name: 'December 2017',
+              y: 120.958873
+            }, {
+              name: 'January 2018',
+              y: 120.958873
+            }, {
+              name: 'February 2018',
+              y: 120.958873
+            }]
+        }, {
+          name: 'Threshold (25%)',
+          data: [{
+              name: 'December 2017',
+              y: 4.8
+            }, {
+              name: 'January 2018',
+              y: 4.8
+            }, {
+              name: 'February 2018',
+              y: 4.8
+            }]
+        }],
+
+        drilldown: {
+            series: []
+        }
+      });
+    });
   </script>
 @endsection

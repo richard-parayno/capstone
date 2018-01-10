@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 22 Nov 2017 05:43:21 +0000.
+ * Date: Mon, 27 Nov 2017 16:20:51 +0000.
  */
 
 namespace App\Models;
@@ -17,6 +17,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $plateNumber
  * @property int $kilometerReading
  * @property string $remarks
+ * @property float $emissions
  * 
  * @property \App\Models\Deptsperinstitution $deptsperinstitution
  * @property \App\Models\VehiclesMv $vehicles_mv
@@ -30,14 +31,16 @@ class Trip extends Eloquent
 
 	protected $casts = [
 		'deptID' => 'int',
-		'kilometerReading' => 'int'
+		'kilometerReading' => 'int',
+		'emissions' => 'float'
 	];
 
 	protected $fillable = [
 		'deptID',
 		'plateNumber',
 		'kilometerReading',
-		'remarks'
+		'remarks',
+		'emissions'
 	];
 
 	public function deptsperinstitution()
