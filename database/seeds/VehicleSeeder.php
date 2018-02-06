@@ -12,10 +12,50 @@ class VehicleSeeder extends Seeder
     public function run()
     {
         //insert to cartype_ref
+        DB::table('cartype_ref')->insert([
+            'carTypeID' => '1',
+            'carTypeName' => 'Sedan',
+        ]);
+        DB::table('cartype_ref')->insert([
+            'carTypeID' => '2',
+            'carTypeName' => 'Bus',
+        ]);
+        DB::table('cartype_ref')->insert([
+            'carTypeID' => '3',
+            'carTypeName' => 'Van',
+        ]);
 
         //insert to carbrand_ref
+        DB::table('carbrand_ref')->insert([
+            'carBrandID' => '1',
+            'carBrandName' => 'Toyota',
+        ]);
+        DB::table('carbrand_ref')->insert([
+            'carBrandID' => '2',
+            'carBrandName' => 'Mitsubishi',
+        ]);
+        DB::table('carbrand_ref')->insert([
+            'carBrandID' => '3',
+            'carBrandName' => 'Subaru',
+        ]);
+        DB::table('carbrand_ref')->insert([
+            'carBrandID' => '4',
+            'carBrandName' => 'Ford',
+        ]);
+        DB::table('carbrand_ref')->insert([
+            'carBrandID' => '5',
+            'carBrandName' => 'Honda',
+        ]);
 
         //inster to fueltype_ref
+        DB::table('fueltype_ref')->insert([
+            'fuelTypeID' => '1',
+            'fuelTypeName' => 'Diesel',
+        ]);
+        DB::table('fueltype_ref')->insert([
+            'fuelTypeID' => '2',
+            'fuelTypeName' => 'Gasoline',
+        ]);
 
         //insert to vehicles_mv
         DB::table('vehicles_mv')->insert([

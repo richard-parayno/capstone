@@ -11,12 +11,13 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        //
-        DB::table('usertype_ref')->insert([
+        //insert to usertype_ref
+        DB::table('usertypes_ref')->insert([
             'userTypeID' => 1,
             'userTypeName' => "University",
         ]);
 
+        //insert to users
         DB::table('users')->insert([
             'userID' => 1,
             'username' => 'richard',
