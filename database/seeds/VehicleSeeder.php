@@ -68,15 +68,6 @@ class VehicleSeeder extends Seeder
             'active' => 1,
         ]);
         DB::table('vehicles_mv')->insert([
-            'plateNumber' => 'UTQ465',
-            'institutionID' => 1,
-            'carTypeID' => 3,
-            'carBrandID' => 1,
-            'fuelTypeID' => 1,
-            'modelName' => "Hiace S Grandia",
-            'active' => 1,
-        ]);
-        DB::table('vehicles_mv')->insert([
             'plateNumber' => 'USQ274',
             'institutionID' => 1,
             'carTypeID' => 2,
