@@ -14,7 +14,27 @@ class UserSeeder extends Seeder
         //insert to usertype_ref
         DB::table('usertypes_ref')->insert([
             'userTypeID' => 1,
-            'userTypeName' => "University",
+            'userTypeName' => "System Admin",
+        ]);
+        DB::table('usertypes_ref')->insert([
+            'userTypeID' => 2,
+            'userTypeName' => "LIFE-DLSP",
+        ]);
+        DB::table('usertypes_ref')->insert([
+            'userTypeID' => 3,
+            'userTypeName' => "Champion",
+        ]);
+        DB::table('usertypes_ref')->insert([
+            'userTypeID' => 4,
+            'userTypeName' => "Dispatching Office",
+        ]);
+        DB::table('usertypes_ref')->insert([
+            'userTypeID' => 5,
+            'userTypeName' => "Social Action Office",
+        ]);
+        DB::table('usertypes_ref')->insert([
+            'userTypeID' => 6,
+            'userTypeName' => "Special User",
         ]);
 
         //insert to users
