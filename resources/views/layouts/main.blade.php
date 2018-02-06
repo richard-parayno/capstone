@@ -16,20 +16,20 @@
   @auth
   <!-- side nav -->
   @section('sidebar')
-    <div class="container u-pull-left" id="sidebar">
-      <div class="twelve column bar">
-        <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>
-      </div>
-
-      <div class="twelve column bar">
-        <span><strong>Current User:</strong></span>
-        @php
-        $userTypeID = Auth::user()->userTypeID;
-        $result = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $userTypeID)->first();
-        @endphp
-        <p>{{ $result->userTypeName }} - {{ Auth::user()->accountName }}</p>
-        <a href="{{ route('logout' )}}">Logout</a>
-      </div>
+  <div class="container u-pull-left" id="sidebar">
+    <div class="twelve column bar">
+      <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>
+    </div>
+    <div class="twelve column bar">
+      <span><strong>Current User:</strong></span>
+      @php
+      $userTypeID = Auth::user()->userTypeID;
+      $result = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $userTypeID)->first();
+      @endphp
+      <p>{{ $result->userTypeName }} - {{ Auth::user()->accountName }}</p>
+      <a href="{{ route('logout' )}}">Logout</a>
+    </div>
+    @if (Auth::user()->userTypeID == 1) <!-- sysadmin -->
       <div class="twelve column bar">
         <span><strong>Home</strong></span>
         <ul>
@@ -77,7 +77,97 @@
           </ul>
         </ul>
       </div>
-    </div>
+    @elseif(Auth::user()->userTypeID == 2) <!-- life -->
+      <div class="twelve column bar">
+        <span><strong>Home</strong></span>
+        <ul>
+          <li>Dashboard</li>
+          <ul>
+            <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
+            <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
+            <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
+          </ul>
+        </ul>
+      </div>
+      <div class="twelve column bar">
+        <span><strong>Account Management</strong></span>
+        <ul>
+          <li>User Accounts</li>
+          <ul>
+            <li><a href="{{ route('user-view') }}">View Users</a></li>
+          </ul>
+        </ul>
+      </div>
+      <div class="twelve column bar">
+        <span><strong>Campus Information Management</strong></span>
+        <ul>
+          <li>Campuses/Institutes</li>
+          <ul>
+            <li><a href="{{ route('campus-view') }}">View Campuses/Institutes</a></li>
+          </ul>
+          <li>Department/Offices</li>
+          <ul>
+            <li><a href="{{ route('department-view') }}">View Departments/Offices</a></li>       
+          </ul>
+          <li>Vehicles</li>
+          <ul>
+            <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
+          </ul>
+        </ul>
+      </div>
+    @elseif(Auth::user()->userTypeID == 3) <!-- social action -->
+      <div class="twelve column bar">
+        <!-- add view trees planted -->
+        <span><strong>Home</strong></span>
+        <ul>
+          <li>Dashboard</li>
+          <ul>
+            <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
+            <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
+            <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
+          </ul>
+        </ul>
+      </div>
+    @elseif(Auth::user()->userTypeID == 4) <!-- champions -->
+      <div class="twelve column bar">
+        <!-- add view trees planted -->
+        <span><strong>Home</strong></span>
+        <ul>
+          <li>Dashboard</li>
+          <ul>
+            <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
+            <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
+            <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
+          </ul>
+        </ul>
+      </div>
+    @elseif(Auth::user()->userTypeID == 5) <!-- dispatch -->
+      <div class="twelve column bar">
+        <span><strong>Home</strong></span>
+        <ul>
+          <li>Dashboard</li>
+          <ul>
+            <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
+          </ul>
+        </ul>
+      </div>
+      <div class="twelve column bar">
+        <!-- add view trips -->
+        <span><strong>Campus Information Management</strong></span>
+        <ul>
+          <li>Vehicles</li>
+          <ul>
+            <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
+            <li><a href="{{ route('vehicle-add') }}">Add New Vehicle</a></li>
+            <li><a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a></li>
+            <li><a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a></li>
+          </ul>
+        </ul>
+      </div> 
+    @endif
+  </div>
+
+
   @show
   <!-- side nav -->
   @endauth
