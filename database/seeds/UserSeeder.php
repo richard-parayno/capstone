@@ -25,6 +25,7 @@ class UserSeeder extends Seeder
             'accountName' => 'richard',
             'email' => str_random(6).'@dlsu.edu.ph',
             'password' => bcrypt('secret'),
+            'status' => 'Active',
         ]);
     }
 }
