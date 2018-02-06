@@ -14,7 +14,7 @@ class VehicleSeeder extends Seeder
         //insert to cartype_ref
         DB::table('cartype_ref')->insert([
             'carTypeID' => '1',
-            'carTypeName' => 'Sedan',
+            'carTypeName' => 'Car',
         ]);
         DB::table('cartype_ref')->insert([
             'carTypeID' => '2',
