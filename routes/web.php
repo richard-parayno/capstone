@@ -15,7 +15,10 @@
 
 
 /* Login Route */
-Route::get('/', 'AuthController@getLogin')->name('login');
+Route::get('/', function() {
+    Auth::logout();
+    return redirect()->action('Auth\LoginController@showLoginForm');
+});
 
 
 Route::get('/test', function () {
