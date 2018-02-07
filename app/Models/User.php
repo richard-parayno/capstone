@@ -8,6 +8,8 @@
 namespace App\Models;
 
 use Reliese\Database\Eloquent\Model as Eloquent;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
 
 /**
  * Class User
@@ -27,7 +29,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  *
  * @package App\Models
  */
-class User extends Eloquent
+class User extends Eloquent implements Authenticatable 
 {
 	protected $casts = [
 		'userTypeID' => 'int'
@@ -41,6 +43,7 @@ class User extends Eloquent
 	protected $fillable = [
 		'userTypeID',
 		'accountName',
+		'username',
 		'email',
 		'password',
 		'remember_token',
@@ -51,4 +54,6 @@ class User extends Eloquent
 	{
 		return $this->belongsTo(\App\Models\UsertypesRef::class, 'userTypeID');
 	}
+
+	public $timestamps = false;
 }
