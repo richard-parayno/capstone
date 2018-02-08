@@ -14,20 +14,25 @@
 @show
 <body>
   @auth
+  @section('topbar')
+  <div id="topbar">
+    <div class="twelve column bar">
+      <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>
+      <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>      
+    </div>
+
+  </div>
   <!-- side nav -->
   @section('sidebar')
   <div class="container u-pull-left" id="sidebar">
     <div class="twelve column bar">
-      <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>
-    </div>
-    <div class="twelve column bar">
-      <span><strong>Current User:</strong></span>
       @php
       $userTypeID = Auth::user()->userTypeID;
       $result = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $userTypeID)->first();
       @endphp
-      <p>{{ $result->userTypeName }} - {{ Auth::user()->accountName }}</p>
-      <a href="{{ route('logout' )}}">Logout</a>
+      <p>{{ Auth::user()->accountName }}</p>
+      <p>{{ $result->userTypeName }}</p>
+      <a href="{{ route('logout' )}}">Click Here to Logout</a>
     </div>
     @if (Auth::user()->userTypeID == 1) <!-- sysadmin -->
       <div class="twelve column bar">

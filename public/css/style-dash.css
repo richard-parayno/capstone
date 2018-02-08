@@ -13,6 +13,10 @@ body {
 
 }
 
+p {
+  margin-bottom: 0px;
+}
+
 img {
   position: relative;
   top: 10px;
@@ -20,7 +24,7 @@ img {
 }
 
 #sidebar {
-  background: #363635;
+  background: #0b5023;
   width: 250px;
   height: 100%;
   position: relative;
@@ -30,22 +34,29 @@ img {
 #sidebar ul {
   list-style: none;
   text-align: justify;
+  margin: 0px;
+}
+
+#sidebar div {
+  border-top-style: solid;
+  border-width: 2px;
 }
 
 #sidebar li {
-
+  
 }
 
 #sidebar a {
-
+  color: white;
   text-decoration: none;
   list-style: none;
   text-align: justify;
 }
 
-#sidebar span {
-
+#sidebar li:hover {
+  background: #087830;  
 }
+
 
 #main-content {
   margin-left: 300px;
@@ -58,4 +69,10 @@ img {
 
 #searchBox {
   color: black;
+}
+
+#topbar {
+  background-color: #087830;  
+  height: 70px;
+  color: white;
 }
