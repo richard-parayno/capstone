@@ -11,9 +11,6 @@
 |
 */
 
-
-
-
 /* Login Route */
 Route::get('/', function() {
     Auth::logout();
@@ -36,9 +33,6 @@ Route::get('/dashboard/upload-files', 'ExcelController@show')->name('upload-file
 Route::post('/dashboard/process-file', 'ExcelController@process')->name('process-file')->middleware('auth');
 Route::get('/dashboard/tree-plant', 'AddController@loadToBatchPlant')->name('tree-plant')->middleware('auth');
 Route::post('/dashboard/process-trees', 'InstitutionBatchPlantController@add')->name('process-trees')->middleware('auth');
-
-
-
 
 /* User Account Management Routes */
 /* View Users */
