@@ -30,143 +30,103 @@
       $userTypeID = Auth::user()->userTypeID;
       $result = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $userTypeID)->first();
       @endphp
-      <p>{{ Auth::user()->accountName }}</p>
-      <p>{{ $result->userTypeName }}</p>
+      <span>{{ Auth::user()->accountName }}</span>
+      <br>
+      <span>{{ $result->userTypeName }}</span>
+      <br>
       <a href="{{ route('logout' )}}">Click Here to Logout</a>
     </div>
     @if (Auth::user()->userTypeID == 1) <!-- sysadmin -->
       <div class="twelve column bar">
-        <span><strong>Home</strong></span>
+        <p><strong>Home</strong></p>
         <ul>
-          <li>Dashboard</li>
-          <ul>
             <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
-          </ul>
         </ul>
       </div>
       <div class="twelve column bar">
-        <span><strong>Account Management</strong></span>
+        <p><strong>Account Management</strong></p>
         <ul>
-          <li>User Accounts</li>
-          <ul>
             <li><a href="{{ route('user-view') }}">View Users</a></li>
             <li><a href="{{ route('user-add') }}">Create New User Account</a></li>
             <li><a href="{{ route('user-editinfo') }}">Edit User Account Information</a></li>
             <li><a href="{{ route('user-editcreds') }}">Edit User Account Credentials</a></li>
-          </ul>
         </ul>
       </div>
       <div class="twelve column bar">
-        <span><strong>Campus Information Management</strong></span>
+        <p><strong>Campus Information Management</strong></p>
         <ul>
-          <li>Campuses/Institutes</li>
-          <ul>
             <li><a href="{{ route('campus-view') }}">View Campuses/Institutes</a></li>
             <li><a href="{{ route('campus-add') }}">Add New Campus/Institute</a></li>
             <li><a href="{{ route('campus-editinfo') }}">Edit Campus/Institute Info</a></li>
-          </ul>
-          <li>Department/Offices</li>
-          <ul>
             <li><a href="{{ route('department-view') }}">View Departments/Offices</a></li>
             <li><a href="{{ route('department-add') }}">Add New Department/Offices</a></li>
             <li><a href="{{ route('department-editinfo') }}">Edit Department/Offices Info</a></li>          
-          </ul>
-          <li>Vehicles</li>
-          <ul>
             <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
             <li><a href="{{ route('vehicle-add') }}">Add New Vehicle</a></li>
             <li><a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a></li>
             <li><a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a></li>
-          </ul>
         </ul>
       </div>
     @elseif(Auth::user()->userTypeID == 2) <!-- life -->
       <div class="twelve column bar">
-        <span><strong>Home</strong></span>
+        <p><strong>Home</strong></p>
         <ul>
-          <li>Dashboard</li>
-          <ul>
             <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
-          </ul>
         </ul>
       </div>
       <div class="twelve column bar">
-        <span><strong>Account Management</strong></span>
+        <p><strong>Account Management</strong></p>
         <ul>
-          <li>User Accounts</li>
-          <ul>
             <li><a href="{{ route('user-view') }}">View Users</a></li>
-          </ul>
         </ul>
       </div>
       <div class="twelve column bar">
-        <span><strong>Campus Information Management</strong></span>
+        <p><strong>Campus Information Management</strong></p>
         <ul>
-          <li>Campuses/Institutes</li>
-          <ul>
             <li><a href="{{ route('campus-view') }}">View Campuses/Institutes</a></li>
-          </ul>
-          <li>Department/Offices</li>
-          <ul>
             <li><a href="{{ route('department-view') }}">View Departments/Offices</a></li>       
-          </ul>
-          <li>Vehicles</li>
-          <ul>
             <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
-          </ul>
         </ul>
       </div>
     @elseif(Auth::user()->userTypeID == 3) <!-- social action -->
       <div class="twelve column bar">
         <!-- add view trees planted -->
-        <span><strong>Home</strong></span>
+        <p><strong>Home</strong></p>
         <ul>
-          <li>Dashboard</li>
-          <ul>
             <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
-          </ul>
         </ul>
       </div>
     @elseif(Auth::user()->userTypeID == 4) <!-- champions -->
       <div class="twelve column bar">
         <!-- add view trees planted -->
-        <span><strong>Home</strong></span>
+        <p><strong>Home</strong></p>
         <ul>
-          <li>Dashboard</li>
-          <ul>
             <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
-          </ul>
         </ul>
       </div>
     @elseif(Auth::user()->userTypeID == 5) <!-- dispatch -->
       <div class="twelve column bar">
-        <span><strong>Home</strong></span>
+        <p><strong>Home</strong></p>
         <ul>
-          <li>Dashboard</li>
-          <ul>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
-          </ul>
         </ul>
       </div>
       <div class="twelve column bar">
         <!-- add view trips -->
-        <span><strong>Campus Information Management</strong></span>
+        <p><strong>Campus Information Management</strong></p>
         <ul>
-          <li>Vehicles</li>
-          <ul>
             <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
             <li><a href="{{ route('vehicle-add') }}">Add New Vehicle</a></li>
             <li><a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a></li>
             <li><a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a></li>
-          </ul>
         </ul>
       </div> 
     @endif
