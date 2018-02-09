@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Carbon Emission Dashboard</title>
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/normalize.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/skeleton.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/style-dash.css') }}">
