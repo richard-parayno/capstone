@@ -29,7 +29,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *
  * @package App\Models
  */
-class User extends Eloquent implements Authenticatable 
+
+//extends Eloquent
+class User extends Authenticatable 
 {
 	protected $casts = [
 		'userTypeID' => 'int'
@@ -37,7 +39,9 @@ class User extends Eloquent implements Authenticatable
 
 	protected $hidden = [
 		'password',
-		'remember_token'
+		'remember_token',
+		'created_at',
+		'updated_at'
 	];
 
 	protected $fillable = [
@@ -55,5 +59,5 @@ class User extends Eloquent implements Authenticatable
 		return $this->belongsTo(\App\Models\UsertypesRef::class, 'userTypeID');
 	}
 
-	public $timestamps = false;
+	public $timestamps = true;
 }
