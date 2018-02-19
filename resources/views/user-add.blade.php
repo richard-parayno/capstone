@@ -55,7 +55,7 @@
       <label for="userTypeID">Select User Type</label>
       <select class="u-full-width" name="userTypeID" id="userTypeID" style="color: black;">
         @foreach($userTypes as $userType)
-          <option value="{{ $userType->userTypeID }}">{{ $userType->userTypeID }} - {{ $userType->userTypeName }}</option>
+          <option value="{{ $userType->userTypeID }}">{{ $userType->userTypeName }}</option>
         @endforeach
       </select>
       @if ($errors->has('userTypeID'))
