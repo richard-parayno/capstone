@@ -10,17 +10,27 @@
 
 @section('content')
 <div class="row">
-  <div class="seven column" id="analytics">
+  <div class="seven column" id="control">
+      <select class="u-full-width" name="userTypeID" id="userTypeID" style="color: black;">
+      </select>
+
+      <div>
+        <input class="u-full-width" name="date" id="date">
+      </div>
 
   </div>
 </div>
 <div class="row">
-  <div class="seven column">
+  <div class="seven column" id="analytics">
+
   </div>
 </div>
 @endsection
 
 @section('scripts')
+  <script>
+    const picker = datepicker('#date');
+  </script>
   <script src="{{ asset('/js/jquery-3.2.1.min.js') }}"></script>
   <script src="{{ asset('/js/fusioncharts-suite-xt/js/fusioncharts.js') }}"></script>
   <script src="{{ asset('/js/fusioncharts-suite-xt/themes/fusioncharts.theme.carbon.js') }}"></script>

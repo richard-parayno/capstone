@@ -1,4 +1,8 @@
 /** TODO: Fix Sidebar links. They're too static atm. **/
+html {
+  height: 100%;
+}
+
 
 body {
   background: #FBFBFB;
@@ -23,10 +27,11 @@ img {
 }
 
 #sidebar {
-  background: #0b5023;
+  background-color: #0b5023;
   width: 250px;
-  height: 100%;
-  position: relative;
+  height: auto !important;
+  min-height: 100%;
+  position: absolute;
   color: white;
 }
 
