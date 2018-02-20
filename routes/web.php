@@ -18,9 +18,7 @@ Route::get('/', function() {
 });
 
 
-Route::get('/analytics-test', function () {
-    return view('analytics-test');
-})->name('analytics-test')->middleware('auth');
+Route::get('/analytics-test', 'DashboardController@main')->name('analytics-test')->middleware('auth');
 
 Route::resource('institution', 'InstitutionController');
 
