@@ -40,13 +40,9 @@ Route::get('/dashboard/user-view', 'ViewUserController@viewUsers')->name('user-v
 /* Create New User Account */
 Route::get('/dashboard/user-add', 'MyController@usertypes')->name('user-add');
 /* Edit User Account Information */
-Route::get('/dashboard/user-editinfo', function() {
-    return view('user-editinfo');
-})->name('user-editinfo')->middleware('auth');
+Route::get('/dashboard/user-editinfo', 'MyController@users')->name('user-editinfo')->middleware('auth');
 /* Edit User Account Credentials */
-Route::get('/dashboard/user-editcreds', function() {
-    return view('user-editcreds');
-})->name('user-editcreds')->middleware('auth');
+Route::get('/dashboard/user-editcreds', 'MyController@usercreds')->name('user-editcreds')->middleware('auth');
 
 /* Campus Information Management Routes */
 /* View Campus */

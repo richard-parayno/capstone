@@ -33,11 +33,13 @@
       $userTypeID = Auth::user()->userTypeID;
       $result = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $userTypeID)->first();
       @endphp
-      <span>{{ Auth::user()->accountName }}</span>
-      <br>
-      <span>{{ $result->userTypeName }}</span>
-      <br>
-      <a href="{{ route('logout' )}}">Click Here to Logout</a>
+      <div id="current-user">
+        <span>{{ Auth::user()->accountName }}</span>
+        <br>
+        <span>{{ $result->userTypeName }}</span>
+        <br>
+        <a href="{{ route('logout' )}}">Click Here to Logout</a>
+      </div>
     </div>
     @if (Auth::user()->userTypeID == 1) <!-- sysadmin -->
       <style>
