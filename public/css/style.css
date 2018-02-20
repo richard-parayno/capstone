@@ -1,0 +1,32 @@
+body {
+  background-color: #363635;
+  font-family: "Lato";
+}
+
+.invisible-div {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#box {
+  margin-top: 20px;
+  background-color: #5A5A59;
+  box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
+  border-radius: 20px;
+}
+
+#box label {
+  font-weight: 500;
+  color: white;  
+}
+
+
+#box p {
+  color: white;
+}
+
+#box .container {
+  padding-top: 60px;
+  padding-bottom: 50px;
+  
+}

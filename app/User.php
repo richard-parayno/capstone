@@ -9,13 +9,16 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $table = 'users';
+    protected $primaryKey = 'userID';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'userTypeID', 'accountName', 'username', 'email', 'password', 'status',
     ];
 
     /**
@@ -24,6 +27,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
     ];
+
+    public function types() {
+        return $this->hasMany('App\Models\UsertypesRef', 'userTypeID');
+    }
 }

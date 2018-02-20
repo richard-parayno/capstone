@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Carbon Emission Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="../css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="../css/style-dash.css">
+  <style>
+    /** TODO: Push margin more to the right. Make the box centered to the user. **/
+    #box-form {
+      background-color: #363635;
+      margin-top: 20px;
+      padding: 40px;
+      border-radius: 10px;
+    }
+
+    #box-form h1 {
+      text-align: center;
+      color: white;
+    }
+
+    #box-form table {
+      color: white;
+    }
+
+    #box-form table th {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- side nav -->
+  <div class="container u-pull-left" id="sidebar">
+    <div class="twelve column bar">
+      <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>
+    </div>
+
+    <div class="twelve column bar">
+      <span><strong>Current User:</strong></span>
+      <p>Systems Administrator</p>
+    </div>
+    <div class="twelve column bar">
+      <span><strong>Home</strong></span>
+      <ul>
+        <li>Dashboard</li>
+        <ul>
+          <li><a href="dashboard.html">View Dashboard</a></li>
+        </ul>
+      </ul>
+    </div>
+    <div class="twelve column bar">
+      <span><strong>Account Management</strong></span>
+      <ul>
+        <li>User Accounts</li>
+        <ul>
+          <li><a href="user-view.html">View Users</a></li>
+          <li><a href="user-add.html">Create New User Account</a></li>
+          <li><a href="user-editinfo.html">Edit User Account Information</a></li>
+          <li><a href="user-editcreds.html">Edit User Account Credentials</a></li>
+        </ul>
+      </ul>
+    </div>
+    <div class="twelve column bar">
+      <span><strong>Campus Information Management</strong></span>
+      <ul>
+        <li>Campuses/Institutes</li>
+        <ul>
+          <li><a href="campus-view.html">View Campuses/Institutes</a></li>
+          <li><a href="campus-add.html">Add New Campus/Institute</a></li>
+          <li><a href="campus-editinfo.html">Edit Campus/Institute Info</a></li>
+        </ul>
+        <li>Department/Offices</li>
+        <ul>
+          <li><a href="department-view.html">View Departments/Offices</a></li>
+          <li><a href="department-add.html">Add New Department/Offices</a></li>
+          <li><a href="department-editinfo.html">Edit Department/Offices Info</a></li>          
+        </ul>
+        <li>Vehicles</li>
+        <ul>
+          <li><a href="vehicle-view.html">View Vehicles</a></li>
+          <li><a href="vehicle-add.html">Add New Vehicle</a></li>
+          <li><a href="vehicle-decommission.html">Decommission Vehicle</a></li>
+        </ul>
+      </ul>
+    </div>
+  </div>
+  <!-- side nav -->
+
+  <!-- main content -->
+  <div class="container" id="main-content">
+    <div class="twelve columns" id="box-form">
+      <h1>View Vehicles</h1>    
+      <table class="u-full-width">
+        <thead>
+          <tr>
+            <th>Car Type</th>
+            <th>Car Brand</th>
+            <th>Car Model</th>
+            <th>Plate Number</th>
+            <th>Manufacturing Year</th>
+            <th>Home Campus/Institute</th>
+            <th>Fuel Type</th>
+            <th>Status</th>
+            <th>Vehicle Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Sedan</td>
+            <td>Toyota</td>
+            <td>Vios</td>
+            <td>ZAW-941</td>
+            <td>2015</td>
+            <td>De La Salle University - Manila</td>
+            <td>Diesel</td>
+            <td>Active</td>
+            <td style="text-align: center;">
+              <a href="vehicle-editinfo.html">Edit Vehicle Info</a> <br>
+              <a href="vehicle-editinfo.html">Decommission Vehicle</a>
+            </td>
+          </tr>
+        </tbody>
+        <!-- action shortcuts -->
+        <span>Shortcuts: </span>
+        <a href="vehicle-add.html">Add New Vehicle</a>
+        <div class="u-pull-right">
+          <span>Search Vehicle: </span>
+          <input type="text" placeholder="LamborGHini" id="searchBox">
+        </div>
+        <!-- action shortcuts -->              
+      </table>
+    </div>
+  </div>
+  <!-- main content -->
+</body>
+
+
+  
+</script>
+</html>

@@ -1,0 +1,61 @@
+/** TODO: Fix Sidebar links. They're too static atm. **/
+
+body {
+  background: #FBFBFB;
+  font-family: "Lato";  
+}
+
+.bar {
+  padding: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin: 0px;
+
+}
+
+img {
+  position: relative;
+  top: 10px;
+
+}
+
+#sidebar {
+  background: #363635;
+  width: 250px;
+  height: 100%;
+  position: relative;
+  color: white;
+}
+
+#sidebar ul {
+  list-style: none;
+  text-align: justify;
+}
+
+#sidebar li {
+
+}
+
+#sidebar a {
+
+  text-decoration: none;
+  list-style: none;
+  text-align: justify;
+}
+
+#sidebar span {
+
+}
+
+#main-content {
+  margin-left: 300px;
+  color: white;
+}
+
+#main-content input {
+  color: black;
+}
+
+#searchBox {
+  color: black;
+}
