@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
 
         //insert to users
         DB::table('users')->insert([
-            'userID' => 1,
+            'id' => 1,
             'username' => 'richard',
             'userTypeID' => '1',
             'accountName' => 'richard',
