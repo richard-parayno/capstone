@@ -9,6 +9,8 @@
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/normalize.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/skeleton.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/style-dash.css') }}">
+  <link rel="stylesheet" href="https://unpkg.com/js-datepicker/datepicker.css">
+  <script src="https://unpkg.com/js-datepicker"></script>
 </head>
 @section('styling')
 
