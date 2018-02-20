@@ -38,6 +38,12 @@
       <a href="{{ route('logout' )}}">Click Here to Logout</a>
     </div>
     @if (Auth::user()->userTypeID == 1) <!-- sysadmin -->
+      <style>
+        #topbar {
+          background-color: black;  
+        }
+      </style>
+
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
@@ -71,6 +77,12 @@
         </ul>
       </div>
     @elseif(Auth::user()->userTypeID == 2) <!-- life -->
+      <style>
+        #topbar {
+          background-color: #087830;  
+        }
+      </style>
+
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
@@ -93,7 +105,12 @@
             <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
         </ul>
       </div>
-    @elseif(Auth::user()->userTypeID == 3) <!-- social action -->
+    @elseif(Auth::user()->userTypeID == 3) <!-- champion -->
+      <style>
+        #topbar {
+          background-color: #2222ab;    
+        }
+      </style>
       <div class="twelve column bar">
         <!-- add view trees planted -->
         <p><strong>Home</strong></p>
@@ -103,7 +120,12 @@
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
       </div>
-    @elseif(Auth::user()->userTypeID == 4) <!-- champions -->
+    @elseif(Auth::user()->userTypeID == 4) <!-- dispatching -->
+      <style>
+        #topbar {
+          background-color: #b4b050;  
+        }
+      </style>
       <div class="twelve column bar">
         <!-- add view trees planted -->
         <p><strong>Home</strong></p>
@@ -113,7 +135,12 @@
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
       </div>
-    @elseif(Auth::user()->userTypeID == 5) <!-- dispatch -->
+    @elseif(Auth::user()->userTypeID == 5) <!-- social action -->
+      <style>
+        #topbar {
+          background-color: #800000;  
+        }
+      </style>
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
