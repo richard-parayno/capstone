@@ -18,22 +18,27 @@ class ExcelController extends Controller
     }
 
     public function process() {
+        // initialize the excelfile that we will be loading
         $excelFile = Input::file('excelFile');
 
         $data = array();
         
+        //load the content of the excel file into an array called $load. we also format the dates into m/d/Y before we pass all of the data to the array.
         $load = Excel::load($excelFile, function($reader) {
             $reader->formatDates(true, 'm/d/Y');
         })->get()->toArray();
-
+        // run the conditional if $load has stuff in it
         if($load){
+            // initialize the counters
             $ctr = 0;
             $totalEmission = 0;
             foreach ($load as $key => $row) {
-
+                // in the current row....... 
+                //convert the date
                 $convertd1 = (string)$row['date'];
                 $currentMonth = date("m", strtotime($convertd1));
                 
+                // place current row into the temp array
                 $data[$ctr]['date'] = $row['date'];
                 $data[$ctr]['requesting_department'] = $row['requesting_department'];
                 $data[$ctr]['plate_number'] = $row['plate_number'];
@@ -41,33 +46,36 @@ class ExcelController extends Controller
                 $data[$ctr]['destinations'] = $row['destinations'];
                 $data[$ctr]['roundtripyn'] = $row['roundtripyn'];
                 
+                // place the current row's data into variables you can manipulate easier
                 $currentPlateNumber = $row['plate_number'];
                 $currentKMReading = $row['kilometer_reading'];
                 $destinations = $row['destinations'];
                 $currentDepartment = $row['requesting_department'];
                 $currentInstitution = DB::table('deptsperinstitution')->where('deptName', $currentDepartment)->value('institutionID');
-                
+
+                //conver another date
                 $convertd2 = (string)$row['date'];
                 $currentMonthInExcel = date("m", strtotime($convertd2));
-                
+                //get the current dept id from the deptsperinstitution table
                 $currentDeptID = DB::table('deptsperinstitution')->where('deptName', $row['requesting_department'])->value('deptID');
                 
-                
-                
-                
+                //check the vehicles_mv table if theres a match for the currentplatenumber
                 if (DB::table('vehicles_mv')->where('plateNumber', $currentPlateNumber)->first()) {
+                    //get the values if there's a match
                     $selected = DB::table('vehicles_mv')->where('plateNumber', $currentPlateNumber)->first();
                     $carType = DB::table('vehicles_mv')->where('plateNumber', $currentPlateNumber)->value('carTypeID');
                     $fuelType = DB::table('vehicles_mv')->where('plateNumber', $currentPlateNumber)->value('fuelTypeID');
                     $selectedFuelType = DB::table('fueltype_ref')->where('fuelTypeID', $fuelType)->value('fuelTypeID');
                     $selectedCarTypeMPG = DB::table('cartype_ref')->where('carTypeID', $carType)->value('mpg');
                     
-                    
+                    //check the fuel type
                     switch ($selectedFuelType) {
+                        //if it's diesel
                         case 1:
                         $dieselEmissionInTonnes = (($currentKMReading * 0.621371) * 19.36) / 2204.6;
                         $totalEmission = $totalEmission + $dieselEmissionInTonnes;
                         
+                        //create a new trip object (to be placed in the db)
                         $trips = new Trip;
                         $trips->deptID = $currentDeptID;
                         $trips->remarks = $destinations;
@@ -76,8 +84,10 @@ class ExcelController extends Controller
                         $trips->emissions = $dieselEmissionInTonnes;
                         $trips->save();
                         
+                        //if the first run of the code hasn't started yet
                         if (!isset($firstrun)) {
                             $currentMonth = $currentMonthInExcel;
+                            // create a new monthly emission object (to be placed in the db)
                             $monthlyEmission = new Monthlyemissionsperschool;
                             $monthlyEmission->institutionID = $currentInstitution;
                             $monthlyEmission->emission = $totalEmission;
@@ -87,10 +97,12 @@ class ExcelController extends Controller
                         }
                         
                         break;
+                        //if it's gas
                         case 2:
                         $gasEmissionInTonnes = ((6760 / $selectedCarTypeMPG) * $currentKMReading) * 100000000000000000000;
                         $totalEmission = $totalEmission + $gasEmissionInTonnes;
                         
+                        //create a new trip object (to be placed in the db)                        
                         $trips = new Trip;
                         $trips->deptID = $currentDeptID;   
                         $trips->remarks = $destinations;                         
@@ -99,8 +111,10 @@ class ExcelController extends Controller
                         $trips->emissions = $gasEmissionInTonnes;
                         $trips->save();   
                         
+                        //if the first run of the code hasn't started yet
                         if (!isset($firstrun)) {
                             $currentMonth = $currentMonthInExcel;
+                            // create a new monthly emission object (to be placed in the db)
                             $monthlyEmission = new Monthlyemissionsperschool;
                             $monthlyEmission->institutionID = $currentInstitution;
                             $monthlyEmission->emission = $totalEmission;
@@ -113,8 +127,10 @@ class ExcelController extends Controller
                     }
                 }
                 
+                //if the current month isn't equal to the one in the excel and the first run is done already
                 if ($currentMonth != $currentMonthInExcel && isset($firstrun)) {
                     $currentMonth = $currentMonthInExcel;
+                    // create a new monthly emission object (to be placed in the db)
                     $monthlyEmission = new Monthlyemissionsperschool;
                     $monthlyEmission->institutionID = $currentInstitution;
                     $monthlyEmission->emission = $totalEmission;
@@ -122,6 +138,7 @@ class ExcelController extends Controller
                     $monthlyEmission->save();
                 }
                 
+                //iterate the ctr to go to the next row
                 $ctr++;
                 /**
                  * if gasoline emission in tonnes -- ((6760 / MPG) * kilometer reading) * 100000000000000000000)
