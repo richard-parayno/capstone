@@ -31,8 +31,11 @@ img {
   width: 250px;
   height: auto !important;
   min-height: 100%;
-  position: absolute;
+  position: fixed;
+  overflow-y: scroll;
   color: white;
+  top: 0;
+  bottom: 0;
 }
 
 #sidebar ul {
@@ -73,7 +76,7 @@ img {
 
 
 #main-content {
-  margin-left: 300px;
+  margin-left: 250px;
   color: white;
 }
 
@@ -85,8 +88,9 @@ img {
   color: black;
 }
 
-#topbar {  
-  height: 70px;
+#topbar { 
+  margin-left: 250px; 
+  height: 84px;
   color: white;
 }
 

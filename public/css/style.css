@@ -1,5 +1,5 @@
 body {
-  background-color: #363635;
+  background-color: #0b5023;
   font-family: "Lato";
 }
 
@@ -10,19 +10,19 @@ body {
 
 #box {
   margin-top: 20px;
-  background-color: #5A5A59;
+  background-color: #FBFBFB;
   box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
   border-radius: 20px;
 }
 
 #box label {
   font-weight: 500;
-  color: white;  
+  color: black;  
 }
 
 
 #box p {
-  color: white;
+  color: black;
 }
 
 #box .container {

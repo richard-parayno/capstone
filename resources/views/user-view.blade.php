@@ -37,18 +37,6 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>Systems Administrator</td>
-        <td>Richard</td>
-        <td>richard.parayno</td>
-        <td>richard_parayno@dlsu.edu.ph</td>
-        <td>Active</td>
-        <td style="text-align: center;">
-          <a href="{{ route('user-editinfo') }}">Edit User Info</a>
-          <br>
-          <a href="{{ route('user-editcreds') }}">Update Account Credentials</a>
-        </td>
-      </tr>
       @foreach($users as $user)
       <tr>
         @foreach($userTypes as $userType)
