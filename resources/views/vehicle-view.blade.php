@@ -23,13 +23,12 @@
 @endsection
 
 @section('content')
-<div class="twelve columns" id="box-form">
+<div class="ten columns offset-by-one" id="box-form">
   <h1>View Vehicles</h1>    
-  <table class="u-full-width">
+  <table class="u-max-full-width">
     <thead>
       <tr>
         <th>Car Type</th>
-        <th>Car Brand</th>
         <th>Car Model</th>
         <th>Plate Number</th>
         <th>Manufacturing Year</th>
@@ -48,11 +47,6 @@
           @endif
         @endforeach
 
-        @foreach($brands as $brand)
-          @if($vehicle->carBrandID == $brand->carBrandID)
-            <td>{{ $brand->carBrandName }}</td>
-          @endif
-        @endforeach
 
         <td>{{ $vehicle->modelName }}</td>
         <td>{{ $vehicle->plateNumber }}</td>

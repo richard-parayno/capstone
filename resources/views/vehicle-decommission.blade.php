@@ -24,7 +24,7 @@
 @endsection
 
 @section('content')
-    <div class="seven columns" id="box-form">
+    <div class="eight columns offset-by-two" id="box-form">
       <!-- TODO: Process add-user logic after submitting form. -->
       <h1>Decommission Vehicle</h1>    
       <form action="/decommission-vehicle">

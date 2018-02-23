@@ -21,7 +21,7 @@
 @endsection
 
 @section('content')
-<div class="eight columns" id="box-form">
+<div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process add-campus logic after submitting form. -->
   <h1>Edit Campus/Institute Info</h1>    
   <form action="/add-campus">

@@ -25,7 +25,7 @@
 @endsection
 
 @section('content')
-<div class="eight columns" id="box-form">
+<div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process add-user logic after submitting form. -->
   <h1>Add Department/Offices</h1>    
   <form method="post" action="{{ route('department-add-process') }}">

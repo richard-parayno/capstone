@@ -20,7 +20,7 @@
 @endsection
 
 @section('content')
-<div class="nine columns" id="box-form">
+<div class="eight columns offset-by-two" id="box-form">
   @if(Session::has('success'))
     <div class="twelve columns" style="color: green;">
       <strong>Success!</strong> {{ Session::get('message', '') }}

@@ -23,7 +23,7 @@
 @endsection
 
 @section('content')
-<div class="twelve columns" id="box-form">
+<div class="ten columns offset-by-one" id="box-form">
   <h1>View Department/Offices</h1>    
   <table class="u-full-width">
     <thead>
