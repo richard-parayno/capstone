@@ -61,8 +61,8 @@
         <ul>
             <li><a href="{{ route('user-view') }}">View Users</a></li>
             <li><a href="{{ route('user-add') }}">Create New User Account</a></li>
-            <li><a href="{{ route('user-editinfo') }}">Edit User Account Information</a></li>
-            <li><a href="{{ route('user-editcreds') }}">Edit User Account Credentials</a></li>
+            <!--<li><a href="{{ route('user-editinfo') }}">Edit User Account Information</a></li>
+            <li><a href="{{ route('user-editcreds') }}">Edit User Account Credentials</a></li>-->
         </ul>
       </div>
       <div class="twelve column bar">
@@ -177,7 +177,11 @@
 </body>
 
 @section('scripts')
-
+<script>
+  function goBack() {
+    window.history.back();
+  }
+  </script>
 @show
 
 </html>

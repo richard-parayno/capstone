@@ -49,9 +49,9 @@
         <td>{{ $user->email }}</td>
         <td>{{ $user->status }}</td>
         <td style="text-align: center;">
-          <a href="{{ route('user-editinfo', array('user' => $user->userTypeID, 'name' => $user->accountName)) }}">Edit User Info</a>
+          <a href="{{ route('user-editinfo', array('user' => $user->id)) }}">Edit User Info</a>
           <br>
-          <a href="{{ route('user-editcreds', array('user' => $user->userTypeID, 'name' => $user->accountName)) }}">Update Account Credentials</a>
+          <a href="{{ route('user-editcreds', array('user' => $user->id)) }}">Update Account Credentials</a>
         </td>
       </tr>
       @endforeach
