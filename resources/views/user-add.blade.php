@@ -43,11 +43,20 @@
       @endif
     </div>
     <div class="six columns" style="margin: 0px;">
-      <label for="accountName">Full Name</label>
-      <input class="u-full-width" type="text" name="accountName" id="accountName" placeholder="Richard Lance Parayno" value="{{ old('accountName') }}" required>
-      @if ($errors->has('accountName'))
+      <label for="firstName">First Name</label>
+      <input class="u-full-width" type="text" name="firstName" id="firstName" placeholder="Richard Lance" value="{{ old('firstName') }}" required>
+      @if ($errors->has('firstName'))
         <span class="help-block">
-          <strong>{{ $errors->first('accountName') }}</strong>
+          <strong>{{ $errors->first('firstName') }}</strong>
+        </span>
+      @endif
+    </div>
+    <div class="six columns" style="margin: 0px;">
+      <label for="lastName">Last Name</label>
+      <input class="u-full-width" type="text" name="lastName" id="lastName" placeholder="Parayno" value="{{ old('lastName') }}" required>
+      @if ($errors->has('lastName'))
+        <span class="help-block">
+          <strong>{{ $errors->first('lastName') }}</strong>
         </span>
       @endif
     </div>

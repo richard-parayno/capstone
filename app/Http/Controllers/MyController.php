@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use App\Models\User;
 
 class MyController extends Controller
 {
@@ -25,8 +26,22 @@ class MyController extends Controller
         return view('user-editcreds', compact('usercreds'));
     }
 
-    public function editinfo()
+    public function editinfo(Request $request)
     {
+        $data = $request->all();
+
+        $currentUser = $data['current-user'];
+        $firstName = $data['first-name'];
+        $lastName = $data['last-name'];
         
+        $userdata = User::find($currentUser);
+
+        $finalName = $firstName . " " . $lastName;
+
+        $userdata->accountName = $finalName;
+
+        $userdata->save();
+
+        return redirect()->route('user-view');
     }
 }

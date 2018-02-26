@@ -23,7 +23,7 @@
 <div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process edit-user logic after submitting form. -->
   <h1>Edit User Account Information</h1>
-  <form action="/edit-user">
+  <form action="{{ route('user-editinfo-process')}}">
     <div class="twelve columns" style="margin: 0px;">
         <p>Selected User: </p>
         @php
@@ -31,7 +31,7 @@
          
           $userdata = DB::table('users')->where('id', $currentUser)->first();
           echo $userdata->accountName;
-          echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"user\" id=\"user\" value=\"$currentUser\">");
+          echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"current-user\" id=\"current-user\" value=\"$currentUser\">");
         @endphp
     </div>
     <div class="six columns" style="margin: 0px;">
