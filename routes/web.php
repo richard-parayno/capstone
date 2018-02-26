@@ -42,6 +42,7 @@ Route::get('/dashboard/user-editinfo', 'MyController@users')->name('user-editinf
 Route::get('/dashboard/user-editinfo-process', 'MyController@editinfo')->name('user-editinfo-process')->middleware('auth');
 /* Edit User Account Credentials */
 Route::get('/dashboard/user-editcreds', 'MyController@usercreds')->name('user-editcreds')->middleware('auth');
+Route::get('/dashboard/user-editcreds-process', 'MyController@editcreds')->name('user-editcreds-process')->middleware('auth');
 
 /* Campus Information Management Routes */
 /* View Campus */

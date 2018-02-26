@@ -44,4 +44,24 @@ class MyController extends Controller
 
         return redirect()->route('user-view');
     }
+
+    public function editcreds(Request $request)
+    {
+        $data = $request->all();
+
+        $currentUser = $data['current-user'];
+        $username = $data['username'];
+        $email = $data['email'];
+        $password = bcrypt($data['password']);
+        
+        $userdata = User::find($currentUser);;
+
+        $userdata->username = $username;
+        $userdata->email = $email;
+        $userdata->password = $password;
+
+        $userdata->save();
+
+        return redirect()->route('user-view');
+    }
 }
