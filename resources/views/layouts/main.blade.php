@@ -51,7 +51,7 @@
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Analytics Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
@@ -68,10 +68,10 @@
       <div class="twelve column bar">
         <p><strong>Campus Information Management</strong></p>
         <ul>
-            <li><a href="{{ route('campus-view') }}">Campuses/Institute Management Dashboard</a></li>
+            <li><a href="{{ route('campus-view') }}">Campus/Institute Management Dashboard</a></li>
             <!--<li><a href="{{ route('campus-add') }}">Add New Campus/Institute</a></li>
             <li><a href="{{ route('campus-editinfo') }}">Edit Campus/Institute Info</a></li>-->
-            <li><a href="{{ route('department-view') }}">Departments/Offices Dashboard</a></li>
+            <li><a href="{{ route('department-view') }}">Department/Office Dashboard</a></li>
             <!--<li><a href="{{ route('department-add') }}">Add New Department/Offices</a></li>
             <li><a href="{{ route('department-editinfo') }}">Edit Department/Offices Info</a></li>-->       
             <li><a href="{{ route('vehicle-view') }}">Vehicle Management Dashboard</a></li>
@@ -90,7 +90,7 @@
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Analytics Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
@@ -105,8 +105,8 @@
       <div class="twelve column bar">
         <p><strong>Campus Information Management</strong></p>
         <ul>
-            <li><a href="{{ route('campus-view') }}">Campuses/Institute Management Dashboard</a></li>
-            <li><a href="{{ route('department-view') }}">Departments/Offices Dashboard</a></li>
+            <li><a href="{{ route('campus-view') }}">Campus/Institute Management Dashboard</a></li>
+            <li><a href="{{ route('department-view') }}">Department/Office Dashboard</a></li>
             <li><a href="{{ route('vehicle-view') }}">Vehicle Management Dashboard</a></li>
 
         </ul>
@@ -121,7 +121,7 @@
         <!-- add view trees planted -->
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Analytics Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
@@ -136,7 +136,7 @@
         <!-- add view trees planted -->
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('dashboard') }}">View Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Analytics Dashboard</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Excel File</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
