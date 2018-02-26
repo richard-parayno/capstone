@@ -59,25 +59,25 @@
       <div class="twelve column bar">
         <p><strong>Account Management</strong></p>
         <ul>
-            <li><a href="{{ route('user-view') }}">View Users</a></li>
-            <li><a href="{{ route('user-add') }}">Create New User Account</a></li>
-            <!--<li><a href="{{ route('user-editinfo') }}">Edit User Account Information</a></li>
+            <li><a href="{{ route('user-view') }}">User Management Dashboard</a></li>
+            <!--<li><a href="{{ route('user-add') }}">Create New User Account</a></li>
+            <li><a href="{{ route('user-editinfo') }}">Edit User Account Information</a></li>
             <li><a href="{{ route('user-editcreds') }}">Edit User Account Credentials</a></li>-->
         </ul>
       </div>
       <div class="twelve column bar">
         <p><strong>Campus Information Management</strong></p>
         <ul>
-            <li><a href="{{ route('campus-view') }}">View Campuses/Institutes</a></li>
-            <li><a href="{{ route('campus-add') }}">Add New Campus/Institute</a></li>
-            <li><a href="{{ route('campus-editinfo') }}">Edit Campus/Institute Info</a></li>
-            <li><a href="{{ route('department-view') }}">View Departments/Offices</a></li>
-            <li><a href="{{ route('department-add') }}">Add New Department/Offices</a></li>
-            <li><a href="{{ route('department-editinfo') }}">Edit Department/Offices Info</a></li>          
-            <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
-            <li><a href="{{ route('vehicle-add') }}">Add New Vehicle</a></li>
+            <li><a href="{{ route('campus-view') }}">Campuses/Institute Management Dashboard</a></li>
+            <!--<li><a href="{{ route('campus-add') }}">Add New Campus/Institute</a></li>
+            <li><a href="{{ route('campus-editinfo') }}">Edit Campus/Institute Info</a></li>-->
+            <li><a href="{{ route('department-view') }}">Departments/Offices Dashboard</a></li>
+            <!--<li><a href="{{ route('department-add') }}">Add New Department/Offices</a></li>
+            <li><a href="{{ route('department-editinfo') }}">Edit Department/Offices Info</a></li>-->       
+            <li><a href="{{ route('vehicle-view') }}">Vehicle Management Dashboard</a></li>
+            <!--<li><a href="{{ route('vehicle-add') }}">Add New Vehicle</a></li>
             <li><a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a></li>
-            <li><a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a></li>
+            <li><a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a></li>-->
         </ul>
       </div>
     @elseif(Auth::user()->userTypeID == 2) <!-- life -->
@@ -98,15 +98,17 @@
       <div class="twelve column bar">
         <p><strong>Account Management</strong></p>
         <ul>
-            <li><a href="{{ route('user-view') }}">View Users</a></li>
+            <li><a href="{{ route('user-view') }}">User Management Dashboard</a></li>
+            
         </ul>
       </div>
       <div class="twelve column bar">
         <p><strong>Campus Information Management</strong></p>
         <ul>
-            <li><a href="{{ route('campus-view') }}">View Campuses/Institutes</a></li>
-            <li><a href="{{ route('department-view') }}">View Departments/Offices</a></li>       
-            <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
+            <li><a href="{{ route('campus-view') }}">Campuses/Institute Management Dashboard</a></li>
+            <li><a href="{{ route('department-view') }}">Departments/Offices Dashboard</a></li>
+            <li><a href="{{ route('vehicle-view') }}">Vehicle Management Dashboard</a></li>
+
         </ul>
       </div>
     @elseif(Auth::user()->userTypeID == 3) <!-- champion -->
@@ -155,10 +157,7 @@
         <!-- add view trips -->
         <p><strong>Campus Information Management</strong></p>
         <ul>
-            <li><a href="{{ route('vehicle-view') }}">View Vehicles</a></li>
-            <li><a href="{{ route('vehicle-add') }}">Add New Vehicle</a></li>
-            <li><a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a></li>
-            <li><a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a></li>
+            <li><a href="{{ route('vehicle-view') }}">Vehicle Management Dashboard</a></li>
         </ul>
       </div> 
     @endif
