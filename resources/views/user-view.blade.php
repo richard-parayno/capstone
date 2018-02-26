@@ -57,8 +57,9 @@
       @endforeach
     </tbody>
     <!-- action shortcuts -->
-    <span>Shortcuts: </span>
-    <a href="{{ route('user-add') }}">Create User Account</a>
+    <a href="{{ route('user-add') }}">
+      <button class="button-primary">Create User Account</button>
+    </a>
     <div class="u-pull-right">
       <span>Search User: </span>
       <input type="text" placeholder="Richard Parayno" id="searchBox">
