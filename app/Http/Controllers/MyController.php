@@ -24,4 +24,9 @@ class MyController extends Controller
         $usercreds = DB::table('users')->select('id', 'userName', 'accountName', 'email')->get();
         return view('user-editcreds', compact('usercreds'));
     }
+
+    public function editinfo()
+    {
+        
+    }
 }

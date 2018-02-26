@@ -39,6 +39,7 @@ Route::get('/dashboard/user-view', 'ViewUserController@viewUsers')->name('user-v
 Route::get('/dashboard/user-add', 'MyController@usertypes')->name('user-add');
 /* Edit User Account Information */
 Route::get('/dashboard/user-editinfo', 'MyController@users')->name('user-editinfo')->middleware('auth');
+Route::get('/dashboard/user-editinfor-process', 'MyController@');
 /* Edit User Account Credentials */
 Route::get('/dashboard/user-editcreds', 'MyController@usercreds')->name('user-editcreds')->middleware('auth');
 
