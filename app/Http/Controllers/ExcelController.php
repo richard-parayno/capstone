@@ -44,7 +44,7 @@ class ExcelController extends Controller
                 $data[$ctr]['plate_number'] = $row['plate_number'];
                 $data[$ctr]['kilometer_reading'] = $row['kilometer_reading'];
                 $data[$ctr]['destinations'] = $row['destinations'];
-                $data[$ctr]['roundtripyn'] = $row['roundtripyn'];
+
                 
                 // place the current row's data into variables you can manipulate easier
                 $currentPlateNumber = $row['plate_number'];

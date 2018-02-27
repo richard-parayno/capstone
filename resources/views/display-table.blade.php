@@ -34,7 +34,6 @@
         <th>Plate Number</th>
         <th>Kilometer Reading</th>
         <th>Destinations</th>
-        <th>Roundtrips?</th>
       </tr>
     </thead>
     <tbody>
@@ -50,7 +49,6 @@
         <td>{{ $data[$x]['plate_number'] }}</td>
         <td>{{ $data[$x]['kilometer_reading'] }}</td>
         <td>{{ $data[$x]['destinations'] }}</td>
-        <td>{{ $data[$x]['roundtripyn'] }}</td>
       </tr>
       @endfor
 
