@@ -43,13 +43,20 @@
       
 
       @for($x = 0; $x < $y; $x++)
-      <tr>
-        <td>{{ $data[$x]['date'] }}</td>
-        <td>{{ $data[$x]['requesting_department'] }}</td>
-        <td>{{ $data[$x]['plate_number'] }}</td>
-        <td>{{ $data[$x]['kilometer_reading'] }}</td>
-        <td>{{ $data[$x]['destinations'] }}</td>
-      </tr>
+        @php 
+          $checker = DB::table('vehicles_mv')->where('plateNumber', $data[$x]['plate_number'])->first();
+          if ($checker == null) {
+          
+          } else {
+            echo "<tr>";
+            echo "<td>".$data[$x]['date']."</td>";
+            echo "<td>".$data[$x]['requesting_department']."</td>";
+            echo "<td>".$data[$x]['plate_number']."</td>";
+            echo "<td>".$data[$x]['kilometer_reading']."</td>";
+            echo "<td>".$data[$x]['destinations']."</td>";
+            echo "</tr>";
+          }
+        @endphp
       @endfor
 
     </tbody>
