@@ -9,6 +9,7 @@ use DB;
 use App\Models\Trip;
 use App\Models\Monthlyemissionsperschool;
 use DateTime;
+use Debugbar;
 
 class ExcelController extends Controller
 {
@@ -36,7 +37,10 @@ class ExcelController extends Controller
                 // in the current row....... 
                 //convert the date
                 $convertd1 = (string)$row['date'];
-                $currentMonth = date("m", strtotime($convertd1));
+                Debugbar::info("convertd1 ".$convertd1);                
+                Debugbar::info("convertd1 strtotime".strtotime($convertd1));                
+                $currentMonth = date("Y-m-d", strtotime($convertd1));
+                Debugbar::info("currentMonth ".$currentMonth);
                 
                 // place current row into the temp array
                 $data[$ctr]['date'] = $row['date'];
@@ -55,7 +59,12 @@ class ExcelController extends Controller
 
                 //conver another date
                 $convertd2 = (string)$row['date'];
-                $currentMonthInExcel = date("m", strtotime($convertd2));
+                Debugbar::info("convertd2 ".$convertd2);                
+                Debugbar::info("convertd2 strtotime".strtotime($convertd2));  
+                $currentMonthInExcel = date("Y-m-d", strtotime($convertd2));
+                Debugbar::info("currentMonthInExcel ".$currentMonthInExcel);
+                
+                
                 //get the current dept id from the deptsperinstitution table
                 $currentDeptID = DB::table('deptsperinstitution')->where('deptName', $row['requesting_department'])->value('deptID');
                 
@@ -87,6 +96,10 @@ class ExcelController extends Controller
                         //if the first run of the code hasn't started yet
                         if (!isset($firstrun)) {
                             $currentMonth = $currentMonthInExcel;
+                            Debugbar::info("currentmonth ".$currentMonth);
+                            Debugbar::info("currentmonthinexcel ".$currentMonthInExcel);
+                            
+                            
                             // create a new monthly emission object (to be placed in the db)
                             $monthlyEmission = new Monthlyemissionsperschool;
                             $monthlyEmission->institutionID = $currentInstitution;
