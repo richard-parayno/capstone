@@ -24,7 +24,7 @@
 
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">
-  <h1>User Management Dashboard</h1>    
+  <h1>Manage Users</h1>    
   <table class="u-full-width">
     <thead>
       <tr>
@@ -49,9 +49,13 @@
         <td>{{ $user->email }}</td>
         <td>{{ $user->status }}</td>
         <td style="text-align: center;">
-          <a href="{{ route('user-editinfo', array('user' => $user->id)) }}">Change User Info</a>
+          <a href="{{ route('user-editinfo', array('user' => $user->id)) }}">
+            Change User Info
+          </a>
           <br>
-          <a href="{{ route('user-editcreds', array('user' => $user->id)) }}">Change User Credentials</a>
+          <a href="{{ route('user-editcreds', array('user' => $user->id)) }}">
+            Change User Credentials
+          </a>
         </td>
       </tr>
       @endforeach

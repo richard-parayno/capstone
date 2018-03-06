@@ -24,7 +24,7 @@
 
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">
-  <h1>View Campuses/Institutes</h1>    
+  <h1>Manage Campuses</h1>    
   <table class="u-full-width">
     <thead>
       <tr>
@@ -45,14 +45,17 @@
         @endforeach
         <td>{{ $institution->location }}</td>
         <td style="text-align: center;">
-          <a href="{{ route('campus-editinfo') }}">Edit Campus/Institute Info</a>
+          <a href="{{ route('campus-editinfo', array('institution' => $institution->institutionID)) }}">
+            Edit Campus/Institute Info
+          </a>
         </td>
       </tr>
       @endforeach
     </tbody>
     <!-- action shortcuts -->
-    <span>Shortcuts: </span>
-    <a href="{{ route('campus-add') }}">Add New Campus/Institute</a>
+    <a href="{{ route('campus-add') }}">
+      <button class="button-primary">Add New Campus/Institute</button>
+    </a>
     <div class="u-pull-right">
       <span>Search Campus/Institute: </span>
       <input type="text" placeholder="De La Salle University" id="searchBox">

@@ -55,6 +55,7 @@ Route::post('/dashboard/campus-add-process', 'InstitutionController@create')->na
 Route::get('/dashboard/campus-editinfo', function() {
     return view('campus-editinfo');
 })->name('campus-editinfo')->middleware('auth');
+Route::get('/dashboard/campus-editinfo-process', 'InstitutionController@edit')->name('campus-editinfo-process')->middleware('auth');
 
 /* View Departments/Offices */
 Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->name('department-view')->middleware('auth');

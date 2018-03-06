@@ -68,10 +68,10 @@
       <div class="twelve column bar">
         <p><strong>Campus Information Management</strong></p>
         <ul>
-            <li><a href="{{ route('campus-view') }}">Campus/Institute Management Dashboard</a></li>
+            <li><a href="{{ route('campus-view') }}">Campus Management Dashboard</a></li>
             <!--<li><a href="{{ route('campus-add') }}">Add New Campus/Institute</a></li>
             <li><a href="{{ route('campus-editinfo') }}">Edit Campus/Institute Info</a></li>-->
-            <li><a href="{{ route('department-view') }}">Department/Office Dashboard</a></li>
+            <li><a href="{{ route('department-view') }}">Department Management Dashboard</a></li>
             <!--<li><a href="{{ route('department-add') }}">Add New Department/Offices</a></li>
             <li><a href="{{ route('department-editinfo') }}">Edit Department/Offices Info</a></li>-->       
             <li><a href="{{ route('vehicle-view') }}">Vehicle Management Dashboard</a></li>
@@ -105,8 +105,8 @@
       <div class="twelve column bar">
         <p><strong>Campus Information Management</strong></p>
         <ul>
-            <li><a href="{{ route('campus-view') }}">Campus/Institute Management Dashboard</a></li>
-            <li><a href="{{ route('department-view') }}">Department/Office Dashboard</a></li>
+            <li><a href="{{ route('campus-view') }}">Campus Management Dashboard</a></li>
+            <li><a href="{{ route('department-view') }}">Department Management Dashboard</a></li>
             <li><a href="{{ route('vehicle-view') }}">Vehicle Management Dashboard</a></li>
 
         </ul>
