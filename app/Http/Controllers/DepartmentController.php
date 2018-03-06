@@ -30,4 +30,27 @@ class DepartmentController extends Controller
         }
 
     }
+
+    public function edit(Request $request) {
+      $data = $request->all();
+
+      $currentDept = $data['department-current'];
+      $campus = $data['department-campus']
+      $name = $data['department-name'];
+      if (isset($data['department-mother'])) {
+        $mother = $data['department-mother'];
+      }
+      
+      $deptsdata = Deptsperinstitution::find($currentDept);
+
+      $deptsdata->deptName = $name;
+      $deptsdata->institutionID = $campus;
+      if (isset($mother)) {
+        $deptsdata->motherDeptID = $mother;
+      }
+
+      $deptsdata->save();
+
+      return redirect()->route('department-view');
+    }
 }

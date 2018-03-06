@@ -63,9 +63,10 @@ Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->
 Route::get('/dashboard/department-add', 'AddController@loadToDepartment')->name('department-add')->middleware('auth');
 Route::post('/dashboard/department-add-process', 'DepartmentController@create')->name('department-add-process')->middleware('auth');
 /* Edit Department/Offices */
-Route::get('/dashboard/department-editinfo', function() {
+Route::get('/dashboard/department-editinfo',function() {
     return view('department-editinfo');
 })->name('department-editinfo')->middleware('auth');
+Route::get('/dashboard/department-editinfo-process', 'DepartmentController@edit')->name('department-editinfo-process')->middleware('auth');
 
 /* View Vehicles */
 Route::get('/dashboard/vehicle-view', 'ViewUserController@viewVehicles')->name('vehicle-view')->middleware('auth');

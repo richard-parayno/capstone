@@ -54,7 +54,7 @@
     </tbody>
     <!-- action shortcuts -->
     <a href="{{ route('campus-add') }}">
-      <button class="button-primary">Add New Campus/Institute</button>
+      <button class="button-primary">New Campus</button>
     </a>
     <div class="u-pull-right">
       <span>Search Campus/Institute: </span>
