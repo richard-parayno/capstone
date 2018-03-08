@@ -39,12 +39,12 @@ class ExcelController extends Controller
                 $currentMonth = date("m", strtotime($convertd1));
                 
                 // place current row into the temp array
-                $data[$ctr]['date'] = $row['date'];
+                $data[$ctr]['date'] = $row['date']; //
                 $data[$ctr]['requesting_department'] = $row['requesting_department'];
                 $data[$ctr]['plate_number'] = $row['plate_number'];
                 $data[$ctr]['kilometer_reading'] = $row['kilometer_reading'];
                 $data[$ctr]['destinations'] = $row['destinations'];
-                $data[$ctr]['roundtripyn'] = $row['roundtripyn'];
+                //$data[$ctr]['roundtripyn'] = $row['roundtripyn'];
                 
                 // place the current row's data into variables you can manipulate easier
                 $currentPlateNumber = $row['plate_number'];
@@ -56,6 +56,7 @@ class ExcelController extends Controller
                 //conver another date
                 $convertd2 = (string)$row['date'];
                 $currentMonthInExcel = date("m", strtotime($convertd2));
+				
                 //get the current dept id from the deptsperinstitution table
                 $currentDeptID = DB::table('deptsperinstitution')->where('deptName', $row['requesting_department'])->value('deptID');
                 
@@ -85,6 +86,7 @@ class ExcelController extends Controller
                         $trips->save();
                         
                         //if the first run of the code hasn't started yet
+						//if this is a new month, add new entry to monthly emission table
                         if (!isset($firstrun)) {
                             $currentMonth = $currentMonthInExcel;
                             // create a new monthly emission object (to be placed in the db)
@@ -112,6 +114,7 @@ class ExcelController extends Controller
                         $trips->save();   
                         
                         //if the first run of the code hasn't started yet
+						//if this is a new month, add new entry to monthly emission table
                         if (!isset($firstrun)) {
                             $currentMonth = $currentMonthInExcel;
                             // create a new monthly emission object (to be placed in the db)

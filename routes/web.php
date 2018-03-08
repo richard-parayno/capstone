@@ -84,4 +84,8 @@ Auth::routes();
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('/home', 'HomeController@index')->name('home');
 
+/*Live Search*/
+Route::get('/search','SearchController@index')->name('search');
+
+Route::get('/search-process','SearchController@search')->name('search-process');
 
