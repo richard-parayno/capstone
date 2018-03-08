@@ -46,13 +46,13 @@ class VehicleController extends Controller
       $currentPlate = $data['vehicle-current'];
       $campus = $data['vehicle-campus'];
       $brand = $data['vehicle-brand'];
-      $type = $data['vehicle-types'];
+      $type = $data['vehicle-type'];
       $fuel = $data['vehicle-fuel'];
       $model = $data['vehicle-model'];
       $year = $data['vehicle-year'];
       $plate = $data['vehicle-plate'];
       
-      $cardata = VehiclesMv::find($currentPlate)
+      $cardata = VehiclesMv::find($currentPlate);
 
       $cardata->institutionID = $campus;
       $cardata->carBrandID = $brand;

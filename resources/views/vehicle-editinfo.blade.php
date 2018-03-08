@@ -33,19 +33,34 @@
           use App\Models\CartypeRef;
           use App\Models\Institution;
           use App\Models\FueltypeRef;
+          use App\Models\VehiclesMv;
 
           $currentVehicle = $_GET['vehicle'];
           echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"vehicle-current\" id=\"vehicle-current\" value=\"$currentVehicle\">");
+
+          $selected = VehiclesMv::find($currentVehicle);
+          $selectedBrand = CarbrandRef::find($selected->carBrandID);
+          $selectedType = CartypeRef::find($selected->carTypeID);
+          $selectedCampus = Institution::find($selected->institutionID);
+          $selectedFuel = FueltypeRef::find($selected->fuelTypeID);
 
           $brands = CarbrandRef::all();
           $cartypes = CartypeRef::all();
           $campuses = Institution::all();
           $fueltypes = FueltypeRef::all();
+
+          echo "<p>Selected Vehicle's Plate Number: ".$currentVehicle."</p>";
+          echo "<p>Car Brand: ".$selectedBrand->carBrandName."</p>";
+          echo "<p>Car Type: ".$selectedType->carTypeName."</p>";
+          echo "<p>Campus: ".$selectedCampus->institutionName."</p>";
+          echo "<p>Fuel Type: ".$selectedFuel->fuelTypeName."</p>";
+
+          echo "<br>";
         @endphp
 
         <div class="twelve columns">
           <label for="vehicle-campus">Update Campus</label>
-          <select class="u-full-width" id="vehicle-campus" style="color: black;">
+          <select class="u-full-width" name="vehicle-campus" id="vehicle-campus" style="color: black;">
             @foreach($campuses as $campus)
               <option value="{{ $campus->institutionID }}">{{ $campus->institutionName }}</option>
             @endforeach
@@ -53,7 +68,7 @@
         </div>
         <div class="twelve columns">
           <label for="vehicle-brand">Update Vehicle Brand</label>
-          <select class="u-full-width" id="vehicle-brand" style="color: black;">
+          <select class="u-full-width" name="vehicle-brand" id="vehicle-brand" style="color: black;">
             @foreach($brands as $brand)
               <option value="{{ $brand->carBrandID }}">{{ $brand->carBrandName }}</option>
             @endforeach
@@ -61,7 +76,7 @@
         </div>
         <div class="twelve columns">
           <label for="vehicle-type">Update Vehicle Type</label>
-          <select class="u-full-width" id="vehicle-type" style="color: black;">
+          <select class="u-full-width" name="vehicle-type" id="vehicle-type" style="color: black;">
               @foreach($cartypes as $cartype)
               <option value="{{ $cartype->carTypeID }}">{{ $cartype->carTypeName }}</option>
             @endforeach
@@ -69,7 +84,7 @@
         </div>
         <div class="twelve columns">
           <label for="vehicle-fuel">Update Fuel Type</label>
-          <select class="u-full-width" id="vehicle-fuel" style="color: black;">
+          <select class="u-full-width" name="vehicle-fuel" id="vehicle-fuel" style="color: black;">
               @foreach($fueltypes as $fueltype)
               <option value="{{ $fueltype->fuelTypeID }}">{{ $fueltype->fuelTypeName }}</option>
             @endforeach
