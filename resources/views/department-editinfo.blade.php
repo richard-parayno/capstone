@@ -45,15 +45,17 @@
 
   
         if (!isset($currentMother)) {
-          echo "<p>Selected Department: </p>".$department->deptName;
-          echo "<p>From Campus: </p>".$campus->institutionName;
+          echo "<p>Selected Department: ".$department->deptName."</p>";
+          echo "<p>From Campus: ".$campus->institutionName."</p>";
         } else {
-          echo "<p>Selected Department: </p>".$department->deptName;
-          echo "<p>From Campus: </p>".$campus->institutionName;
-          echo "<p>Currently Under: </p>".$motherDept->deptName;
+          echo "<p>Selected Department: ".$department->deptName."</p>";
+          echo "<p>From Campus: ".$campus->institutionName."</p>";
+          echo "<p>Currently Under: ".$motherDept->deptName."</p>";
         }
 
         echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"department-current\" id=\"department-current\" value=\"$currentDepartment\">");
+
+        echo "<br>";
       @endphp
     <div class="twelve columns">
       <label for="find-campus">Select Campus</label>

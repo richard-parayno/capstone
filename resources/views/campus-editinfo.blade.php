@@ -23,9 +23,8 @@
 @section('content')
 <div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process add-campus logic after submitting form. -->
-  <h1>Update Institution Information</h1>    
+  <h1>Update Campus Information</h1>    
   <form action="{{ route('campus-editinfo-process') }}">
-    <p>Selected Institution: </p>
     @php
       use App\Models\Institution;
       use App\Models\SchooltypeRef;
@@ -38,11 +37,14 @@
 
       $schools = SchooltypeRef::all();
 
-      echo $institution->institutionName." - ".$institution->location." - ".$schoolType->schoolTypeName;
+      echo "<p>Selected Campus: ".$institution->institutionName."</p>";
+      echo "<p>Campus Location: ".$institution->location."</p>";
+      echo "<p>Campus Classification: ".$schoolType->schoolTypeName."</p>";
       echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"current-ci\" id=\"current-ci\" value=\"$currentInstitution\">");
+      echo "<br>";
     @endphp
     <div class="twelve columns">
-      <label for="ci-name">Updated Institution Name</label>
+      <label for="ci-name">Updated Campus Name</label>
       <input class="u-full-width" type="text" name="ci-name" id="ci-name" placeholder="La Salle Greenhills">
     </div>
     <div class="twelve columns">

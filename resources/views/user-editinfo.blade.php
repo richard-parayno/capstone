@@ -25,15 +25,16 @@
   <h1>Change User Information</h1>
   <form action="{{ route('user-editinfo-process')}}">
     <div class="twelve columns" style="margin: 0px;">
-        <p>Selected User: </p>
         @php
           $currentUser = $_GET['user'];
          
           $userdata = DB::table('users')->where('id', $currentUser)->first();
           $usertype = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $currentUser)->first();
 
-          echo $userdata->accountName." - ".$usertype->userTypeName;
+          echo "<p>Selected User: ".$userdata->accountName."</p>";
+          echo "<p>User Type: ".$usertype->userTypeName."</p>";
           echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"current-user\" id=\"current-user\" value=\"$currentUser\">");
+          echo "<br>";
         @endphp
     </div>
     <div class="six columns" style="margin: 0px;">
@@ -45,7 +46,7 @@
       <label for="last-name">New Last Name</label>
       <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
     </div>
-    <input class="button-primary u-pull-right" type="submit" value="Update">
+    <input class="button-primary u-pull-right" type="submit" value="Update User">
     <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>
     
   </form>

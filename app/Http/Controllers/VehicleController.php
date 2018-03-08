@@ -38,6 +38,32 @@ class VehicleController extends Controller
 
           return redirect('/dashboard/vehicle-add')->with('success', true)->with('message', 'Vehicle successfully added!');
         }
+    }
 
+    public function edit(Request $request) {
+      $data = $request->all();
+
+      $currentPlate = $data['vehicle-current'];
+      $campus = $data['vehicle-campus'];
+      $brand = $data['vehicle-brand'];
+      $type = $data['vehicle-types'];
+      $fuel = $data['vehicle-fuel'];
+      $model = $data['vehicle-model'];
+      $year = $data['vehicle-year'];
+      $plate = $data['vehicle-plate'];
+      
+      $cardata = VehiclesMv::find($currentPlate)
+
+      $cardata->institutionID = $campus;
+      $cardata->carBrandID = $brand;
+      $cardata->carTypeID = $type;
+      $cardata->fuelTypeID = $fuel;
+      $cardata->modelName = $model;
+      //year
+      $cardata->plateNumber = $plate;
+      $cardata->save();
+
+      return redirect()->route('vehicle-view');
+      
     }
 }

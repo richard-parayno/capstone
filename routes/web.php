@@ -77,6 +77,7 @@ Route::post('/dashboard/vehicle-add-process', 'VehicleController@create')->name(
 Route::get('/dashboard/vehicle-editinfo', function() {
     return view('vehicle-editinfo');
 })->name('vehicle-editinfo')->middleware('auth');
+Route::get('/dashboard/vehicle-editinfo-process', 'VehicleController@edit')->name('vehicle-editinfo-process')->middleware('auth');
 /* Decommission Vehicle */
 Route::get('/dashboard/vehicle-decommission', function() {
     return view('vehicle-decommission');

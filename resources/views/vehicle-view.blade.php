@@ -32,7 +32,7 @@
         <th>Car Model</th>
         <th>Plate Number</th>
         <th>Manufacturing Year</th>
-        <th>Home Campus/Institute</th>
+        <th>Home Campus</th>
         <th>Fuel Type</th>
         <th>Status</th>
         <th>Vehicle Actions</th>
@@ -71,18 +71,19 @@
         @endif
 
         <td style="text-align: center;">
-          <a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a> <br>
-          <a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a>
+          <a href="{{ route('vehicle-editinfo', array('vehicle' => $vehicle->plateNumber)) }}">Update Vehicle Info</a> <br> <br>
+          <a href="{{ route('vehicle-decommission', array('vehicle' => $vehicle->plateNumber)) }}">Decommission Vehicle</a>
         </td>
       </tr>
       @endforeach
     </tbody>
     <!-- action shortcuts -->
-    <span>Shortcuts: </span>
-    <a href="{{ route('vehicle-add') }}">Add New Vehicle</a>
+    <a href="{{ route('vehicle-add') }}">
+      <button class="button-primary">New Vehicle</button>
+    </a>
     <div class="u-pull-right">
       <span>Search Vehicle: </span>
-      <input type="text" placeholder="LamborGHini" id="searchBox">
+      <input type="text" placeholder="Accord" id="searchBox">
     </div>
     <!-- action shortcuts -->              
   </table>

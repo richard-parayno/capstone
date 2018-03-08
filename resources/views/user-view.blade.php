@@ -50,11 +50,11 @@
         <td>{{ $user->status }}</td>
         <td style="text-align: center;">
           <a href="{{ route('user-editinfo', array('user' => $user->id)) }}">
-            Change User Info
+            Update User Info
           </a>
-          <br>
+          <br> <br>
           <a href="{{ route('user-editcreds', array('user' => $user->id)) }}">
-            Change User Credentials
+            Update User Credentials
           </a>
         </td>
       </tr>
