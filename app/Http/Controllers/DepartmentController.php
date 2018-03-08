@@ -32,25 +32,37 @@ class DepartmentController extends Controller
     }
 
     public function edit(Request $request) {
-      $data = $request->all();
+      if ($request->has('department-mother')) {
+        $data = $request->all();
 
-      $currentDept = $data['department-current'];
-      $campus = $data['department-campus']
-      $name = $data['department-name'];
-      if (isset($data['department-mother'])) {
+        $currentDept = $data['department-current'];
+        $campus = $data['department-campus'];
+        $name = $data['department-name'];
         $mother = $data['department-mother'];
-      }
-      
-      $deptsdata = Deptsperinstitution::find($currentDept);
-
-      $deptsdata->deptName = $name;
-      $deptsdata->institutionID = $campus;
-      if (isset($mother)) {
+        
+        $deptsdata = Deptsperinstitution::find($currentDept);
+        $deptsdata->deptName = $name;
+        $deptsdata->institutionID = $campus;
         $deptsdata->motherDeptID = $mother;
+
+        $deptsdata->save();
+
+        return redirect()->route('department-view');
+
+      } else {
+        $data = $request->all();
+
+        $currentDept = $data['department-current'];
+        $campus = $data['department-campus'];
+        $name = $data['department-name'];
+
+        $deptsdata = Deptsperinstitution::find($currentDept);
+        $deptsdata->deptName = $name;
+        $deptsdata->institutionID = $campus;
+
+        $deptsdata->save();
+
+        return redirect()->route('department-view');
       }
-
-      $deptsdata->save();
-
-      return redirect()->route('department-view');
     }
 }

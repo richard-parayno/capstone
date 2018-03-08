@@ -42,6 +42,7 @@
   
         $campusList = Institution::all();
         $departmentList = Deptsperinstitution::all();
+
   
         if (!isset($currentMother)) {
           echo "<p>Selected Department: </p>".$department->deptName;
@@ -56,7 +57,7 @@
       @endphp
     <div class="twelve columns">
       <label for="find-campus">Select Campus</label>
-      <select class="u-full-width" id="department-campus" style="color: black;">
+      <select class="u-full-width" name="department-campus" id="department-campus" style="color: black;">
         @foreach($campusList as $campuses)
           <option value="{{ $campuses->institutionID }}">{{ $campuses->institutionName }}</option>
         @endforeach
@@ -66,20 +67,24 @@
       <label for="department-name">Department Name</label>
       <input class="u-full-width" type="text" name="department-name" id="department-name" placeholder="College of Computer Studies">
     </div>
-    @if(isset($currentMother))
     <div class="twelve columns">
       <label for="department-mother">New Mother Department</label>
-      <select class="u-full-width" id="department-campus" style="color: black;">
+      <select class="u-full-width" name="department-mother" id="department-mother" style="color: black;">
         <option value="">Make Department Separate</option>
         @foreach($departmentList as $depts)
-        @if (Deptsperinstitution::find($currentDepartment))
-        @else
-        <option value="{{ $depts->deptID }}">{{ $depts->institutionName }}</option>
-        @endif
+        @php
+          //$dupliChecker = Deptsperinstitution::where('deptId', '=', $currentDepartment)->first();
+          if ($depts->deptID == $currentDepartment) {
+            //alaws men
+            echo "<option value=".$depts->deptID." hidden>".$depts->deptName."</option>";
+          }
+          else {
+            echo "<option value=".$depts->deptID.">".$depts->deptName."</option>";
+          }
+        @endphp
         @endforeach
       </select>
     </div>
-    @endif
     <input class="button-primary u-pull-right" type="submit" value="Edit Department/Offices Info">
   </form>
 </div>

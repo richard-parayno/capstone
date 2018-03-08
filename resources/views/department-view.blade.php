@@ -46,14 +46,13 @@
             <td style="text-align: center;">{{ $institution->institutionName }}</td>
           @endif
         @endforeach
-        @php
-        if ($department->motherDeptID != null)            
+        @php           
           $motherDept = Deptsperinstitution::find($department->motherDeptID);
         @endphp
-        @if(isset($motherDept))
-          <td style="text-align: center;">{{ $motherDept->deptName }}</td>
+        @if($motherDept == null)
+        <td style="text-align: center;">N/A</td>
         @else
-          <td style="text-align: center;">N/A</td>
+        <td style="text-align: center;">{{ $motherDept->deptName }}</td>
         @endif
 
         <td style="text-align: center;">
