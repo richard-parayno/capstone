@@ -37,6 +37,7 @@ class ExcelController extends Controller
                 // in the current row....... 
                 //convert the date
                 $convertd1 = (string)$row['date'];
+
                 Debugbar::info("convertd1 ".$convertd1);                
                 Debugbar::info("convertd1 strtotime".strtotime($convertd1));                
                 $currentMonth = date("Y-m-d", strtotime($convertd1));
@@ -87,6 +88,7 @@ class ExcelController extends Controller
                         $trips->save();
                         
                         //if the first run of the code hasn't started yet
+						//if this is a new month, add new entry to monthly emission table
                         if (!isset($firstrun)) {
                             $currentMonth = $currentMonthInExcel;
                             Debugbar::info("currentmonth ".$currentMonth);

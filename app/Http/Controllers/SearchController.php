@@ -1,34 +1,79 @@
 <?php
 
+<<<<<<< HEAD
+
+
 namespace App\Http\Controllers;
+
+
 
 use Illuminate\Http\Request;
 
+use DB;
+
+
+
+
 class SearchController extends Controller
+
 {
-    public function index() {
-        return view('search.search');
-    }
 
-    public function search(Request $request) {
-        if($request->ajax()) {
-            $output="";
-            $users = DB::table('users')->where()->get();
-            $userTypes = DB::table('usertypes_ref')->get();
-            $users=DB::table('products')->where('title','LIKE','%'.$request->search."%")->get();
-            if($products) {
-                foreach ($products as $key => $product) {
-                $output.='<tr>'.
-                '<td>'.$product->id.'</td>'.
-                '<td>'.$product->title.'</td>'.
-                '<td>'.$product->description.'</td>'.
-                '<td>'.$product->price.'</td>'.
-                '</tr>';
-                }
+public function index()
 
-            return Response($output);
+{
 
-            }
-        }
-    }
+return view('search.search');
+
+}
+
+
+
+public function search(Request $request)
+
+{
+
+if($request->ajax())
+
+{
+
+$output="";
+
+$dept=DB::table('deptsperinstitution')->where('deptName','LIKE','%'.$request->search."%")->get();
+
+if($dept)
+
+{
+
+foreach ($dept as $key => $dept) {
+
+$output.='<tr>'.
+
+'<td>'.$dept->deptID.'</td>'.
+
+'<td>'.$dept->institutionID.'</td>'.
+
+'<td>'.$dept->deptName.'</td>'.
+
+'<td>'.$dept->motherDeptID.'</td>'.
+
+'</tr>';
+
+}
+
+
+
+return Response($output);
+
+
+
+}
+
+
+
+}
+
+
+
+}
+
 }
