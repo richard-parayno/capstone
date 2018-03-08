@@ -9,11 +9,34 @@ use Validator;
 class DepartmentController extends Controller
 {
     public function create(Request $request){
+      if ($request->has('department-mother')) {
         $data = $request->all();
 
         $validator = Validator::make($data, [
           'institutionID' => 'required|int|max:100',
           'deptName' => 'required|string|max:45',
+          'motherDeptID' => 'nullable|int',
+        ]);
+
+        if ($validator->fails()) {
+          return redirect('/dashboard/department-add')->withErrors($validator)->withInput();
+        }
+
+        else if ($validator->passes()) {
+          $department = new Deptsperinstitution;
+          $department->institutionID = $data['institutionID'];
+          $department->deptName = $data['deptName'];
+          $department->motherDeptID = $data['department-mother'];
+          $department->save();
+
+          return redirect('/dashboard/department-add')->with('success', true)->with('message', 'Department successfully created!');
+        }
+      } else {
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+          'institutionID' => 'required|int|max:100',
+          'deptName' => 'required|string|max:45',          
         ]);
 
         if ($validator->fails()) {
@@ -28,7 +51,7 @@ class DepartmentController extends Controller
 
           return redirect('/dashboard/department-add')->with('success', true)->with('message', 'Department/Office successfully added!');
         }
-
+      }
     }
 
     public function edit(Request $request) {

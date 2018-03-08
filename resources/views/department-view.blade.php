@@ -66,9 +66,9 @@
       @endforeach
     </tbody>
     <!-- action shortcuts -->
-    <button class="button-primary"
-    <a href="{{ route('department-add') }}">New Department</a>
-    </button>
+    <a href="{{ route('department-add') }}">
+    <button class="button-primary">New Department</button>
+    </a>
     <div class="u-pull-right">
       <span>Search Departments: </span>
       <input type="text" placeholder="Information Technology Services" id="searchBox">

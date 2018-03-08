@@ -23,9 +23,10 @@ class AddController extends Controller
     }
 
     public function loadToDepartment() {
-        $institutions = DB::table('institutions')->get();         
+        $institutions = DB::table('institutions')->get();  
+        $departments = DB::table('deptsperinstitution')->get();     
 
-        return view('department-add', compact('institutions'));
+        return view('department-add', compact('institutions', 'departments'));
         
     }
 
