@@ -26,25 +26,47 @@
 @section('content')
     <div class="eight columns offset-by-two" id="box-form">
       <!-- TODO: Process add-user logic after submitting form. -->
-      <h1>Decommission Vehicle</h1>    
-      <form action="/decommission-vehicle">
-        <div class="twelve columns">
-          <label for="vehicle-campus">Select Campus/Institute</label>
-          <select class="u-full-width" id="vehicle-campus"></select>
-        </div>
-        <div class="twelve columns">
-          <label for="vehicle-brand">Vehicle Brand</label>
-          <select class="u-full-width" id="vehicle-brand"></select>
-        </div>
-        <div class="eight columns" style="margin: 0px;">
-          <label for="vehicle-model">Model Name</label>
-          <input class="u-full-width" type="text" name="vehicle-model" id="vehicle-model" placeholder="L300">
-        </div>
-        <div class="four columns">
-          <label for="vehicle-year">Manufacturing Year</label>
-          <input class="u-full-width" type="number" name="vehicle-year" id="email" placeholder="2017">
-        </div>
-        <input class="button-primary u-pull-right" type="submit" value="Decommission Vehicle">
+      <h1>Update Vehicle Status</h1>    
+      <form action="{{ route('vehicle-decommission-process') }}">
+        @php
+          use App\Models\CarbrandRef;
+          use App\Models\CartypeRef;
+          use App\Models\Institution;
+          use App\Models\FueltypeRef;
+          use App\Models\VehiclesMv;
+
+          $currentVehicle = $_GET['vehicle'];
+          echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"vehicle-current\" id=\"vehicle-current\" value=\"$currentVehicle\">");
+
+          $selected = VehiclesMv::find($currentVehicle);
+          $selectedBrand = CarbrandRef::find($selected->carBrandID);
+          $selectedType = CartypeRef::find($selected->carTypeID);
+          $selectedCampus = Institution::find($selected->institutionID);
+          $selectedFuel = FueltypeRef::find($selected->fuelTypeID);
+
+          $brands = CarbrandRef::all();
+          $cartypes = CartypeRef::all();
+          $campuses = Institution::all();
+          $fueltypes = FueltypeRef::all();
+
+          echo "<p>Selected Vehicle's Plate Number: ".$currentVehicle."</p>";
+          echo "<p>Car Brand: ".$selectedBrand->carBrandName."</p>";
+          echo "<p>Car Type: ".$selectedType->carTypeName."</p>";
+          echo "<p>Campus: ".$selectedCampus->institutionName."</p>";
+          echo "<p>Fuel Type: ".$selectedFuel->fuelTypeName."</p>";
+
+          echo "<br>";
+        @endphp
+
+        <p>Are you sure you want to decommission this vehicle?</p>
+        <input type="radio" name="choice" value="yes">
+        <span class="label-body">Yes</span>
+        <br>
+        <input type="radio" name="choice" value="no">
+        <span class="label-body">No</span>
+        <br>
+        <a class="button button-primary u-pull-left" onClick="goBack()">Cancel Vehicle Decommission</a>
+        <input class="button-primary u-pull-right" type="submit" value="Confirm Vehicle Decommission">
       </form>
     </div>
 @endsection

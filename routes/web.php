@@ -82,6 +82,7 @@ Route::get('/dashboard/vehicle-editinfo-process', 'VehicleController@edit')->nam
 Route::get('/dashboard/vehicle-decommission', function() {
     return view('vehicle-decommission');
 })->name('vehicle-decommission')->middleware('auth');
+Route::get('/dashboard/vehicle-decommission-process', 'VehicleController@decommission')->name('vehicle-decommission-process')->middleware('auth');
 
 Auth::routes();
 

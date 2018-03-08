@@ -66,4 +66,24 @@ class VehicleController extends Controller
       return redirect()->route('vehicle-view');
       
     }
+
+    public function decommission(Request $request) {
+      $data = $request->all();
+      $currentPlate = $data['vehicle-current'];
+      $choice = $data['choice'];
+
+      if ($choice == 'yes') {
+        $cardata = VehiclesMv::find($currentPlate);
+        $cardata->active = 0; 
+        $cardata->save();
+
+        return redirect()->route('vehicle-view');
+      } else {
+        $cardata = VehiclesMv::find($currentPlate);
+        $cardata->active = 1; 
+        $cardata->save();
+
+        return redirect()->route('vehicle-view');
+      }
+    }
 }

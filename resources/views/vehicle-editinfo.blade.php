@@ -25,7 +25,6 @@
 
 @section('content')
     <div class="eight columns offset-by-two" id="box-form">
-
       <h1>Update Vehicle Info</h1>    
       <form action="{{ route('vehicle-editinfo-process' )}}">
         @php
