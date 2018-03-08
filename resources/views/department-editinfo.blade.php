@@ -24,14 +24,66 @@
 <div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process add-user logic after submitting form. -->
   <h1>Edit Department/Offices Info</h1>    
-  <form action="/add-department">
+  <form action="{{ route('department-editinfo-process') }}">
+      @php
+        use App\Models\Deptsperinstitution;
+        use App\Models\Institution;
+      
+        $currentDepartment = $_GET['department'];
+        if (isset($_GET['mother'])) {
+          $currentMother = $_GET['mother'];
+
+          $motherDept = Deptsperinstitution::find($currentMother);
+        }
+       
+        $department = Deptsperinstitution::find($currentDepartment);
+  
+        $campus = Institution::find($department->institutionID);
+  
+        $campusList = Institution::all();
+        $departmentList = Deptsperinstitution::all();
+
+  
+        if (!isset($currentMother)) {
+          echo "<p>Selected Department: </p>".$department->deptName;
+          echo "<p>From Campus: </p>".$campus->institutionName;
+        } else {
+          echo "<p>Selected Department: </p>".$department->deptName;
+          echo "<p>From Campus: </p>".$campus->institutionName;
+          echo "<p>Currently Under: </p>".$motherDept->deptName;
+        }
+
+        echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"department-current\" id=\"department-current\" value=\"$currentDepartment\">");
+      @endphp
     <div class="twelve columns">
-      <label for="find-campus">Select Campus/Institute</label>
-      <select class="u-full-width" id="find-campus"></select>
+      <label for="find-campus">Select Campus</label>
+      <select class="u-full-width" name="department-campus" id="department-campus" style="color: black;">
+        @foreach($campusList as $campuses)
+          <option value="{{ $campuses->institutionID }}">{{ $campuses->institutionName }}</option>
+        @endforeach
+      </select>
     </div>
     <div class="twelve columns">
       <label for="department-name">Department Name</label>
-      <input class="u-full-width" type="text" name="department-name" id="username" placeholder="College of Computer Studies">
+      <input class="u-full-width" type="text" name="department-name" id="department-name" placeholder="College of Computer Studies">
+    </div>
+    <div class="twelve columns">
+      <label for="department-mother">New Mother Department</label>
+      <select class="u-full-width" name="department-mother" id="department-mother" style="color: black;">
+        <option value="">Make Department Separate</option>
+        @foreach($departmentList as $depts)
+        @php
+          //$dupliChecker = Deptsperinstitution::where('deptId', '=', $currentDepartment)->first();
+          if ($depts->deptID == $currentDepartment) {
+            //alaws men
+            echo "<option value=".$depts->deptID." hidden>".$depts->deptName."</option>";
+          }
+          else {
+            echo "<option value=".$depts->deptID.">".$depts->deptName."</option>";
+          }
+        @endphp
+        @endforeach
+      </select>
     </div>
     <input class="button-primary u-pull-right" type="submit" value="Edit Department/Offices Info">
   </form>

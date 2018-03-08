@@ -24,7 +24,7 @@
 
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">
-  <h1>View Users</h1>    
+  <h1>Manage Users</h1>    
   <table class="u-full-width">
     <thead>
       <tr>
@@ -49,16 +49,21 @@
         <td>{{ $user->email }}</td>
         <td>{{ $user->status }}</td>
         <td style="text-align: center;">
-          <a href="{{ route('user-editinfo', array('user' => $user->id)) }}">Edit User Info</a>
+          <a href="{{ route('user-editinfo', array('user' => $user->id)) }}">
+            Change User Info
+          </a>
           <br>
-          <a href="{{ route('user-editcreds', array('user' => $user->id)) }}">Update Account Credentials</a>
+          <a href="{{ route('user-editcreds', array('user' => $user->id)) }}">
+            Change User Credentials
+          </a>
         </td>
       </tr>
       @endforeach
     </tbody>
     <!-- action shortcuts -->
-    <span>Shortcuts: </span>
-    <a href="{{ route('user-add') }}">Create User Account</a>
+    <a href="{{ route('user-add') }}">
+      <button class="button-primary">Create User Account</button>
+    </a>
     <div class="u-pull-right">
       <span>Search User: </span>
       <input type="text" placeholder="Richard Parayno" id="searchBox">

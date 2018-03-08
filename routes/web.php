@@ -42,6 +42,7 @@ Route::get('/dashboard/user-editinfo', 'MyController@users')->name('user-editinf
 Route::get('/dashboard/user-editinfo-process', 'MyController@editinfo')->name('user-editinfo-process')->middleware('auth');
 /* Edit User Account Credentials */
 Route::get('/dashboard/user-editcreds', 'MyController@usercreds')->name('user-editcreds')->middleware('auth');
+Route::get('/dashboard/user-editcreds-process', 'MyController@editcreds')->name('user-editcreds-process')->middleware('auth');
 
 /* Campus Information Management Routes */
 /* View Campus */
@@ -54,6 +55,7 @@ Route::post('/dashboard/campus-add-process', 'InstitutionController@create')->na
 Route::get('/dashboard/campus-editinfo', function() {
     return view('campus-editinfo');
 })->name('campus-editinfo')->middleware('auth');
+Route::get('/dashboard/campus-editinfo-process', 'InstitutionController@edit')->name('campus-editinfo-process')->middleware('auth');
 
 /* View Departments/Offices */
 Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->name('department-view')->middleware('auth');
@@ -61,9 +63,10 @@ Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->
 Route::get('/dashboard/department-add', 'AddController@loadToDepartment')->name('department-add')->middleware('auth');
 Route::post('/dashboard/department-add-process', 'DepartmentController@create')->name('department-add-process')->middleware('auth');
 /* Edit Department/Offices */
-Route::get('/dashboard/department-editinfo', function() {
+Route::get('/dashboard/department-editinfo',function() {
     return view('department-editinfo');
 })->name('department-editinfo')->middleware('auth');
+Route::get('/dashboard/department-editinfo-process', 'DepartmentController@edit')->name('department-editinfo-process')->middleware('auth');
 
 /* View Vehicles */
 Route::get('/dashboard/vehicle-view', 'ViewUserController@viewVehicles')->name('vehicle-view')->middleware('auth');

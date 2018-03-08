@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Institution;
+use App\Models\Institution;
 use Illuminate\Support\Facades\Validator;
 
 class InstitutionController extends Controller
@@ -42,7 +42,25 @@ class InstitutionController extends Controller
 
           return redirect('/dashboard/campus-add')->with('success', true)->with('message', 'Campus successfully added!');
         }
+    }
 
+    public function edit(Request $request) {
+      $data = $request->all();
+
+      $currentInstitution = $data['current-ci'];
+      $institution = $data['ci-name'];
+      $location = $data['ci-location'];
+      $type = $data['ci-type'];
+      
+      $institutiondata = Institution::find($currentInstitution);
+
+      $institutiondata->institutionName = $institution;
+      $institutiondata->location = $location;
+      $institutiondata->schoolTypeID = $type;
+
+      $institutiondata->save();
+
+      return redirect()->route('campus-view');
     }
 
 }

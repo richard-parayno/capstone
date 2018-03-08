@@ -24,35 +24,53 @@
 
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">
-  <h1>View Department/Offices</h1>    
+  <h1>Manage Departments</h1>    
   <table class="u-full-width">
     <thead>
       <tr>
-        <th>Department/Office Name</th>
-        <th>From Campus/Institute</th>
-        <th>Department/Office Actions</th>
+        <th>Department Name</th>
+        <th>From Campus</th>
+        <th>From Department</th>
+        <th>Department Action</th>
       </tr>
     </thead>
     <tbody>
+      @php
+      use App\Models\Deptsperinstitution;
+      @endphp
       @foreach($departments as $department)
       <tr>
         <td>{{ $department->deptName }}</td>
         @foreach($institutions as $institution)
           @if($department->institutionID == $institution->institutionID)
-            <td>{{ $institution->institutionName }}</td>
+            <td style="text-align: center;">{{ $institution->institutionName }}</td>
           @endif
         @endforeach
+        @php           
+          $motherDept = Deptsperinstitution::find($department->motherDeptID);
+        @endphp
+        @if($motherDept == null)
+        <td style="text-align: center;">N/A</td>
+        @else
+        <td style="text-align: center;">{{ $motherDept->deptName }}</td>
+        @endif
+
         <td style="text-align: center;">
-          <a href="{{ route('department-editinfo') }}">Edit Department/Office Info</a>
+          @if (isset($motherDept))
+          <a href="{{ route('department-editinfo', array('department' => $department->deptID, 'mother' => $motherDept->deptID)) }}">Edit Department Info</a>
+          @else
+          <a href="{{ route('department-editinfo', array('department' => $department->deptID)) }}">Edit Department Info</a>
+          @endif 
         </td>
       </tr>
       @endforeach
     </tbody>
     <!-- action shortcuts -->
-    <span>Shortcuts: </span>
-    <a href="{{ route('campus-add') }}">Add New Department/Office</a>
+    <a href="{{ route('department-add') }}">
+    <button class="button-primary">New Department</button>
+    </a>
     <div class="u-pull-right">
-      <span>Search Department/Office: </span>
+      <span>Search Departments: </span>
       <input type="text" placeholder="Information Technology Services" id="searchBox">
     </div>
     <!-- action shortcuts -->              

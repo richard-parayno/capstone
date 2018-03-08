@@ -22,7 +22,7 @@
 @section('content')
 <div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process edit-user logic after submitting form. -->
-  <h1>Edit User Account Information</h1>
+  <h1>Change User Information</h1>
   <form action="{{ route('user-editinfo-process')}}">
     <div class="twelve columns" style="margin: 0px;">
         <p>Selected User: </p>
@@ -30,17 +30,19 @@
           $currentUser = $_GET['user'];
          
           $userdata = DB::table('users')->where('id', $currentUser)->first();
-          echo $userdata->accountName;
+          $usertype = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $currentUser)->first();
+
+          echo $userdata->accountName." - ".$usertype->userTypeName;
           echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"current-user\" id=\"current-user\" value=\"$currentUser\">");
         @endphp
     </div>
     <div class="six columns" style="margin: 0px;">
-      <label for="first-name">First Name</label>
+      <label for="first-name">New First Name</label>
       <input class="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance">
       
     </div>
     <div class="six columns">
-      <label for="last-name">Last Name</label>
+      <label for="last-name">New Last Name</label>
       <input class="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno">
     </div>
     <input class="button-primary u-pull-right" type="submit" value="Update">

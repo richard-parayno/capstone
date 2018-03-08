@@ -23,23 +23,39 @@
 @section('content')
 <div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process add-campus logic after submitting form. -->
-  <h1>Edit Campus/Institute Info</h1>    
-  <form action="/add-campus">
-    <label>
-      <label>Campus or Institute?</label>
-      <input type="radio" name="ci-type" id="type-campus" value="Campus">
-      <span class="label-body">Campus</span>
-      <br>
-      <input type="radio" name="ci-type" id="type-institute" value="Institute">
-      <span class="label-body">Institute</span>
-    </label>
+  <h1>Update Institution Information</h1>    
+  <form action="{{ route('campus-editinfo-process') }}">
+    <p>Selected Institution: </p>
+    @php
+      use App\Models\Institution;
+      use App\Models\SchooltypeRef;
+    
+      $currentInstitution = $_GET['institution'];
+     
+      $institution = Institution::find($currentInstitution);
+
+      $schoolType = SchooltypeRef::find($institution->schoolTypeID);
+
+      $schools = SchooltypeRef::all();
+
+      echo $institution->institutionName." - ".$institution->location." - ".$schoolType->schoolTypeName;
+      echo ("<input class=\"u-full-width\" type=\"hidden\" name=\"current-ci\" id=\"current-ci\" value=\"$currentInstitution\">");
+    @endphp
     <div class="twelve columns">
-      <label for="ci-name">Campus/Institute Name</label>
+      <label for="ci-name">Updated Institution Name</label>
       <input class="u-full-width" type="text" name="ci-name" id="ci-name" placeholder="La Salle Greenhills">
     </div>
     <div class="twelve columns">
-      <label for="ci-location">Location</label>
+      <label for="ci-location">Updated Location</label>
       <input class="u-full-width" type="text" name="ci-location" id="email" placeholder="GH pare">
+    </div>
+    <div class="twelve columns">
+      <label for="ci-type">Updated Classification</label>
+      <select class="u-full-width" name="ci-type" id="ci-type" style="color: black;">
+        @foreach($schools as $schoolTypes)
+          <option value="{{ $schoolTypes->schoolTypeID }}">{{ $schoolTypes->schoolTypeName }}</option>
+        @endforeach
+      </select>
     </div>
     <input class="button-primary u-pull-right" type="submit" value="Edit Campus/Institute Info">
   </form>
