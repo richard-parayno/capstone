@@ -51,7 +51,7 @@
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('dashboard') }}">Analytics Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Analytics</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Trip Data</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
@@ -90,7 +90,7 @@
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('dashboard') }}">Analytics Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Analytics</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Trip Data</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
@@ -121,7 +121,7 @@
         <!-- add view trees planted -->
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('dashboard') }}">Analytics Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Analytics</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Trip Data</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>
@@ -136,7 +136,7 @@
         <!-- add view trees planted -->
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('dashboard') }}">Analytics Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Analytics</a></li>
             <li><a href="{{ route('upload-files') }}">Upload Trip Data</a></li>
             <li><a href="{{ route('tree-plant') }}">We Planted Trees</a></li>
         </ul>

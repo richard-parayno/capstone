@@ -38,6 +38,11 @@ img {
   bottom: 0;
 }
 
+#sidebar::-webkit-scrollbar {
+  width: 0px;  /* remove scrollbar space */
+
+}
+
 #sidebar ul {
   list-style: none;
   text-align: justify;

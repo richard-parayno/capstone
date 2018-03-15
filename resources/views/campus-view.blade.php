@@ -28,10 +28,10 @@
   <table class="u-full-width">
     <thead>
       <tr>
-        <th>Campus/Institute Name</th>
+        <th>Campus/Institution Name</th>
         <th>Type</th>
         <th>Location</th>
-        <th>Campus/Institute Actions</th>
+        <th>Campus/Institution Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -46,7 +46,7 @@
         <td>{{ $institution->location }}</td>
         <td style="text-align: center;">
           <a href="{{ route('campus-editinfo', array('institution' => $institution->institutionID)) }}">
-            Edit Campus/Institute Info
+            Edit Campus/Institution Info
           </a>
         </td>
       </tr>
@@ -57,7 +57,7 @@
       <button class="button-primary">New Campus</button>
     </a>
     <div class="u-pull-right">
-      <span>Search Campus/Institute: </span>
+      <span>Search Campus/Institution: </span>
       <input type="text" placeholder="De La Salle University" id="searchBox">
     </div>
     <!-- action shortcuts -->              
