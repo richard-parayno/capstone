@@ -59,6 +59,9 @@ Route::get('/dashboard/campus-editinfo-process', 'InstitutionController@edit')->
 
 /* View Departments/Offices */
 Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->name('department-view')->middleware('auth');
+Route::get('/dashboard/department-view-search', 'ViewUserController@viewDepartmentsSearch')->name('department-view-search')->middleware('auth');
+Route::get('/department-search','ViewUserController@viewDepartmentsProcess')->name('department-search')->middleware('auth');
+
 /* Add New Department/Offices */
 Route::get('/dashboard/department-add', 'AddController@loadToDepartment')->name('department-add')->middleware('auth');
 Route::post('/dashboard/department-add-process', 'DepartmentController@create')->name('department-add-process')->middleware('auth');

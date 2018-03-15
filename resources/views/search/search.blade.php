@@ -36,19 +36,19 @@
   </div>
 
   <script type="text/javascript">
-    $('#search').on('keyup', function () {
+    $('#search').on('keydown', function (e) {
+      if (e.which == 13) {
       $value = $(this).val();
       $.ajax({
         type: 'get',
-        url: '{{URL::to('
-        search - process ')}}',
+        url: '{{URL::to('search-process')}}',
         data: {
           'search': $value
         },
         success: function (data) {
           $('tbody').html(data);
         }
-      });
+      })};
     })
   </script>
 

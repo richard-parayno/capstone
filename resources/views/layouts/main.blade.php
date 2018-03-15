@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+@section('header')
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,9 @@
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/style-dash.css') }}">
   <link rel="stylesheet" href="https://unpkg.com/js-datepicker/datepicker.css">
   <script src="https://unpkg.com/js-datepicker"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>  
 </head>
+
 @section('styling')
 
 @show
