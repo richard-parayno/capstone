@@ -29,13 +29,14 @@ class ViewUserController extends Controller
     }
 
     public function viewVehicles() {
-        $vehicles = DB::table('vehicles_mv')->get();
+        $vehicles = DB::table('vehicles_mv')->where('active', 1)->get();
+        $inactive = DB::table('vehicles_mv')->where('active', 0)->get();
         $brands = DB::table('carbrand_ref')->get();
         $institutions = DB::table('institutions')->get(); 
         $fueltype = DB::table('fueltype_ref')->get();
         $cartypes = DB::table('cartype_ref')->get();
 
-        return view('vehicle-view', compact('vehicles', 'brands', 'institutions', 'fueltype', 'cartypes'));
+        return view('vehicle-view', compact('vehicles', 'inactive', 'brands', 'institutions', 'fueltype', 'cartypes'));
     }
 
 

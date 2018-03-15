@@ -58,15 +58,19 @@
           echo "<br>";
         @endphp
 
+        @if ($selected->active == 1)
         <p>Are you sure you want to decommission this vehicle?</p>
+        @elseif ($selected->active == 0)
+        <p>Are you sure you want to make this vehicle active?</p>
+        @endif
         <input type="radio" name="choice" value="yes">
         <span class="label-body">Yes</span>
         <br>
         <input type="radio" name="choice" value="no">
         <span class="label-body">No</span>
         <br>
-        <a class="button button-primary u-pull-left" onClick="goBack()">Cancel Vehicle Decommission</a>
-        <input class="button-primary u-pull-right" type="submit" value="Confirm Vehicle Decommission">
+        <a class="button button-primary u-pull-left" onClick="goBack()">Cancel Vehicle Status Update</a>
+        <input class="button-primary u-pull-right" type="submit" value="Confirm Vehicle Status Update">
       </form>
     </div>
 @endsection

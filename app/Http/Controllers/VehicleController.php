@@ -72,18 +72,36 @@ class VehicleController extends Controller
       $currentPlate = $data['vehicle-current'];
       $choice = $data['choice'];
 
-      if ($choice == 'yes') {
-        $cardata = VehiclesMv::find($currentPlate);
-        $cardata->active = 0; 
-        $cardata->save();
-
-        return redirect()->route('vehicle-view');
+      if (VehiclesMv::find($currentPlate)->active == 1) {
+        if ($choice == 'yes') {
+          $cardata = VehiclesMv::find($currentPlate);
+          $cardata->active = 0; 
+          $cardata->save();
+  
+          return redirect()->route('vehicle-view');
+        } else {
+          $cardata = VehiclesMv::find($currentPlate);
+          $cardata->active = 1; 
+          $cardata->save();
+  
+          return redirect()->route('vehicle-view');
+        }
       } else {
-        $cardata = VehiclesMv::find($currentPlate);
-        $cardata->active = 1; 
-        $cardata->save();
-
-        return redirect()->route('vehicle-view');
+        if ($choice == 'yes') {
+          $cardata = VehiclesMv::find($currentPlate);
+          $cardata->active = 1; 
+          $cardata->save();
+  
+          return redirect()->route('vehicle-view');
+        } else {
+          $cardata = VehiclesMv::find($currentPlate);
+          $cardata->active = 0; 
+          $cardata->save();
+  
+          return redirect()->route('vehicle-view');
+        }
       }
+
+      
     }
 }
