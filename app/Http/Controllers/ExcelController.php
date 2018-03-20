@@ -10,6 +10,10 @@ use App\Models\Trip;
 use App\Models\Monthlyemissionsperschool;
 use DateTime;
 use Debugbar;
+use PHPExcel_Cell;
+use PHPExcel_Cell_DataType;
+use PHPExcel_Cell_IValueBinder;
+use PHPExcel_Cell_DefaultValueBinder;
 
 class ExcelController extends Controller
 {
@@ -26,7 +30,7 @@ class ExcelController extends Controller
         
         //load the content of the excel file into an array called $load. we also format the dates into m/d/Y before we pass all of the data to the array.
         $load = Excel::load($excelFile, function($reader) {
-            $reader->formatDates(true, 'm/d/Y');
+
         })->get()->toArray();
         // run the conditional if $load has stuff in it
         if($load){
@@ -41,7 +45,9 @@ class ExcelController extends Controller
                 Debugbar::info("convertd1 ".$convertd1);                
                 Debugbar::info("convertd1 strtotime".strtotime($convertd1));                
                 $currentMonth = date("Y-m-d", strtotime($convertd1));
+                $currentd1Time = date("H:i", strtotime($row['departure_time']));          
                 Debugbar::info("currentMonth ".$currentMonth);
+                Debugbar::info("currentTime ".$currentd1Time);
                 
 
                 // place the current row's data into variables you can manipulate easier
@@ -53,6 +59,7 @@ class ExcelController extends Controller
 
                 //do the same date conversion but declare it as the currrent month in excel.
                 $convertd2 = (string)$row['date'];
+                $currentd2Time = $row['departure_time'];                              
                 Debugbar::info("convertd2 ".$convertd2);                
                 Debugbar::info("convertd2 strtotime".strtotime($convertd2));  
                 $currentMonthInExcel = date("Y-m-d", strtotime($convertd2));
@@ -85,6 +92,8 @@ class ExcelController extends Controller
                         $trips->plateNumber = $currentPlateNumber;
                         $trips->kilometerReading = $currentKMReading;
                         $trips->emissions = $dieselEmissionInTonnes;
+                        $trips->tripTime = $currentd1Time;
+                        $trips->tripDate = $currentMonth;
                         $trips->save();
                         
                         //if the first run of the code hasn't started yet
@@ -117,6 +126,8 @@ class ExcelController extends Controller
                         $trips->plateNumber = $currentPlateNumber;
                         $trips->kilometerReading = $currentKMReading;
                         $trips->emissions = $gasEmissionInTonnes;
+                        $trips->tripTime = $currentd1Time;  
+                        $trips->tripDate = $currentMonth;                                              
                         $trips->save();   
                         
                         //if the first run of the code hasn't started yet
@@ -156,11 +167,12 @@ class ExcelController extends Controller
                 }
 
                 // place current row into the array that we'll pass to the next page
-                $data[$ctr]['date'] = $row['date'];
+                $data[$ctr]['date'] = $currentMonth;
                 $data[$ctr]['requesting_department'] = $row['requesting_department'];
                 $data[$ctr]['plate_number'] = $row['plate_number'];
                 $data[$ctr]['kilometer_reading'] = $row['kilometer_reading'];
                 $data[$ctr]['destinations'] = $row['destinations'];
+                $data[$ctr]['tripTime'] = $currentd1Time;
                 
                 //iterate the ctr to go to the next row
                 $ctr++;

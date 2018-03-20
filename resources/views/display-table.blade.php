@@ -30,6 +30,7 @@
     <thead>
       <tr>
         <th>Date</th>
+        <th>Departure Time</th>
         <th>Requesting Department</th>
         <th>Plate Number</th>
         <th>Kilometer Reading</th>
@@ -48,6 +49,7 @@
         $checker = DB::table('vehicles_mv')->where('plateNumber', $data[$x]['plate_number'])->first();
         if ($checker == null) {
           $throw[$x]['date'] = $data[$x]['date'];
+          $throw[$x]['tripTime'] = $data[$x]['tripTime'];
           $throw[$x]['requesting_department'] = $data[$x]['requesting_department'];
           $throw[$x]['plate_number'] = $data[$x]['plate_number'];
           $throw[$x]['kilometer_reading'] = $data[$x]['kilometer_reading'];
@@ -55,6 +57,7 @@
         } else {
           echo "<tr>";
           echo "<td>".$data[$x]['date']."</td>";
+          echo "<td>".$data[$x]['tripTime']."</td>";
           echo "<td>".$data[$x]['requesting_department']."</td>";
           echo "<td>".$data[$x]['plate_number']."</td>";
           echo "<td>".$data[$x]['kilometer_reading']."</td>";
@@ -70,33 +73,6 @@
 
   </table>
 
-  <h1>Dataset Errors</h1>
-  @php
-  if ($throw != null) {
-    echo "<table>";
-    echo "<thead>";
-    echo  "<tr>";
-    echo    "<th>Date</th>";
-    echo    "<th>Requesting Department</th>";
-    echo    "<th>Plate Number</th>";
-    echo    "<th>Kilometer Reading</th>";
-    echo    "<th>Destinations</th>";
-    echo  "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
-    for($x = 0; $x < count($throw); $x++) {
-      echo"<tr>";
-      echo"<td>".$throw[$x]['date']."</td>";
-      echo"<td>".$throw[$x]['requesting_department']."</td>";
-      echo"<td>".$throw[$x]['plate_number']."</td>";
-      echo"<td>".$throw[$x]['kilometer_reading']."</td>";
-      echo"<td>".$throw[$x]['destinations']."</td>";
-      echo"</tr>";
-    }
-    echo "</tbody>";
-    echo "</table>";
-  }
-  @endphp
 </div>
 
 @endsection

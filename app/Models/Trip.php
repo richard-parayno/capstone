@@ -32,7 +32,8 @@ class Trip extends Eloquent
 	protected $casts = [
 		'deptID' => 'int',
 		'kilometerReading' => 'int',
-		'emissions' => 'float'
+		'emissions' => 'float',
+		'tripDate' => 'date'
 	];
 
 	protected $fillable = [
@@ -40,7 +41,10 @@ class Trip extends Eloquent
 		'plateNumber',
 		'kilometerReading',
 		'remarks',
-		'emissions'
+		'emissions',
+		'tripDate',
+		'tripTime'
+
 	];
 
 	public function deptsperinstitution()
