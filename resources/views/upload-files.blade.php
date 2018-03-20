@@ -21,7 +21,7 @@
 
 @section('content')
 
-<div class="seven column" id="box-form">
+<div class="eight columns offset-by-two" id="box-form">
   <h1>Upload Excel File</h1>
   <form action="{{ route('process-file') }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
