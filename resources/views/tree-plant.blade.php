@@ -25,9 +25,9 @@
 @endsection
 
 @section('content')
-<div class="eight columns" id="box-form">
+<div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process add-user logic after submitting form. -->
-  <h1>Add Trees Planted</h1>    
+  <h1>We Planted Trees</h1>    
   <form method="post" action="{{ route('process-trees') }}">
     {{ csrf_field() }}
     @if(Session::has('success'))
@@ -36,7 +36,7 @@
     </div>
     @endif
     <div class="twelve columns">
-      <label for="institutionID">Select Campus/Institute</label>
+      <label for="institutionID">Choose a Campus</label>
       <select class="u-full-width" name="institutionID" id="institution">
         @foreach($institutions as $institution)
           <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
@@ -49,7 +49,7 @@
       </span>
     @endif
     <div class="twelve columns">
-      <label for="numOfPlantedTrees">Number of Planted Trees</label>
+      <label for="numOfPlantedTrees">Number of Trees Planted</label>
       <input class="u-full-width" type="text" name="numOfPlantedTrees" id="numOfPlantedTrees" >
     </div>
     @if ($errors->has('numOfPlantedTrees'))
