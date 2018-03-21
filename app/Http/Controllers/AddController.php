@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use App\Models\Institution, App\Models\Institutionbatchplant;
 
 class AddController extends Controller
 {
@@ -34,5 +35,12 @@ class AddController extends Controller
         $institutions = DB::table('institutions')->get();         
 
         return view('tree-plant', compact('institutions'));
+    }
+
+    public function viewPlanted() {
+        $institutions = Institution::all();
+        $treesPlanted = Institutionbatchplant::all();
+
+        return view('tree-view', compact('institutions', 'treesPlanted'));
     }
 }

@@ -24,9 +24,9 @@
 @section('content')
 
 
-<div class="seven column" id="box-form">
-  <h1>Excel Data</h1>
-  <table>
+<div class="ten columns offset-by-one" id="box-form">
+  <h1>Confirm Trip Data</h1>
+  <table class="u-full-width">
     <thead>
       <tr>
         <th>Date</th>
@@ -41,6 +41,7 @@
       @php
       $y = count($data);
       $throw = array();
+      $z = 0;
       @endphp
       
 
@@ -48,12 +49,13 @@
         @php 
         $checker = DB::table('vehicles_mv')->where('plateNumber', $data[$x]['plate_number'])->first();
         if ($checker == null) {
-          $throw[$x]['date'] = $data[$x]['date'];
-          $throw[$x]['tripTime'] = $data[$x]['tripTime'];
-          $throw[$x]['requesting_department'] = $data[$x]['requesting_department'];
-          $throw[$x]['plate_number'] = $data[$x]['plate_number'];
-          $throw[$x]['kilometer_reading'] = $data[$x]['kilometer_reading'];
-          $throw[$x]['destinations'] = $data[$x]['destinations'];
+          $throw[$z]['date'] = $data[$x]['date'];
+          $throw[$z]['tripTime'] = $data[$x]['tripTime'];
+          $throw[$z]['requesting_department'] = $data[$x]['requesting_department'];
+          $throw[$z]['plate_number'] = $data[$x]['plate_number'];
+          $throw[$z]['kilometer_reading'] = $data[$x]['kilometer_reading'];
+          $throw[$z]['destinations'] = $data[$x]['destinations'];
+          $z++;
         } else {
           echo "<tr>";
           echo "<td>".$data[$x]['date']."</td>";
@@ -66,13 +68,38 @@
         }
         @endphp
       @endfor
-
-      
     </tbody>
-
-
   </table>
+</div>
 
+<div class="ten columns offset-by-one" id="box-form">
+    <h1>Data Set Errors</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Departure Time</th>
+          <th>Requesting Department</th>
+          <th>Plate Number</th>
+          <th>Kilometer Reading</th>
+          <th>Destinations</th>
+        </tr>
+      </thead>
+      <tbody>
+        @php
+        foreach ($throw as $x) {
+          echo "<tr>";
+          echo "<td>".$x['date']."</td>";
+          echo "<td>".$x['tripTime']."</td>";
+          echo "<td>".$x['requesting_department']."</td>";
+          echo "<td>".$x['plate_number']."</td>";
+          echo "<td>".$x['kilometer_reading']."</td>";
+          echo "<td>".$x['destinations']."</td>";
+          echo "</tr>";
+        }
+        @endphp
+      </tbody>
+    </table>
 </div>
 
 @endsection

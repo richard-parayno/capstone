@@ -31,9 +31,8 @@ class Trip extends Eloquent
 
 	protected $casts = [
 		'deptID' => 'int',
-		'kilometerReading' => 'int',
+		'kilometerReading' => 'decimal',
 		'emissions' => 'float',
-		'tripDate' => 'date'
 	];
 
 	protected $fillable = [
@@ -44,7 +43,6 @@ class Trip extends Eloquent
 		'emissions',
 		'tripDate',
 		'tripTime'
-
 	];
 
 	public function deptsperinstitution()
@@ -55,5 +53,9 @@ class Trip extends Eloquent
 	public function vehicles_mv()
 	{
 		return $this->belongsTo(\App\Models\VehiclesMv::class, 'plateNumber');
+	}
+
+	private function getTime() {
+		return date("H:i", strtotime($this->attributes['tripTime']));          
 	}
 }

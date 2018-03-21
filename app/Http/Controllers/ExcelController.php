@@ -18,8 +18,15 @@ use PHPExcel_Cell_DefaultValueBinder;
 class ExcelController extends Controller
 {
     public function show() {
+        $trips = Trip::all();
 
-        return view('upload-files');
+        return view('upload-files', compact('trips'));
+    }
+
+    public function showUploaded() {
+        $trips = Trip::all();
+        
+        return view('upload-view', compact('trips'));
     }
 
     public function process() {

@@ -79,6 +79,8 @@
     @endif
 
     <input class="button-primary u-pull-right" type="submit" value="Add Planted Trees">
+    <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>
+    
   </form>
 </div>
 @endsection

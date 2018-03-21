@@ -22,12 +22,14 @@
 @section('content')
 
 <div class="eight columns offset-by-two" id="box-form">
-  <h1>Upload Excel File</h1>
+  <h1>Upload Trip Data</h1>
   <form action="{{ route('process-file') }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
     <input type="file" name="excelFile">
     <br>
-    <input type="submit" value="Submit">
+    <input class="button button-primary u-pull-right" type="submit" value="Submit">
+    <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a> 
+    
   </form>
 </div>
 

@@ -28,8 +28,10 @@ Route::get('/dashboard', function () {
 })->name('dashboard')->middleware('auth');
 /* Excel Upload Route */
 Route::get('/dashboard/upload-files', 'ExcelController@show')->name('upload-files')->middleware('auth');
+Route::get('/dashboard/upload-view', 'ExcelController@showUploaded')->name('upload-view')->middleware('auth');
 Route::post('/dashboard/process-file', 'ExcelController@process')->name('process-file')->middleware('auth');
 Route::get('/dashboard/tree-plant', 'AddController@loadToBatchPlant')->name('tree-plant')->middleware('auth');
+Route::get('/dashboard/tree-view', 'AddController@viewPlanted')->name('tree-view')->middleware('auth');
 Route::post('/dashboard/process-trees', 'InstitutionBatchPlantController@add')->name('process-trees')->middleware('auth');
 
 /* User Account Management Routes */
