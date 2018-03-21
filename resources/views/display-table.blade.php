@@ -22,8 +22,6 @@
 @endsection
 
 @section('content')
-
-
 <div class="ten columns offset-by-one" id="box-form">
   <h1>Confirm Trip Data</h1>
   <table class="u-full-width">
@@ -43,8 +41,6 @@
       $throw = array();
       $z = 0;
       @endphp
-      
-
       @for($x = 0; $x < $y; $x++)
         @php 
         $checker = DB::table('vehicles_mv')->where('plateNumber', $data[$x]['plate_number'])->first();
@@ -70,6 +66,20 @@
       @endfor
     </tbody>
   </table>
+    @php
+      $y = count($excelFile);
+      $throw = array();
+      $z = 0;
+    @endphp
+    <form action="{{ route('process-file') }}" method="POST">
+      {{ csrf_field() }}
+      @php
+        echo "<input type='hidden' name='excelFile' value='".$excelFile."'>'";
+      @endphp
+
+      <input class="button button-primary u-pull-right" type="submit" value="Confirm Trip Data Upload">
+      <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>  
+    </form>
 </div>
 
 <div class="ten columns offset-by-one" id="box-form">
