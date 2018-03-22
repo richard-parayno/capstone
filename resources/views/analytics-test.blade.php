@@ -1,965 +1,165 @@
-@extends('layouts.main')
-
-
-@section('styling')
+@extends('layouts.main') @section('styling')
 <style>
-  
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+    }
+
+    #chartdiv {
+        width: 100%;
+        height: 50%;
+        margin: 20px;
+    }
 </style>
-@endsection
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+@endsection 
+<div class="container" id="main-content">
+<div id="chartdiv"></div>
+<div class="seven column" id="control">
+    <select class="u-full-width" name="userTypeID" id="userTypeID" style="color: black;">
+    </select>
 
-
-@section('content')
-<div class="row">
-  <div class="seven column" id="control">
-      <select class="u-full-width" name="userTypeID" id="userTypeID" style="color: black;">
-      </select>
-
-      <div>
+    <div>
         <input class="u-full-width" name="date" id="date">
-      </div>
+    </div>
 
-  </div>
 </div>
-<div class="row">
-  <div class="seven column" id="analytics">
+</div>
 
-  </div>
-</div>
-@endsection
 
 @section('scripts')
-  <script>
-    const picker = datepicker('#date');
-  </script>
-  <script src="{{ asset('/js/jquery-3.2.1.min.js') }}"></script>
-  <script src="{{ asset('/js/fusioncharts-suite-xt/js/fusioncharts.js') }}"></script>
-  <script src="{{ asset('/js/fusioncharts-suite-xt/themes/fusioncharts.theme.carbon.js') }}"></script>
-  <script>
-    FusionCharts.ready(function() {
-      var revenueChart = new FusionCharts({
-        "type": "line",
-        "renderAt": "analytics",
-        "width": "500",
-        "height": "300",
-        "dataFormat": "json",
-        "dataSource": {
-          "chart":{
-             "caption":"YoY Sales - KFC",
-             "xAxisName":"Year",
-             "yAxisName":"Sales",
-             "paletteColors":"#008ee4",
-             "yAxisMaxValue":"50000",
-             "baseFont":"Open Sans",
-             "theme":"elegant"
-          },
-          "data":[
-             {
-                "label":"2011",
-                "value":"32145",
-                "link":"newchart-json-2011"
-             },
-             {
-                "label":"2012",
-                "value":"30078",
-                "link":"newchart-json-2012"
-             },
-             {
-                "label":"2013",
-                "value":"14536",
-                "link":"newchart-json-2013"
-             },
-             {
-                "label":"2014",
-                "value":"20163",
-                "link":"newchart-json-2014"
-             },
-             {
-                "label":"2015",
-                "value":"39163",
-                "link":"newchart-json-2015"
-             },
-             {
-                "label":"2016",
-                "value":"39973",
-                "link":"newchart-json-2016"
-             }
-          ],
-          "linkeddata":[
-             {
-                "id":"2011",
-                "linkedchart":{
-                   "chart":{
-                      "caption":"QoQ Sales - KFC for 2011",
-                      "xAxisName":"Quarter",
-                      "yAxisName":"Sales",
-                      "paletteColors":"#6baa01",
-                      "baseFont":"Open Sans",
-                      "theme":"elegant"
-                   },
-                   "data":[
-                      {
-                         "label":"Q1",
-                         "value":"7500",
-                         "link":"newchart-json-2011Q1"
-                      },
-                      {
-                         "label":"Q2",
-                         "value":"8150",
-                         "link":"newchart-json-2011Q2"
-                      },
-                      {
-                         "label":"Q3",
-                         "value":"9350",
-                         "link":"newchart-json-2011Q3"
-                      },
-                      {
-                         "label":"Q4",
-                         "value":"7145",
-                         "link":"newchart-json-2011Q4"
-                      }
-                   ],
-                   "linkeddata":[
-                      {
-                         "id":"2011Q1",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q1 of 2011",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jan",
-                                  "value":"2000"
-                               },
-                               {
-                                  "label":"Feb",
-                                  "value":"2300"
-                               },
-                               {
-                                  "label":"Mar",
-                                  "value":"3200"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2011Q2",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q2 of 2011",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Apr",
-                                  "value":"2800"
-                               },
-                               {
-                                  "label":"May",
-                                  "value":"3000"
-                               },
-                               {
-                                  "label":"Jun",
-                                  "value":"2350"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2011Q3",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q3 of 2011",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jul",
-                                  "value":"2850"
-                               },
-                               {
-                                  "label":"Aug",
-                                  "value":"3000"
-                               },
-                               {
-                                  "label":"Sep",
-                                  "value":"3500"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2011Q4",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q4 of 2011",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Oct",
-                                  "value":"3000"
-                               },
-                               {
-                                  "label":"Nov",
-                                  "value":"2895"
-                               },
-                               {
-                                  "label":"Dec",
-                                  "value":"1250"
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "id":"2012",
-                "linkedchart":{
-                   "chart":{
-                      "caption":"QoQ Sales - KFC for 2012",
-                      "xAxisName":"Quarter",
-                      "yAxisName":"Sales",
-                      "paletteColors":"#6baa01",
-                      "baseFont":"Open Sans",
-                      "theme":"elegant"
-                   },
-                   "data":[
-                      {
-                         "label":"Q1",
-                         "value":"7000",
-                         "link":"newchart-json-2012Q1"
-                      },
-                      {
-                         "label":"Q2",
-                         "value":"6178",
-                         "link":"newchart-json-2012Q2"
-                      },
-                      {
-                         "label":"Q3",
-                         "value":"8000",
-                         "link":"newchart-json-2012Q3"
-                      },
-                      {
-                         "label":"Q4",
-                         "value":"8900",
-                         "link":"newchart-json-2012Q4"
-                      }
-                   ],
-                   "linkeddata":[
-                      {
-                         "id":"2012Q1",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q1 of 2012",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jan",
-                                  "value":"1585"
-                               },
-                               {
-                                  "label":"Feb",
-                                  "value":"2345"
-                               },
-                               {
-                                  "label":"Mar",
-                                  "value":"3070"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2012Q2",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q2 of 2012",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Apr",
-                                  "value":"2856"
-                               },
-                               {
-                                  "label":"May",
-                                  "value":"2500"
-                               },
-                               {
-                                  "label":"Jun",
-                                  "value":"822"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2012Q3",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q3 of 2012",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jul",
-                                  "value":"1500"
-                               },
-                               {
-                                  "label":"Aug",
-                                  "value":"3296"
-                               },
-                               {
-                                  "label":"Sep",
-                                  "value":"3204"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2012Q4",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q4 of 2012",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Oct",
-                                  "value":"3689"
-                               },
-                               {
-                                  "label":"Nov",
-                                  "value":"3200"
-                               },
-                               {
-                                  "label":"Dec",
-                                  "value":"2011"
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "id":"2013",
-                "linkedchart":{
-                   "chart":{
-                      "caption":"QoQ Sales - KFC for 2013",
-                      "xAxisName":"Quarter",
-                      "yAxisName":"Sales",
-                      "paletteColors":"#6baa01",
-                      "baseFont":"Open Sans",
-                      "theme":"elegant"
-                   },
-                   "data":[
-                      {
-                         "label":"Q1",
-                         "value":"3000",
-                         "link":"newchart-json-2013Q1"
-                      },
-                      {
-                         "label":"Q2",
-                         "value":"4000",
-                         "link":"newchart-json-2013Q2"
-                      },
-                      {
-                         "label":"Q2",
-                         "value":"3536",
-                         "link":"newchart-json-2013Q2"
-                      },
-                      {
-                         "label":"Q4",
-                         "value":"4000",
-                         "link":"newchart-json-2013Q4"
-                      }
-                   ],
-                   "linkeddata":[
-                      {
-                         "id":"2013Q1",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q1 of 2013",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jan",
-                                  "value":"1200"
-                               },
-                               {
-                                  "label":"Feb",
-                                  "value":"500"
-                               },
-                               {
-                                  "label":"Mar",
-                                  "value":"400"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2013Q2",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q2 of 2013",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Apr",
-                                  "value":"900"
-                               },
-                               {
-                                  "label":"May",
-                                  "value":"1565"
-                               },
-                               {
-                                  "label":"Jun",
-                                  "value":"1535"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2013Q2",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q2 of 2013",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Apr",
-                                  "value":"900"
-                               },
-                               {
-                                  "label":"May",
-                                  "value":"1565"
-                               },
-                               {
-                                  "label":"Jun",
-                                  "value":"1535"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2013Q4",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q4 of 2013",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Oct",
-                                  "value":"980"
-                               },
-                               {
-                                  "label":"Nov",
-                                  "value":"1500"
-                               },
-                               {
-                                  "label":"Dec",
-                                  "value":"1520"
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "id":"2014",
-                "linkedchart":{
-                   "chart":{
-                      "caption":"QoQ Sales - KFC for 2014",
-                      "xAxisName":"Quarter",
-                      "yAxisName":"Sales",
-                      "paletteColors":"#6baa01",
-                      "baseFont":"Open Sans",
-                      "theme":"elegant"
-                   },
-                   "data":[
-                      {
-                         "label":"Q1",
-                         "value":"5040",
-                         "link":"newchart-json-2014Q1"
-                      },
-                      {
-                         "label":"Q2",
-                         "value":"5600",
-                         "link":"newchart-json-2014Q2"
-                      },
-                      {
-                         "label":"Q3",
-                         "value":"4960",
-                         "link":"newchart-json-2014Q3"
-                      },
-                      {
-                         "label":"Q4",
-                         "value":"4563",
-                         "link":"newchart-json-2014Q4"
-                      }
-                   ],
-                   "linkeddata":[
-                      {
-                         "id":"2014Q1",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q1 of 2014",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jan",
-                                  "value":"1875"
-                               },
-                               {
-                                  "label":"Feb",
-                                  "value":"1600"
-                               },
-                               {
-                                  "label":"Mar",
-                                  "value":"1565"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2014Q2",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q2 of 2014",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Apr",
-                                  "value":"2389"
-                               },
-                               {
-                                  "label":"May",
-                                  "value":"1289"
-                               },
-                               {
-                                  "label":"Jun",
-                                  "value":"1922"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2014Q3",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q3 of 2014",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jul",
-                                  "value":"2006"
-                               },
-                               {
-                                  "label":"Aug",
-                                  "value":"1854"
-                               },
-                               {
-                                  "label":"Sep",
-                                  "value":"1100"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2014Q4",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q4 of 2014",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Oct",
-                                  "value":"875"
-                               },
-                               {
-                                  "label":"Nov",
-                                  "value":"1500"
-                               },
-                               {
-                                  "label":"Dec",
-                                  "value":"2188"
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "id":"2015",
-                "linkedchart":{
-                   "chart":{
-                      "caption":"QoQ Sales - KFC for 2015",
-                      "xAxisName":"Quarter",
-                      "yAxisName":"Sales",
-                      "paletteColors":"#6baa01",
-                      "baseFont":"Open Sans",
-                      "theme":"elegant"
-                   },
-                   "data":[
-                      {
-                         "label":"Q1",
-                         "value":"10700",
-                         "link":"newchart-json-2015Q1"
-                      },
-                      {
-                         "label":"Q2",
-                         "value":"8563",
-                         "link":"newchart-json-2015Q2"
-                      },
-                      {
-                         "label":"Q3",
-                         "value":"11000",
-                         "link":"newchart-json-2015Q3"
-                      },
-                      {
-                         "label":"Q4",
-                         "value":"8900",
-                         "link":"newchart-json-2015Q4"
-                      }
-                   ],
-                   "linkeddata":[
-                      {
-                         "id":"2015Q1",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q1 of 2015",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jan",
-                                  "value":"4087"
-                               },
-                               {
-                                  "label":"Feb",
-                                  "value":"3965"
-                               },
-                               {
-                                  "label":"Mar",
-                                  "value":"2684"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2015Q2",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q2 of 2015",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Apr",
-                                  "value":"2983"
-                               },
-                               {
-                                  "label":"May",
-                                  "value":"3265"
-                               },
-                               {
-                                  "label":"Jun",
-                                  "value":"2315"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2015Q3",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q3 of 2015",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jul",
-                                  "value":"3215"
-                               },
-                               {
-                                  "label":"Aug",
-                                  "value":"3998"
-                               },
-                               {
-                                  "label":"Sep",
-                                  "value":"3787"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2015Q4",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q4 of 2015",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Oct",
-                                  "value":"4098"
-                               },
-                               {
-                                  "label":"Nov",
-                                  "value":"2654"
-                               },
-                               {
-                                  "label":"Dec",
-                                  "value":"2148"
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "id":"2016",
-                "linkedchart":{
-                   "chart":{
-                      "caption":"QoQ Sales - KFC for 2016",
-                      "xAxisName":"Quarter",
-                      "yAxisName":"Sales",
-                      "paletteColors":"#6baa01",
-                      "baseFont":"Open Sans",
-                      "theme":"elegant"
-                   },
-                   "data":[
-                      {
-                         "label":"Q1",
-                         "value":"9900",
-                         "link":"newchart-json-2016Q1"
-                      },
-                      {
-                         "label":"Q2",
-                         "value":"10000",
-                         "link":"newchart-json-2016Q2"
-                      },
-                      {
-                         "label":"Q3",
-                         "value":"11173",
-                         "link":"newchart-json-2016Q3"
-                      },
-                      {
-                         "label":"Q4",
-                         "value":"8900",
-                         "link":"newchart-json-2016Q4"
-                      }
-                   ],
-                   "linkeddata":[
-                      {
-                         "id":"2016Q1",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q1 of 2016",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jan",
-                                  "value":"2983"
-                               },
-                               {
-                                  "label":"Feb",
-                                  "value":"3965"
-                               },
-                               {
-                                  "label":"Mar",
-                                  "value":"2952"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2016Q2",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q2 of 2016",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Apr",
-                                  "value":"3998"
-                               },
-                               {
-                                  "label":"May",
-                                  "value":"3265"
-                               },
-                               {
-                                  "label":"Jun",
-                                  "value":"2737"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2016Q3",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q3 of 2016",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Jul",
-                                  "value":"3215"
-                               },
-                               {
-                                  "label":"Aug",
-                                  "value":"3787"
-                               },
-                               {
-                                  "label":"Sep",
-                                  "value":"4171"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "id":"2016Q4",
-                         "linkedchart":{
-                            "chart":{
-                               "caption":"MoM Sales - KFC for Quarter Q4 of 2016",
-                               "xAxisName":"Month",
-                               "yAxisName":"Sales",
-                               "paletteColors":"#f5555C",
-                               "baseFont":"Open Sans",
-                               "theme":"elegant"
-                            },
-                            "data":[
-                               {
-                                  "label":"Oct",
-                                  "value":"4078"
-                               },
-                               {
-                                  "label":"Nov",
-                                  "value":"3566"
-                               },
-                               {
-                                  "label":"Dec",
-                                  "value":"1256"
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                }
-             }
-          ]
-       }
-      });
+<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 
-      revenueChart.render();
-    })
-  </script>
+<script type="text/javascript">
+    var chart;
+    var chartTitle = "Base";
+    var chartDataIndexes = [];
+    var chartData = [{
+        "date": "2009-03-01",
+        "value": 15,
+        "fromValue": 12,
+        "toValue": 18,
+        "bullet": "round",
+        "subSetTitle": "Second level",
+        "subSet": [{
+            "date": "2009-03-04",
+            "value": 3,
+            "fromValue": 2,
+            "toValue": 5,
+            "bullet": "round",
+            "subSetTitle": "Third level",
+            "subSet": [{
+                "date": "2009-03-04 03:00",
+                "value": 5,
+                "fromValue": 4,
+                "toValue": 6,
+                "bullet": "round",
+                "subSetTitle": "Fourth level",
+                "subSet": [{
+                    "date": "2009-03-04 03:10",
+                    "value": 3,
+                    "fromValue": 2,
+                    "toValue": 5
+                }]
+            }]
+        }]
+    }];
+
+    chart = AmCharts.makeChart("chartdiv", {
+        "type": "serial",
+        "titles": [{
+            "text": chartTitle
+        }],
+        "allLabels": [{
+            "text": "",
+            "x": 10,
+            "y": 15,
+            "url": "javascript: goBack();void(0);"
+        }],
+        "dataProvider": chartData,
+        "valueAxes": [{
+            "axisAlpha": 0,
+            "dashLength": 4,
+            "position": "left"
+        }],
+        "graphs": [{
+            "id": "fromGraph",
+            "lineAlpha": 0,
+            "showBalloon": false,
+            "valueField": "fromValue",
+            "fillAlphas": 0
+        }, {
+            "fillAlphas": 0.2,
+            "fillToGraph": "fromGraph",
+            "lineAlpha": 0,
+            "showBalloon": false,
+            "valueField": "toValue"
+        }, {
+            "valueField": "value",
+            "fillAlphas": 0,
+            "bulletField": "bullet"
+        }],
+        "chartCursor": {
+            "zoomable": false,
+            "fullWidth": true,
+            "cursorAlpha": 0.1,
+            "categoryBalloonEnabled": false
+        },
+        "dataDateFormat": "YYYY-MM-DD HH:NN:SS",
+        "categoryField": "date",
+        "categoryAxis": {
+            "parseDates": true,
+            "minPeriod": "mm",
+            "axisAlpha": 0,
+            "minHorizontalGap": 50,
+            "gridAlpha": 0,
+            "tickLength": 0
+        }
+    });
+
+    chart.addListener('clickGraphItem', function(evt) {
+        if (evt.item.dataContext.subSet) {
+            chartDataIndexes.push({
+                index: evt.index,
+                title: evt.item.dataContext.subSetTitle,
+                prev: evt.chart.titles[0].text
+            });
+            evt.chart.dataProvider = evt.item.dataContext.subSet;
+            evt.chart.allLabels[0].text = "Go Back " + evt.chart.titles[0].text;
+            evt.chart.titles[0].text = evt.item.dataContext.subSetTitle;
+            evt.chart.validateData();
+
+        }
+    });
+
+    function goBack() {
+        var previousData = chartData;
+        var tmp = {
+            prev: ""
+        }
+
+        // Remove latest
+        chartDataIndexes.pop();
+
+        // Get previous cached object
+        for (var i = 0; i < chartDataIndexes.length; i++) {
+            tmp = chartDataIndexes[i];
+            previousData = previousData[tmp.index].subSet;
+        }
+
+        // Apply titles and stuff
+        chart.allLabels[0].text = tmp.prev ? "Go Back " + tmp.prev : "";
+        chart.titles[0].text = tmp.title || chartTitle;
+        chart.dataProvider = previousData;
+        chart.validateData();
+    }
+</script>
+<script>
+    const picker = datepicker('#date');
+</script>
+
 @endsection
