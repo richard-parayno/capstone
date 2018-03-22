@@ -14,6 +14,7 @@ use PHPExcel_Cell;
 use PHPExcel_Cell_DataType;
 use PHPExcel_Cell_IValueBinder;
 use PHPExcel_Cell_DefaultValueBinder;
+use Illuminate\Support\Carbon;
 
 class ExcelController extends Controller
 {
@@ -49,10 +50,13 @@ class ExcelController extends Controller
                 //convert the date
                 $convertd1 = (string)$row['date'];
 
+
                 Debugbar::info("convertd1 ".$convertd1);                
                 Debugbar::info("convertd1 strtotime".strtotime($convertd1));                
                 $currentMonth = date("Y-m-d", strtotime($convertd1));
-                $currentd1Time = date("H:i", strtotime($row['departure_time']));          
+                $currentd1Time = date("H:i", strtotime($row['departure_time']));   
+                Debugbar::info("currentd1Time strtotime".strtotime($currentd1Time));                
+                       
                 Debugbar::info("currentMonth ".$currentMonth);
                 Debugbar::info("currentTime ".$currentd1Time);
                 
@@ -76,6 +80,7 @@ class ExcelController extends Controller
                 // place current row into the array that we'll pass to the next page
                 $data[$ctr]['date'] = $currentMonth;
                 $data[$ctr]['requesting_department'] = $row['requesting_department'];
+                $data[$ctr]['departure_time'] = $row['departure_time'];
                 $data[$ctr]['plate_number'] = $row['plate_number'];
                 $data[$ctr]['kilometer_reading'] = $row['kilometer_reading'];
                 $data[$ctr]['destinations'] = $row['destinations'];
@@ -92,15 +97,13 @@ class ExcelController extends Controller
             }
 
         }
-        return view('display-table', compact('data', 'excelFile'));
+        return view('display-table', compact('data', 'load'));
 
     }
 
     public function saveToDb(Request $request) {
-        $load = $request->all();
+        $load = json_decode($request->data, true);
 
-        return $request->all();
-        Debugbar::info("load content: ");
 
         // initialize the counters
         $ctr = 0;
@@ -109,11 +112,13 @@ class ExcelController extends Controller
             // in the current row....... 
             //convert the date
             $convertd1 = (string)$row['date'];
+            $departureTime = Carbon::parse($row['departure_time']['date']);
 
             Debugbar::info("convertd1 ".$convertd1);                
-            Debugbar::info("convertd1 strtotime".strtotime($convertd1));                
             $currentMonth = date("Y-m-d", strtotime($convertd1));
-            $currentd1Time = date("H:i", strtotime($row['departure_time']));          
+            Debugbar::info("currentMonth strtotime".strtotime($currentMonth));                
+            $currentd1Time = date("H:i", strtotime($departureTime));
+            Debugbar::info("currentd1Time strtotime".strtotime($currentd1Time));                                    
             Debugbar::info("currentMonth ".$currentMonth);
             Debugbar::info("currentTime ".$currentd1Time);
             
@@ -127,7 +132,7 @@ class ExcelController extends Controller
 
             //do the same date conversion but declare it as the currrent month in excel.
             $convertd2 = (string)$row['date'];
-            $currentd2Time = $row['departure_time'];                              
+            $currentd2Time = $departureTime;                              
             Debugbar::info("convertd2 ".$convertd2);                
             Debugbar::info("convertd2 strtotime".strtotime($convertd2));  
             $currentMonthInExcel = date("Y-m-d", strtotime($convertd2));
@@ -242,8 +247,9 @@ class ExcelController extends Controller
              * after each computation (per row), add it to the total (acts as counter) emission variable
              */
         }
+        $trips = Trip::all();
 
-        return view('upload-view');
+        return redirect('/dashboard/upload-view')->with(compact('trips'));
 
     }
 }

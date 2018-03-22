@@ -23,7 +23,7 @@
 
 <div class="eight columns offset-by-two" id="box-form">
   <h1>Upload Trip Data</h1>
-  <form action="{{ route('process-file') }}" method="POST" enctype="multipart/form-data">
+  <form action="{{ route('pre-process-files') }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
     <input type="file" name="excelFile">
     <br>
