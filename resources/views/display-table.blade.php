@@ -66,15 +66,10 @@
       @endfor
     </tbody>
   </table>
-    @php
-      $y = count($excelFile);
-      $throw = array();
-      $z = 0;
-    @endphp
     <form action="{{ route('process-file') }}" method="POST">
       {{ csrf_field() }}
       @php
-        echo "<input type='hidden' name='excelFile' value='".$excelFile."'>'";
+        echo "<input type='hidden' name='data' value='".json_encode($data)."'>'";
       @endphp
 
       <input class="button button-primary u-pull-right" type="submit" value="Confirm Trip Data Upload">
