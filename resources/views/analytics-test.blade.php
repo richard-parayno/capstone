@@ -1,4 +1,6 @@
-@extends('layouts.main') @section('styling')
+@extends('layouts.main') 
+
+@section('styling')
 <style>
     html,
     body {
@@ -7,19 +9,14 @@
         margin: 0px;
     }
 
-    #chartdiv {
-        width: 100%;
-        height: 50%;
-        margin: 20px;
-    }
+   
 </style>
-<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-<script src="https://www.amcharts.com/lib/3/serial.js"></script>
-<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-@endsection 
-<div class="container" id="main-content">
-<div id="chartdiv"></div>
-<div class="seven column" id="control">
+@endsection
+
+
+@section('content')
+<div class="eight columns offset-by-two" id="chartdiv" style="width: 640px; height: 400px;"></div>
+<div class="eight columns offset-by-two" id="control">
     <select class="u-full-width" name="userTypeID" id="userTypeID" style="color: black;">
     </select>
 
@@ -28,7 +25,7 @@
     </div>
 
 </div>
-</div>
+@endsection
 
 
 @section('scripts')
@@ -78,7 +75,7 @@
             "text": "",
             "x": 10,
             "y": 15,
-            "url": "javascript: goBack();void(0);"
+            "url": "javascript: goBackChart();void(0);"
         }],
         "dataProvider": chartData,
         "valueAxes": [{
@@ -136,7 +133,7 @@
         }
     });
 
-    function goBack() {
+    function goBackChart() {
         var previousData = chartData;
         var tmp = {
             prev: ""
