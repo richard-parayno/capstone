@@ -125,3 +125,53 @@ img {
   padding-right: 15px;
   border: 1px solid rgb(225, 225, 225)
 }
+
+#analytics-sidebar {
+  background-color: #0b5023;
+  width: 200px;
+  height: auto !important;
+  min-height: 100%;
+  position: fixed;
+  right: 0;
+  overflow-y: scroll;
+  color: white;
+  top: 0;
+  bottom: 0;
+}
+
+#analytics-sidebar::-webkit-scrollbar {
+  width: 0px;  /* remove scrollbar space */
+}
+
+#analytics-sidebar ul {
+  list-style: none;
+  text-align: justify;
+  margin: 0px;
+}
+
+#analytics-sidebar div {
+  border-top-style: solid;
+  border-width: 2px;
+}
+
+#analytics-sidebar ul {
+  padding-left: 20px;
+  padding-right: 20px;
+  
+}
+
+#analytics-sidebar div p {
+  text-align: center;
+  padding-top:10px;
+  padding-bottom:10px;
+  border-bottom-style: solid;
+  border-width: 2px;
+}
+
+
+#analytics-topbar { 
+  margin-left: 250px; 
+  margin-right: 200px;
+  height: 84px;
+  color: white;
+}

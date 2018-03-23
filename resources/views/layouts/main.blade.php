@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+@php
+use Illuminate\Support\Facades\Route;
+@endphp
+
 @section('header')
 <head>
   <meta charset="UTF-8">
@@ -15,7 +19,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
   <script src="https://www.amcharts.com/lib/3/serial.js"></script>
-  <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+  <script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
 </head>
 
 @section('styling')
@@ -24,13 +28,21 @@
 <body>
   @auth
   @section('topbar')
+  @if (Route::currentRouteName() != 'analytics-test')
   <div id="topbar">
     <div class="twelve column bar">
       <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>
       <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>      
     </div>
-
   </div>
+  @else
+  <div id="analytics-topbar">
+    <div class="twelve column bar">
+      <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>
+      <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>      
+    </div>
+  </div>
+  @endif
   <!-- side nav -->
   @section('sidebar')
   <div class="container u-pull-left" id="sidebar">
@@ -52,13 +64,17 @@
         #topbar {
           background-color: black;  
         }
+
+        #analytics-topbar {
+          background-color: black;
+        }
       </style>
 
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
             <li><a href="{{ route('dashboard') }}">Analytics</a></li>
-            <li><a href="{{ route('upload-view') }}">Upload Trip Data</a></li>
+            <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
             <li><a href="{{ route('tree-view') }}">We Planted Trees</a></li>
         </ul>
       </div>
@@ -91,13 +107,17 @@
         #topbar {
           background-color: #087830;  
         }
+
+        #analytics-topbar {
+          background-color: #087830;
+        }
       </style>
 
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
             <li><a href="{{ route('dashboard') }}">Analytics</a></li>
-            <li><a href="{{ route('upload-view') }}">Upload Trip Data</a></li>
+            <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
             <li><a href="{{ route('tree-view') }}">We Planted Trees</a></li>
         </ul>
       </div>
@@ -122,13 +142,16 @@
         #topbar {
           background-color: #2222ab;    
         }
+        #analytics-topbar {
+          background-color: #2222ab;
+        }
       </style>
       <div class="twelve column bar">
         <!-- add view trees planted -->
         <p><strong>Home</strong></p>
         <ul>
             <li><a href="{{ route('dashboard') }}">Analytics</a></li>
-            <li><a href="{{ route('upload-view') }}">Upload Trip Data</a></li>
+            <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
             <li><a href="{{ route('tree-view') }}">We Planted Trees</a></li>
         </ul>
       </div>
@@ -137,13 +160,16 @@
         #topbar {
           background-color: #b4b050;  
         }
+        #analytics-topbar {
+          background-color: #b4b050;
+        }
       </style>
       <div class="twelve column bar">
         <!-- add view trees planted -->
         <p><strong>Home</strong></p>
         <ul>
             <li><a href="{{ route('dashboard') }}">Analytics</a></li>
-            <li><a href="{{ route('upload-view') }}">Upload Trip Data</a></li>
+            <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
             <li><a href="{{ route('tree-view') }}">We Planted Trees</a></li>
         </ul>
       </div>
@@ -152,11 +178,14 @@
         #topbar {
           background-color: #800000;  
         }
+        #analytics-topbar {
+          background-color: #800000;
+        }
       </style>
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
-            <li><a href="{{ route('upload-view') }}">Upload Trip Data</a></li>
+            <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
         </ul>
       </div>
       <div class="twelve column bar">
