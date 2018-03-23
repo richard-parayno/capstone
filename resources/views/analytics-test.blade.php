@@ -13,6 +13,99 @@
 </style>
 @endsection
 
+<?php
+$filterData = true;
+$institutionID = 1;
+$carFilter = 2;
+$gasFilter = 1;
+if(!$filterData){
+    $chartTitle = 'All Universities';   
+    $emissionData = DB::table('trips')
+    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+    ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
+    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+    ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+    ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
+'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active')
+    ->get();
+} else{
+    $rawDB = "+";
+    echo $rawDB;
+    $add = false;
+    if(isset($universityIDFilter)){
+        $rawDB .= " institutionID = " . $universityIDFilter;
+        $add = true;
+        echo $rawDB;
+    }
+    if(isset($carFilter)){
+        if($add){
+            $rawDB .= " AND ";
+        }
+        $rawDB .= "carType_ref.carTypeID = " . $carFilter;
+        $add = true;
+        echo $rawDB;
+    }
+    if(isset($gasFilter)){
+        if($add){
+            $rawDB .= " AND ";
+        }
+        $add = true;
+        $rawDB .= "fueltype_ref.fueltypeID = " . $gasFilter;
+        echo $rawDB;
+    }
+    if(isset($toDateFilter) | isset($fromDateFilter)){
+        if($add){
+            $rawDB .= " AND ";
+        }
+    }
+    $emissionData = DB::table('trips')
+    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+    ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
+    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+    ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+    ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
+'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active')
+    ->whereRaw($rawDB)
+    ->get();    
+    $chartTitle = "DLSU";
+}
+dd($emissionData);
+//$filtered;
+/*
+if(!isset($filtered)){
+    $chartTitle = "All Emissions";
+    $emissionData = DB::select('trips.tripDate','trips.tripTime','deptsperinstitution.deptName','trips.plateNumber','trips.kilometerReading','trips.remarks','monthlyemissionsperschool.emission')
+		->addSelect(DB::raw('CONCAT(YEAR(trips.tripDate))'), '-', DB::raw('MONTH(trips.tripDate)')
+		->from('trips')
+		->join('deptsperinstitution', function($join) {
+			$join->on('trips.deptID', '=', 'deptsperinstitution.deptID');
+			})
+		->join('monthlyemissionsperschool', function($join) {
+			$join->on(DB::raw('CONCAT(YEAR(trips.tripDate), "-", MONTH(trips.tripDate));'), '=', DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-", MONTH(monthlyemissionsperschool.monthYear));')
+			)})
+		->get();
+    //2d array containing emissions grouped by month
+    //$emissionArray = [][];
+    for(all rows in emissionData){
+        if(!(isset($emissionArray[x])){
+            $emissionsArray[x] = [$emissionData[x].monthYear, $emissionData[x].emissions];
+            //for all same monthyear group //monthYear==previous
+            {
+                emissionArray[x][y] = emmisionData[x];    
+            }
+        }else {
+            
+        }
+}
+    
+}else{
+    //filtered query here
+}
+*/
+
+?>
 
 @section('content')
 <div class="eight columns offset-by-two" id="chartdiv" style="width: 640px; height: 400px;"></div>
@@ -33,7 +126,7 @@
 
 <script type="text/javascript">
     var chart;
-    var chartTitle = "Base";
+    var chartTitle = "<?php echo $chartTitle; ?>";
     var chartDataIndexes = [];
     var chartData = [{
         "date": "2009-03-01",
