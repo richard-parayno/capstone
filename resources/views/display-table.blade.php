@@ -39,12 +39,14 @@
       @php
       $y = count($data);
       $throw = array();
+      $cleaned = array();
       $z = 0;
       @endphp
       @for($x = 0; $x < $y; $x++)
         @php 
         $checkerPlate = DB::table('vehicles_mv')->where('plateNumber', $data[$x]['plate_number'])->first();
         $checkerDept = DB::table('deptsperinstitution')->where('deptName', $data[$x]['requesting_department'])->first();
+        //dd($data);
         if ($checkerPlate == null || $checkerDept == null) {
           $throw[$z]['date'] = $data[$x]['date'];
           $throw[$z]['tripTime'] = $data[$x]['tripTime'];
@@ -54,13 +56,20 @@
           $throw[$z]['destinations'] = $data[$x]['destinations'];
           $z++;
         } else {
+          $cleaned[$x]['date'] = $data[$x]['date'];
+          $cleaned[$x]['tripTime'] = $data[$x]['tripTime'];
+          $cleaned[$x]['requesting_department'] = $data[$x]['requesting_department'];
+          $cleaned[$x]['plate_number'] = $data[$x]['plate_number'];
+          $cleaned[$x]['kilometer_reading'] = $data[$x]['kilometer_reading'];
+          $cleaned[$x]['departure_time'] = $data[$x]['departure_time'];
+          $cleaned[$x]['destinations'] = $data[$x]['destinations'];
           echo "<tr>";
-          echo "<td>".$data[$x]['date']."</td>";
-          echo "<td>".$data[$x]['tripTime']."</td>";
-          echo "<td>".$data[$x]['requesting_department']."</td>";
-          echo "<td>".$data[$x]['plate_number']."</td>";
-          echo "<td>".$data[$x]['kilometer_reading']."</td>";
-          echo "<td>".$data[$x]['destinations']."</td>";
+          echo "<td>".$cleaned[$x]['date']."</td>";
+          echo "<td>".$cleaned[$x]['tripTime']."</td>";
+          echo "<td>".$cleaned[$x]['requesting_department']."</td>";
+          echo "<td>".$cleaned[$x]['plate_number']."</td>";
+          echo "<td>".$cleaned[$x]['kilometer_reading']."</td>";
+          echo "<td>".$cleaned[$x]['destinations']."</td>";
           echo "</tr>";
         }
         @endphp
@@ -70,10 +79,11 @@
     <form action="{{ route('process-file') }}" method="POST">
       {{ csrf_field() }}
       @php
-        echo "<input type='hidden' name='data' value='".json_encode($data)."'>'";
+        //dd($cleaned);
+        echo "<input type='hidden' name='data' value='".json_encode($cleaned)."'>";
       @endphp
 
-      <input class="button button-primary u-pull-right" type="submit" value="Confirm Trip Data Upload">
+      <input class="button button-primary u-pull-right" type="submit" value="Confirm Trip Data Upload" style="color: white;">
       <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>  
     </form>
 </div>

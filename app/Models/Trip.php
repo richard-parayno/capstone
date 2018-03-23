@@ -42,7 +42,9 @@ class Trip extends Eloquent
 		'remarks',
 		'emissions',
 		'tripDate',
-		'tripTime'
+		'tripTime',
+		'batch',
+		'uploaded_at'
 	];
 
 	public function deptsperinstitution()
