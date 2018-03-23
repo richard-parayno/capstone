@@ -79,11 +79,11 @@ class ExcelController extends Controller
                 
                 // place current row into the array that we'll pass to the next page
                 $data[$ctr]['date'] = $currentMonth;
-                $data[$ctr]['requesting_department'] = $row['requesting_department'];
-                $data[$ctr]['departure_time'] = $row['departure_time'];
-                $data[$ctr]['plate_number'] = $row['plate_number'];
-                $data[$ctr]['kilometer_reading'] = $row['kilometer_reading'];
-                $data[$ctr]['destinations'] = $row['destinations'];
+                $data[$ctr]['requesting_department'] = $currentDepartment;
+                $data[$ctr]['departure_time'] = $currentd2Time;
+                $data[$ctr]['plate_number'] = $currentPlateNumber;
+                $data[$ctr]['kilometer_reading'] = $currentKMReading;
+                $data[$ctr]['destinations'] = $destinations;
                 $data[$ctr]['tripTime'] = $currentd1Time;
                 
                 //iterate the ctr to go to the next row

@@ -43,8 +43,9 @@
       @endphp
       @for($x = 0; $x < $y; $x++)
         @php 
-        $checker = DB::table('vehicles_mv')->where('plateNumber', $data[$x]['plate_number'])->first();
-        if ($checker == null) {
+        $checkerPlate = DB::table('vehicles_mv')->where('plateNumber', $data[$x]['plate_number'])->first();
+        $checkerDept = DB::table('deptsperinstitution')->where('deptName', $data[$x]['requesting_department'])->first();
+        if ($checkerPlate == null || $checkerDept == null) {
           $throw[$z]['date'] = $data[$x]['date'];
           $throw[$z]['tripTime'] = $data[$x]['tripTime'];
           $throw[$z]['requesting_department'] = $data[$x]['requesting_department'];
