@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+@php
+use Illuminate\Support\Facades\Route;
+@endphp
+
 @section('header')
 <head>
   <meta charset="UTF-8">
@@ -24,13 +28,26 @@
 <body>
   @auth
   @section('topbar')
+  @if (Route::currentRouteName() != 'analytics-test')
   <div id="topbar">
     <div class="twelve column bar">
       <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>
       <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>      
     </div>
-
   </div>
+  @else
+  <style>
+    #main-content {
+      padding-right: 200px; 
+    }
+  </style>
+  <div id="analytics-topbar">
+    <div class="twelve column bar">
+      <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>
+      <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>      
+    </div>
+  </div>
+  @endif
   <!-- side nav -->
   @section('sidebar')
   <div class="container u-pull-left" id="sidebar">
@@ -51,6 +68,10 @@
       <style>
         #topbar {
           background-color: black;  
+        }
+
+        #analytics-topbar {
+          background-color: black;
         }
       </style>
 
@@ -91,6 +112,10 @@
         #topbar {
           background-color: #087830;  
         }
+
+        #analytics-topbar {
+          background-color: #087830;
+        }
       </style>
 
       <div class="twelve column bar">
@@ -122,6 +147,9 @@
         #topbar {
           background-color: #2222ab;    
         }
+        #analytics-topbar {
+          background-color: #2222ab;
+        }
       </style>
       <div class="twelve column bar">
         <!-- add view trees planted -->
@@ -137,6 +165,9 @@
         #topbar {
           background-color: #b4b050;  
         }
+        #analytics-topbar {
+          background-color: #b4b050;
+        }
       </style>
       <div class="twelve column bar">
         <!-- add view trees planted -->
@@ -151,6 +182,9 @@
       <style>
         #topbar {
           background-color: #800000;  
+        }
+        #analytics-topbar {
+          background-color: #800000;
         }
       </style>
       <div class="twelve column bar">
