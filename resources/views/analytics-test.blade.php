@@ -18,6 +18,8 @@ $filterData = true;
 $institutionID = 1;
 $carFilter = 2;
 $gasFilter = 1;
+$fromDateFilter = "2017-6-12";
+$toDateFilter = "2017-8-15";
 if(!$filterData){
     $chartTitle = 'All Universities';   
     $emissionData = DB::table('trips')
@@ -36,7 +38,6 @@ if(!$filterData){
     if(isset($universityIDFilter)){
         $rawDB .= " institutionID = " . $universityIDFilter;
         $add = true;
-        echo $rawDB;
     }
     if(isset($carFilter)){
         if($add){
@@ -44,7 +45,6 @@ if(!$filterData){
         }
         $rawDB .= "carType_ref.carTypeID = " . $carFilter;
         $add = true;
-        echo $rawDB;
     }
     if(isset($gasFilter)){
         if($add){
@@ -52,13 +52,24 @@ if(!$filterData){
         }
         $add = true;
         $rawDB .= "fueltype_ref.fueltypeID = " . $gasFilter;
-        echo $rawDB;
     }
-    if(isset($toDateFilter) | isset($fromDateFilter)){
+    if(isset($fromDateFilter) && isset($toDateFilter)){
         if($add){
             $rawDB .= " AND ";
         }
+        $rawDB .= "trips.tripDate <= '" . $toDateFilter . "' AND trips.tripDate >= '" . $fromDateFilter. "'";
+    }elseif(!isset($fromDateFilter) && isset($toDateFilter)){
+        if($add){
+            $rawDB .= " AND ";
+        }
+        $rawDB .= "trips.tripDate <= '" . $toDateFilter . "'";
+    }elseif(isset($fromDateFilter) && !isset($toDateFilter)){
+        if($add){
+            $rawDB .= " AND ";
+        }
+        $rawDB .= "trips.tripDate >= '" . $fromDateFilter . "'";
     }
+    echo $rawDB;
     $emissionData = DB::table('trips')
     ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
     ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
