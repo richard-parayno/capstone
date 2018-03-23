@@ -50,6 +50,7 @@
           $fueltypes = FueltypeRef::all();
 
           echo "<p>Selected Vehicle's Plate Number: ".$currentVehicle."</p>";
+          echo "<p>Car Model: ".$selected->modelName."</p>";          
           echo "<p>Car Brand: ".$selectedBrand->carBrandName."</p>";
           echo "<p>Car Type: ".$selectedType->carTypeName."</p>";
           echo "<p>Campus: ".$selectedCampus->institutionName."</p>";
@@ -69,8 +70,8 @@
         <input type="radio" name="choice" value="no">
         <span class="label-body">No</span>
         <br>
-        <a class="button button-primary u-pull-left" onClick="goBack()">Cancel Vehicle Status Update</a>
-        <input class="button-primary u-pull-right" type="submit" value="Confirm Vehicle Status Update">
+        <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>
+        <input class="button-primary u-pull-right" type="submit" value="Confirm Vehicle Status Update" style="color: white;">
       </form>
     </div>
 @endsection

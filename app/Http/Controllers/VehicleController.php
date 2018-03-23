@@ -36,7 +36,7 @@ class VehicleController extends Controller
           $vehicle->active = 1;
           $vehicle->save();
 
-          return redirect('/dashboard/vehicle-add')->with('success', true)->with('message', 'Vehicle successfully added!');
+          return redirect('/dashboard/vehicle-add')->with('success', true)->with('message', $data['modelName'].'-'.$data['plateNumber'].' added!');
         }
     }
 
@@ -63,7 +63,7 @@ class VehicleController extends Controller
       $cardata->plateNumber = $plate;
       $cardata->save();
 
-      return redirect()->route('vehicle-view');
+      return redirect()->route('vehicle-view')->with('success', true)->with('message', $cardata->modelName.'-'.$currentPlate.' successfully edited to '.$model.'-'.$plate.'!');
       
     }
 
@@ -78,13 +78,13 @@ class VehicleController extends Controller
           $cardata->active = 0; 
           $cardata->save();
   
-          return redirect()->route('vehicle-view');
+          return redirect()->route('vehicle-view')->with('success', true)->with('message', $cardata->modelName.'-'.$currentPlate.' successfully decommissioned!');
         } else {
           $cardata = VehiclesMv::find($currentPlate);
           $cardata->active = 1; 
           $cardata->save();
   
-          return redirect()->route('vehicle-view');
+          return redirect()->route('vehicle-view')->with('success', true)->with('message', $cardata->modelName.'-'.$currentPlate.' successfully activated!');
         }
       } else {
         if ($choice == 'yes') {
@@ -92,13 +92,13 @@ class VehicleController extends Controller
           $cardata->active = 1; 
           $cardata->save();
   
-          return redirect()->route('vehicle-view');
+          return redirect()->route('vehicle-view')->with('success', true)->with('message', $cardata->modelName.'-'.$currentPlate.' successfully activated!');
         } else {
           $cardata = VehiclesMv::find($currentPlate);
           $cardata->active = 0; 
           $cardata->save();
   
-          return redirect()->route('vehicle-view');
+          return redirect()->route('vehicle-view')->with('success', true)->with('message', $cardata->modelName.'-'.$currentPlate.' successfully decommissioned!');
         }
       }
 

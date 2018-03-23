@@ -45,11 +45,11 @@
     @endphp
     <div class="twelve columns">
       <label for="ci-name">Updated Campus Name</label>
-      <input class="u-full-width" type="text" name="ci-name" id="ci-name" placeholder="La Salle Greenhills">
+      <input class="u-full-width" type="text" name="ci-name" id="ci-name" placeholder="De La Salle University - Manila">
     </div>
     <div class="twelve columns">
       <label for="ci-location">Updated Location</label>
-      <input class="u-full-width" type="text" name="ci-location" id="email" placeholder="GH pare">
+      <input class="u-full-width" type="text" name="ci-location" id="email" placeholder="2401 Taft Avenue">
     </div>
     <div class="twelve columns">
       <label for="ci-type">Updated Classification</label>
@@ -59,7 +59,8 @@
         @endforeach
       </select>
     </div>
-    <input class="button-primary u-pull-right" type="submit" value="Edit Campus/Institute Info">
+    <input class="button-primary u-pull-right" type="submit" value="Update Campus Information" style="color: white;">
+    <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>    
   </form>
 </div>
 @endsection

@@ -29,7 +29,7 @@ class DepartmentController extends Controller
           $department->motherDeptID = $data['department-mother'];
           $department->save();
 
-          return redirect('/dashboard/department-add')->with('success', true)->with('message', 'Department successfully created!');
+          return redirect('/dashboard/department-add')->with('success', true)->with('message', $data['deptName'].' added!');
         }
       } else {
         $data = $request->all();
@@ -49,7 +49,7 @@ class DepartmentController extends Controller
           $department->deptName = $data['deptName'];
           $department->save();
 
-          return redirect('/dashboard/department-add')->with('success', true)->with('message', 'Department/Office successfully added!');
+          return redirect('/dashboard/department-add')->with('success', true)->with('message', $data['deptName'].' successfully added!');
         }
       }
     }
@@ -85,7 +85,7 @@ class DepartmentController extends Controller
 
         $deptsdata->save();
 
-        return redirect()->route('department-view');
+        return redirect()->route('department-view')->with('success', true)->with('message', $deptsdata->deptName.' successfully updated to '.$name.' !');
       }
     }
 }

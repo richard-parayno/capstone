@@ -64,10 +64,12 @@
     <a href="{{ route('user-add') }}">
       <button class="button-primary">Create User Account</button>
     </a>
+    <!--
     <div class="u-pull-right">
       <span>Search User: </span>
       <input type="text" placeholder="Richard Parayno" id="searchBox">
     </div>
+    -->
     <!-- action shortcuts -->              
   </table>
 </div>

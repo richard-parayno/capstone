@@ -31,9 +31,9 @@
   <form method="post" action="{{ route('department-add-process') }}">
     {{ csrf_field() }}
     @if(Session::has('success'))
-    <div class="twelve columns" style="color: green;">
-      <strong>Success!</strong> {{ Session::get('message', '') }}
-    </div>
+      <div class="twelve columns" id="success-message" style="color: green;">
+          <strong>Success! </strong> {{ Session::get('message', '') }}
+      </div>
     @endif
     <div class="twelve columns">
       <label for="institutionID">Home Campus</label>
@@ -53,7 +53,7 @@
       <input class="u-full-width" type="text" name="deptName" id="deptName" placeholder="College of Computer Studies">
     </div>
     <div class="twelve columns">
-      <label for="department-mother">Mother Department</label>
+      <label for="department-mother">Select Mother Department</label>
       <select class="u-full-width" name="department-mother" id="department-mother" style="color: black;">
         <option value="">Make Department Separate</option>
         @foreach($departments as $depts)
@@ -80,7 +80,8 @@
     </div> 
     @endif
 
-    <input class="button-primary u-pull-right" type="submit" value="Add Department/Offices">
+    <input class="button-primary u-pull-right" type="submit" value="Add Department" style="color: white;">
+    <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>    
   </form>
 </div>
 @endsection

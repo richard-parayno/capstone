@@ -24,7 +24,13 @@
 
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">
-  <h1>Manage Active Vehicles</h1>    
+  <h1>Manage Active Vehicles</h1>
+  @if(Session::has('success'))
+      <div class="twelve columns" id="success-message" style="color: green; margin-bottom: 20px;">
+          <strong>Success! </strong> {{ Session::get('message', '') }}
+      </div>
+  @endif    
+  <br>
   <table class="u-max-full-width">
     <thead>
       <tr>
@@ -81,10 +87,12 @@
     <a href="{{ route('vehicle-add') }}">
       <button class="button-primary">New Vehicle</button>
     </a>
+    <!--
     <div class="u-pull-right">
       <span>Search Vehicle: </span>
       <input type="text" placeholder="Accord" id="searchBox">
     </div>
+    -->
     <!-- action shortcuts -->              
   </table>
 </div>
@@ -149,10 +157,12 @@ $inactive = DB::table('vehicles_mv')->where('active', 0)->get();
       @endforeach
     </tbody>
     <!-- action shortcuts -->
+    <!--
     <div class="u-pull-right">
       <span>Search Vehicle: </span>
       <input type="text" placeholder="Accord" id="searchBox">
     </div>
+    -->
     <!-- action shortcuts -->              
   </table>
 </div>

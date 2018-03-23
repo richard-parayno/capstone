@@ -25,6 +25,11 @@
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">
   <h1>Manage Departments</h1>    
+  @if(Session::has('success'))
+      <div class="twelve columns" id="success-message" style="color: green; margin-bottom: 20px;">
+          <strong>Success! </strong> {{ Session::get('message', '') }}
+      </div>
+  @endif
   <table class="u-full-width">
     <thead>
       <tr>
@@ -59,7 +64,7 @@
           @if (isset($motherDept))
           <a href="{{ route('department-editinfo', array('department' => $department->deptID, 'mother' => $motherDept->deptID)) }}">Edit Department Info</a>
           @else
-          <a href="{{ route('department-editinfo', array('department' => $department->deptID)) }}">Edit Department Info</a>
+          <a href="{{ route('department-editinfo', array('department' => $department->deptID)) }}">Update Department Info</a>
           @endif 
         </td>
       </tr>
@@ -69,10 +74,12 @@
     <a href="{{ route('department-add') }}">
     <button class="button-primary">New Department</button>
     </a>
+    <!--
     <div class="u-pull-right">
       <span>Search Departments: </span>
       <input type="text" placeholder="Information Technology Services" id="searchBox">
     </div>
+    -->
     <!-- action shortcuts -->              
   </table>
 </div>

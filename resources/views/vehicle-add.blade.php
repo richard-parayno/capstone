@@ -31,9 +31,9 @@
   <form method="POST" action="{{ route('vehicle-add-process') }}">
     {{ csrf_field() }}
     @if(Session::has('success'))
-    <div class="twelve columns" style="color: green;">
-      <strong>Success!</strong> {{ Session::get('message', '') }}
-    </div>
+      <div class="twelve columns" id="success-message" style="color: green;">
+          <strong>Success! </strong> {{ Session::get('message', '') }}
+      </div>
     @endif
     <div class="twelve columns">
       <label for="institutionID">Select Campus/Institute</label>
@@ -82,7 +82,7 @@
         <strong>{{ $errors->first('carBrandID') }}</strong>
       </span>
     @endif
-    <div class="eight columns" style="margin: 0px;">
+    <div class="six columns" style="margin: 0px;">
       <label for="modelName">Model Name</label>
       <input class="u-full-width" type="text" name="modelName" id="modelName" placeholder="L300">
     </div>
@@ -91,9 +91,9 @@
         <strong>{{ $errors->first('modelName') }}</strong>
       </span>
     @endif
-    <div class="eight columns" style="margin: 0px;">
+    <div class="six columns">
       <label for="plateNumber">Plate Number</label>
-      <input class="u-full-width" type="text" name="plateNumber" id="plateNumber" placeholder="ABC-123">
+      <input class="u-full-width" type="text" name="plateNumber" id="plateNumber" placeholder="ABC123">
     </div>
     @if ($errors->has('plateNumber'))
       <span class="help-block">
@@ -110,13 +110,14 @@
         </ul>
     </div> 
     @endif
-    <!--
-    <div class="four columns">
+    <!--<div class="four columns offset-by-six">
       <label for="vehicle-year">Manufacturing Year</label>
       <input class="u-full-width" type="number" name="vehicle-year" id="email" placeholder="2017">
-    </div> -->
-    
-    <input class="button-primary u-pull-right" type="submit" value="Add Vehicle">
+    </div>-->
+
+    <input class="button-primary u-pull-right" type="submit" value="Add Vehicle" style="color: white;">
+    <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>    
+    </div>
   </form>
 </div>
 @endsection

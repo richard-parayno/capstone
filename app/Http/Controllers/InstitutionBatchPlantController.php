@@ -35,7 +35,7 @@ class InstitutionBatchPlantController extends Controller
           $plant->datePlanted = $data['datePlanted'];
           $plant->save();
     
-          return redirect('/dashboard/tree-plant')->with('success', true)->with('message', 'Planted Trees successfully added!');
+          return redirect('/dashboard/tree-plant')->with('success', true)->with('message', 'Successfully added '.$data['numOfPlantedTrees'].' planted trees! (Plant Date: '.$data['datePlanted'].')');
         }
     }
 }

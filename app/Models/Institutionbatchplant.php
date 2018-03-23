@@ -32,10 +32,6 @@ class Institutionbatchplant extends Eloquent
 		'numOfPlantedTrees' => 'int'
 	];
 
-	protected $dates = [
-		'datePlanted'
-	];
-
 	protected $fillable = [
 		'institutionID',
 		'numOfPlantedTrees',

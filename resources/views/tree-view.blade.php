@@ -22,21 +22,30 @@
 @section('content')
 <div class="eight columns offset-by-two" id="box-form">
     <h1>We Planted Trees</h1>
+    @if(Session::has('success'))
+      <div class="twelve columns" id="success-message" style="color: green; margin-bottom: 20px;">
+          <strong>Success! </strong> {{ Session::get('message', '') }}
+      </div>
+    @endif    
     <table class="u-full-width">
       <thead>
         <tr>
           <th>Institution</th>
-          <th>Total Number of Planted Trees</th>
+          <th>Number of Planted Trees</th>
+          <th>Date Planted</th>
         </tr>
       </thead>
       <tbody>
         @foreach($treesPlanted as $trees)
+        <tr>
           @foreach($institutions as $institution)
             @if($trees->institutionID == $institution->institutionID)
               <td>{{ $institution->institutionName }}</td>
             @endif
             <td> {{ $trees->numOfPlantedTrees }} </td>
+            <td> {{ $trees->datePlanted }} </td>
           @endforeach
+        </tr>
         @endforeach
       </tbody>
       <!-- action shortcuts -->

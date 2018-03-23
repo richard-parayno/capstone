@@ -31,10 +31,10 @@
   <form method="post" action="{{ route('process-trees') }}">
     {{ csrf_field() }}
     @if(Session::has('success'))
-    <div class="twelve columns" style="color: green;">
-      <strong>Success!</strong> {{ Session::get('message', '') }}
-    </div>
-    @endif
+      <div class="twelve columns" id="success-message" style="color: green; margin-bottom: 20px;">
+          <strong>Success! </strong> {{ Session::get('message', '') }}
+      </div>
+    @endif    
     <div class="twelve columns">
       <label for="institutionID">Choose a Campus</label>
       <select class="u-full-width" name="institutionID" id="institution">
@@ -78,7 +78,7 @@
     </div> 
     @endif
 
-    <input class="button-primary u-pull-right" type="submit" value="Add Planted Trees">
+    <input class="button-primary u-pull-right" type="submit" value="Add Planted Trees" style="color: white;">
     <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>
     
   </form>

@@ -24,6 +24,11 @@
   <h1>Create New User Account</h1>    
   <form method="POST" action="{{ route('register') }}">
     {{ csrf_field() }}
+    @if(Session::has('success'))
+      <div class="twelve columns" id="success-message" style="color: green;">
+          <strong>Success! </strong> {{ Session::get('message', '') }}
+      </div>
+    @endif
     <div class="twelve columns">
       <label for="username">Username</label>
       <input class="u-full-width" type="text" name="username" id="username" placeholder="richard.parayno" value="{{ old('username') }}" required>

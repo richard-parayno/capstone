@@ -40,7 +40,7 @@ class InstitutionController extends Controller
           $institution->schoolTypeID = $data['schoolTypeID'];
           $institution->save();
 
-          return redirect('/dashboard/campus-add')->with('success', true)->with('message', 'Campus successfully added!');
+          return redirect('/dashboard/campus-add')->with('success', true)->with('message', $data['institutionName'].' added!');
         }
     }
 

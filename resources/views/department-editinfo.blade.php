@@ -23,7 +23,7 @@
 @section('content')
 <div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process add-user logic after submitting form. -->
-  <h1>Edit Department/Offices Info</h1>    
+  <h1>Update Department Info</h1>    
   <form action="{{ route('department-editinfo-process') }}">
       @php
         use App\Models\Deptsperinstitution;
@@ -70,7 +70,7 @@
       <input class="u-full-width" type="text" name="department-name" id="department-name" placeholder="College of Computer Studies">
     </div>
     <div class="twelve columns">
-      <label for="department-mother">New Mother Department</label>
+      <label for="department-mother">Select Mother Department</label>
       <select class="u-full-width" name="department-mother" id="department-mother" style="color: black;">
         <option value="">Make Department Separate</option>
         @foreach($departmentList as $depts)
@@ -87,7 +87,9 @@
         @endforeach
       </select>
     </div>
-    <input class="button-primary u-pull-right" type="submit" value="Edit Department/Offices Info">
+    <input class="button-primary u-pull-right" type="submit" value="Update Department Info" style="color: white;">
+    <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>
+    
   </form>
 </div>
 @endsection

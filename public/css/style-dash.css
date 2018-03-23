@@ -115,3 +115,13 @@ img {
 #box-form {
   background-color: #0b5023 !important;
 }
+
+#success-message {
+  background-color: #E1E1E1;
+  border-radius: 4px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: 1px solid rgb(225, 225, 225)
+}
