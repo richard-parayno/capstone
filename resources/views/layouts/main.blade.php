@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
   <script src="https://www.amcharts.com/lib/3/serial.js"></script>
-  <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+  <script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
 </head>
 
 @section('styling')
@@ -36,11 +36,6 @@ use Illuminate\Support\Facades\Route;
     </div>
   </div>
   @else
-  <style>
-    #main-content {
-      padding-right: 200px; 
-    }
-  </style>
   <div id="analytics-topbar">
     <div class="twelve column bar">
       <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>

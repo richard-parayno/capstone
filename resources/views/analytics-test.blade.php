@@ -2,12 +2,9 @@
 
 @section('styling')
 <style>
-    html,
-    body {
-        width: 100%;
-        height: 100%;
-        margin: 0px;
-    }  
+    #main-content {
+        padding-right: 200px;
+    }
 </style>
 @endsection
 
@@ -110,7 +107,7 @@ if(!isset($filtered)){
 <div class="container u-pull-right" id="analytics-sidebar">
   <div class="twelve column bar">
     <div id="current-user">
-      <span>Analytics Filters</span>
+      <p style="text-align: center; border: none;">Analytics Filters</p>
     </div>
   </div>
     <style>
@@ -120,48 +117,46 @@ if(!isset($filtered)){
     </style>
 
     <div class="twelve column bar">
-      <p><strong>Home</strong></p>
-      <ul>
-          <li><a href="{{ route('dashboard') }}">Analytics</a></li>
-          <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
-          <li><a href="{{ route('tree-view') }}">We Planted Trees</a></li>
-      </ul>
+      <p><strong>Campus</strong></p>
+      <br>
+      <div style="padding-left: 5px; padding-right: 5px; border: none;">
+        <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
+
+        </select>
+      </div>
     </div>
     <div class="twelve column bar">
-      <p><strong>Account Management</strong></p>
-      <ul>
-          <li><a href="{{ route('user-view') }}">User Management</a></li>
-          <!--<li><a href="{{ route('user-add') }}">Create New User Account</a></li>
-          <li><a href="{{ route('user-editinfo') }}">Edit User Account Information</a></li>
-          <li><a href="{{ route('user-editcreds') }}">Edit User Account Credentials</a></li>-->
-      </ul>
+      <p><strong>Vehicle Type</strong></p>
+      <br>      
+      <div style="padding-left: 5px; padding-right: 5px; border: none;">      
+        <select class="u-full-width" name="carFilter" id="carFilter" style="color: black;">
+
+        </select>
+      </div>
     </div>
     <div class="twelve column bar">
-      <p><strong>Campus Information Management</strong></p>
-      <ul>
-          <li><a href="{{ route('campus-view') }}">Campus Management</a></li>
-          <!--<li><a href="{{ route('campus-add') }}">Add New Campus/Institute</a></li>
-          <li><a href="{{ route('campus-editinfo') }}">Edit Campus/Institute Info</a></li>-->
-          <li><a href="{{ route('department-view') }}">Department Management</a></li>
-          <!--<li><a href="{{ route('department-add') }}">Add New Department/Offices</a></li>
-          <li><a href="{{ route('department-editinfo') }}">Edit Department/Offices Info</a></li>-->       
-          <li><a href="{{ route('vehicle-view') }}">Vehicle Management</a></li>
-          <!--<li><a href="{{ route('vehicle-add') }}">Add New Vehicle</a></li>
-          <li><a href="{{ route('vehicle-editinfo') }}">Edit Vehicle Info</a></li>
-          <li><a href="{{ route('vehicle-decommission') }}">Decommission Vehicle</a></li>-->
-      </ul>
+      <p><strong>Fuel Type</strong></p>
+      <br>      
+      <div style="padding-left: 5px; padding-right: 5px; border: none;">      
+        <select class="u-full-width" name="gasFilter" id="gasFilter" style="color: black;">
+
+        </select>
+      </div>
+    </div>
+    <div class="twelve column bar">
+      <p><strong>Date</strong></p>
+      <div style="padding-left: 5px; padding-right: 5px; border: none;">      
+        <p style="text-align: left;">From: </p>
+        <input class="u-full-width" type="date" name="fromDate" id="fromDate" >  
+        <p style="text-align: left;">Until: </p>
+        <input class="u-full-width" type="date" name="toDate" id="toDate" >  
+      </div>
     </div>
 </div>
 <!-- analytics sidenav -->
 
-<div class="eight columns offset-by-two" id="chartdiv" style="width: 640px; height: 400px;"></div>
-<div class="eight columns offset-by-two" id="control">
-    <select class="u-full-width" name="userTypeID" id="userTypeID" style="color: black;">
-    </select>
-    <div>
-        <input class="u-full-width" name="date" id="date">
-    </div>
-</div>
+<div class="twelve columns" id="chartdiv" style="width: 640px; height: 400px;"></div>
+
 @endsection
 
 
@@ -169,6 +164,7 @@ if(!isset($filtered)){
 <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 
 <script type="text/javascript">
+    AmCharts.theme = AmCharts.themes.dark;
     var chart;
     var chartTitle = "<?php echo $chartTitle; ?>";
     var chartDataIndexes = [];
@@ -205,6 +201,7 @@ if(!isset($filtered)){
 
     chart = AmCharts.makeChart("chartdiv", {
         "type": "serial",
+        "backgroundAlpha": 1,
         "titles": [{
             "text": chartTitle
         }],
@@ -216,25 +213,25 @@ if(!isset($filtered)){
         }],
         "dataProvider": chartData,
         "valueAxes": [{
-            "axisAlpha": 0,
+            "axisAlpha": 1,
             "dashLength": 4,
             "position": "left"
         }],
         "graphs": [{
             "id": "fromGraph",
-            "lineAlpha": 0,
+            "lineAlpha": 1,
             "showBalloon": false,
             "valueField": "fromValue",
-            "fillAlphas": 0
+            "fillAlphas": 1
         }, {
             "fillAlphas": 0.2,
             "fillToGraph": "fromGraph",
-            "lineAlpha": 0,
+            "lineAlpha": 1,
             "showBalloon": false,
             "valueField": "toValue"
         }, {
             "valueField": "value",
-            "fillAlphas": 0,
+            "fillAlphas": 1,
             "bulletField": "bullet"
         }],
         "chartCursor": {
@@ -248,9 +245,9 @@ if(!isset($filtered)){
         "categoryAxis": {
             "parseDates": true,
             "minPeriod": "mm",
-            "axisAlpha": 0,
+            "axisAlpha": 1,
             "minHorizontalGap": 50,
-            "gridAlpha": 0,
+            "gridAlpha": 1,
             "tickLength": 0
         }
     });

@@ -141,7 +141,6 @@ img {
 
 #analytics-sidebar::-webkit-scrollbar {
   width: 0px;  /* remove scrollbar space */
-
 }
 
 #analytics-sidebar ul {
@@ -169,15 +168,6 @@ img {
   border-width: 2px;
 }
 
-#analytics-sidebar a {
-  color: white;
-  text-decoration: none;
-  list-style: none;
-}
-
-#analytics-sidebar li:hover {
-  background: #087830;  
-}
 
 #analytics-topbar { 
   margin-left: 250px; 
