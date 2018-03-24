@@ -1,4 +1,6 @@
-@extends('layouts.main') @section('styling')
+@extends('layouts.main')
+
+@section('styling')
 <style>
     #main-content {
         padding-right: 200px;
@@ -131,7 +133,8 @@ if(!$filterData){
 
     <div class="twelve columns" id="chartdiv" style="width: 640px; height: 400px;"></div>
 
-    @endsection @section('scripts')
+    @endsection 
+    @section('scripts')
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 
     <script type="text/javascript">
@@ -301,6 +304,9 @@ if(!$filterData){
         }];
         chart = AmCharts.makeChart("chartdiv", {
             "backgroundAlpha": 1,
+            "export": {
+                "enabled": true
+            },
             "type": "serial",
             "titles": [{
                 "text": chartTitle
@@ -309,7 +315,7 @@ if(!$filterData){
                 "text": "",
                 "x": 10,
                 "y": 15,
-                "url": "javascript: goBack();void(0);"
+                "url": "javascript: goBackChart();void(0);"
             }],
             "dataProvider": chartData,
             "valueAxes": [{
@@ -350,70 +356,6 @@ if(!$filterData){
                 "gridAlpha": 0,
                 "tickLength": 0
             },
-            amExport = {
-                top: 0,
-                right: 0,
-                exportJPG: true,
-                exportPNG: true,
-                exportSVG: true
-            }
-
-            // Advanced configuration
-            amExport.userCFG = {
-                menuTop: 'auto',
-                menuLeft: 'auto',
-                menuRight: '0px',
-                menuBottom: '0px',
-                menuItems: [{
-                    textAlign: 'center',
-                    icon: '../amcharts/images/export.png',
-                    iconTitle: 'Save chart as an image',
-                    onclick: function() {},
-                    items: [{
-                        title: 'JPG',
-                        format: 'jpg'
-                    }, {
-                        title: 'PNG',
-                        format: 'png'
-                    }, {
-                        title: 'SVG',
-                        format: 'svg'
-                    }]
-                }],
-                menuItemStyle: {
-                    backgroundColor: 'transparent',
-                    opacity: 1,
-                    rollOverBackgroundColor: '#EFEFEF',
-                    color: '#000000',
-                    rollOverColor: '#CC0000',
-                    paddingTop: '6px',
-                    paddingRight: '6px',
-                    paddingBottom: '6px',
-                    paddingLeft: '6px',
-                    marginTop: '0px',
-                    marginRight: '0px',
-                    marginBottom: '0px',
-                    marginLeft: '0px',
-                    textAlign: 'left',
-                    textDecoration: 'none',
-                    fontFamily: 'Arial', // Default: charts default
-                    fontSize: '12px', // Default: charts default
-                },
-                menuItemOutput: {
-                    backgroundColor: '#FFFFFF',
-                    fileName: 'amCharts',
-                    format: 'png',
-                    output: 'dataurlnewwindow',
-                    render: 'browser',
-                    dpi: 90,
-                    onclick: function(instance, config, event) {
-                        event.preventDefault();
-                        instance.output(config);
-                    }
-                },
-                legendPosition: "bottom", //top,left,right
-                removeImagery: true
-            }
         });
 
 
@@ -454,12 +396,6 @@ if(!$filterData){
             chart.validateData();
         }
     </script>
-    <script src="../amcharts/exporting/amexport.js" type="text/javascript"></script>
-    <script src="../amcharts/exporting/canvg.js" type="text/javascript"></script>
-    <script src="../amcharts/exporting/rgbcolor.js" type="text/javascript"></script>
-    <script src="../amcharts/exporting/filesaver.js" type="text/javascript"></script>
-    <script src="../amcharts/exporting/jspdf.js" type="text/javascript"></script>
-    <script src="../amcharts/exporting/jspdf.plugin.addimage.js" type="text/javascript"></script>
     <script>
         const picker = datepicker('#date');
     </script>

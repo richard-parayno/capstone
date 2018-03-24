@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
   <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
   <script src="https://www.amcharts.com/lib/3/serial.js"></script>
   <script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
+  <script src="https://www.amcharts.com/lib/3/plugins/export/export.js" type="text/javascript"></script>
+  <link href="https://www.amcharts.com/lib/3/plugins/export/export.css" rel="stylesheet" type="text/css">
 </head>
 
 @section('styling')
