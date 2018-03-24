@@ -117,13 +117,21 @@ class ExcelController extends Controller
         Debugbar::info("lastTripsBatchNumber pre loop: ".$lastTripsBatchNumber);
          
         $currentAuditDate = Carbon::now();
-        $formattedCurrentAuditDate = $currentAuditDate->toDateTimeString();    
-
+        $formattedCurrentAuditDate = $currentAuditDate->toDateTimeString();   
+        
+        
 
         // initialize the counters
         $ctr = 0;
         $totalEmission = 0;
         foreach ($load as $key => $row) {
+            $allEmissions = Monthlyemissionsperschool::all();
+
+            if ($allEmissions->isEmpty()) {
+                $firstrun = true;
+            } else {
+                $firstrun = false;
+            }
             // in the current row....... 
             //convert the date
             $convertd1 = (string)$row['date'];
@@ -152,6 +160,7 @@ class ExcelController extends Controller
             Debugbar::info("convertd2 ".$convertd2);                
             Debugbar::info("convertd2 strtotime".strtotime($convertd2));  
             $currentMonthInExcel = date("Y-m-d", strtotime($convertd2));
+
             Debugbar::info("currentMonthInExcel ".$currentMonthInExcel);
 
             //get the current dept id from the deptsperinstitution table
@@ -190,22 +199,41 @@ class ExcelController extends Controller
 
                     $trips->save();
                     
-                    //if the first run of the code hasn't started yet
-                    //if this is a new month, add new entry to monthly emission table
-                    if (!isset($firstrun)) {
-                        $currentMonth = $currentMonthInExcel;
-                        Debugbar::info("currentmonth ".$currentMonth);
-                        Debugbar::info("currentmonthinexcel ".$currentMonthInExcel);
-                        
-                        
-                        // create a new monthly emission object (to be placed in the db)
+                    //MONTHLY EMISSIONS
+                    $currentMonth = $currentMonthInExcel;
+                    $carbonMonthYearExcel = Carbon::parse($currentMonth);
+                    Debugbar::info("current carbon month excel: ".$carbonMonthYearExcel);
+                    
+
+                    if ($firstrun == true) {
                         $monthlyEmission = new Monthlyemissionsperschool;
                         $monthlyEmission->institutionID = $currentInstitution;
                         $monthlyEmission->emission = $totalEmission;
-                        $monthlyEmission->monthYear = $currentMonthInExcel;
+                        $newDate = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);                        
+                        $monthlyEmission->monthYear = $newDate;
                         $monthlyEmission->save();
-                        $firstrun = true;
+                        $firstrun = false;
+                    } elseif ($firstrun == false) {
+                        foreach($allEmissions as $all) {
+                            $carbonMonthYearDB = Carbon::parse($all->monthYear);
+                            $newDateExcel = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);
+                            $newDateDB = Carbon::create($carbonMonthYearDB->year, $carbonMonthYearDB->month, 1, 0);
+                            Debugbar::info("current carbon month db: ".$newDateDB);
+                            
+
+                            if (Monthlyemissionsperschool::where('monthYear', $newDateExcel)->exists()) {
+                                $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);
+                            } else {
+                                $newMonthlyEmissions = new Monthlyemissionsperschool;
+                                $newMonthlyEmissions->institutionID = $currentInstitution;
+                                $newMonthlyEmissions->emission = $totalEmission;                        
+                                $newMonthlyEmissions->monthYear = $newDateExcel;
+                                $newMonthlyEmissions->save();
+                            }
+                        }
                     }
+                   
+
                     
                     break;
                     //if it's gas
@@ -231,37 +259,40 @@ class ExcelController extends Controller
                                                                 
                     $trips->save();   
                     
-                    //if the first run of the code hasn't started yet
-                    /** 
-                    * 
-                    *if (!isset($firstrun)) {
-                    *   $currentMonth = $currentMonthInExcel;
-                    *    // create a new monthly emission object (to be placed in the db)
-                    *    $monthlyEmission = new Monthlyemissionsperschool;
-                    *    $monthlyEmission->institutionID = $currentInstitution;
-                    *    $monthlyEmission->emission = $totalEmission;
-                    *    $monthlyEmission->monthYear = $currentMonthInExcel;
-                    *    $monthlyEmission->save();
-                    *    $firstrun = true;
-                    *}
-                    **/
-                    //if the current month isn't equal to the one in the excel and the first run is done already
-                    if ($currentMonth != $currentMonthInExcel) {
-                        $currentMonth = $currentMonthInExcel;
-                        // create a new monthly emission object (to be placed in the db)
+                    //MONTHLY EMISSIONS
+                    $currentMonth = $currentMonthInExcel;
+                    $carbonMonthYearExcel = Carbon::parse($currentMonth);
+                    Debugbar::info("current carbon month excel: ".$carbonMonthYearExcel);
+                    
+
+                    if ($firstrun == true) {
                         $monthlyEmission = new Monthlyemissionsperschool;
                         $monthlyEmission->institutionID = $currentInstitution;
                         $monthlyEmission->emission = $totalEmission;
-                        $monthlyEmission->monthYear = $currentMonthInExcel;
+                        $newDate = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);                        
+                        $monthlyEmission->monthYear = $newDate;
                         $monthlyEmission->save();
-                    } else {
-                        // create a new monthly emission object (to be placed in the db)
-                        $monthlyEmission = new Monthlyemissionsperschool;
-                        $monthlyEmission->institutionID = $currentInstitution;
-                        $monthlyEmission->emission = $totalEmission;
-                        $monthlyEmission->monthYear = $currentMonth;
-                        $monthlyEmission->save();
+                        $firstrun = false;
+                    } elseif ($firstrun == false) {
+                        foreach($allEmissions as $all) {
+                            $carbonMonthYearDB = Carbon::parse($all->monthYear);
+                            $newDateExcel = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);
+                            $newDateDB = Carbon::create($carbonMonthYearDB->year, $carbonMonthYearDB->month, 1, 0);
+                            Debugbar::info("current carbon month db: ".$newDateDB);
+                            
+
+                            if (Monthlyemissionsperschool::where('monthYear', $newDateExcel)->exists()) {
+                                $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);
+                            } else {
+                                $newMonthlyEmissions = new Monthlyemissionsperschool;
+                                $newMonthlyEmissions->institutionID = $currentInstitution;
+                                $newMonthlyEmissions->emission = $totalEmission;                        
+                                $newMonthlyEmissions->monthYear = $newDateExcel;
+                                $newMonthlyEmissions->save();
+                            }
+                        }
                     }
+
                     
                     break;
                 }

@@ -23,17 +23,13 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 class Monthlyemissionsperschool extends Eloquent
 {
 	protected $table = 'monthlyemissionsperschool';
-	protected $primaryKey = 'monthYear';
+	protected $primaryKey = ['monthYear', 'institutionID'];
 	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
 		'institutionID' => 'int',
 		'emission' => 'int'
-	];
-
-	protected $dates = [
-		'monthYear'
 	];
 
 	protected $fillable = [
