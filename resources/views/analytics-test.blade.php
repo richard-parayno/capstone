@@ -397,7 +397,7 @@ if(!$filterData){
         }
     </script>
     <script>
-        const picker = datepicker('#date');
+
     </script>
 
     @endsection
