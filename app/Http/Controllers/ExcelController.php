@@ -310,7 +310,7 @@ class ExcelController extends Controller
 
         $trips = Trip::all();
 
-        return redirect('/dashboard/upload-view')->with(compact('trips'));
+        return redirect('/dashboard/upload-view')->with(compact('trips'))->with('success', true)->with('message', 'Trip Data Batch #'.$lastTripsBatchNumber.' ('.$formattedCurrentAuditDate.') successfully uploaded!');
 
     }
 }

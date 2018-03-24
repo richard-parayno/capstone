@@ -24,6 +24,11 @@
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">
   <h1>Confirm Trip Data</h1>
+  @if(Session::has('success'))
+      <div class="twelve columns" id="success-message" style="color: green; margin-bottom: 20px;">
+          <strong>Success! </strong> {{ Session::get('message', '') }}
+      </div>
+  @endif
   <table class="u-full-width">
     <thead>
       <tr>
