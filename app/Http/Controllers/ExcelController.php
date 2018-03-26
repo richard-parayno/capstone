@@ -39,6 +39,7 @@ class ExcelController extends Controller
 
     public function showManualProcess(Request $request) {
         $allEmissions = Monthlyemissionsperschool::all();
+        $trips = Trip::all();
 
         if ($allEmissions->isEmpty()) {
             $firstrun = true;
@@ -200,6 +201,8 @@ class ExcelController extends Controller
                 break;
             }
         }
+
+        return redirect('/dashboard/upload-view')->with(compact('trips'))->with('success', true)->with('message', 'Trip Data Batch #'.$lastTripsBatchNumber.' ('.$formattedCurrentAuditDate.') successfully uploaded!');        
 
     }
 
