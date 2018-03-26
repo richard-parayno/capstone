@@ -141,7 +141,7 @@ if(!isset($data)){
                 </div>
             </div>
             <div class="twelve column bar">
-                <button class="submit">Filter</button>
+                <input class="button-primary" type="submit"></input>
             </div>
         </form>
     </div>
