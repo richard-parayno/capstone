@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 @extends('layouts.main') @section('styling')
 <style>
     #main-content {
@@ -29,35 +30,35 @@ if(!isset($data)){
 } else{
     $rawDB = "";
     $add = false;
-    if(isset($universityIDFilter)){
-        $rawDB .= " institutionID = " . $data['institutionID'];
+    if($data['institutionID'] != null){
+        $rawDB .= " vehicles_mv.institutionID = " . $data['institutionID'];
         $add = true;
     }
-    if(isset($carFilter)){
+    if($data['carTypeID'] != null){
         if($add){
             $rawDB .= " AND ";
         }
-        $rawDB .= "cartype_ref.carTypeID = " . $data['carType'];
+        $rawDB .= "cartype_ref.carTypeID = " . $data['carTypeID'];
         $add = true;
     }
-    if(isset($gasFilter)){
+    if($data['fuelTypeID'] != null){
         if($add){
             $rawDB .= " AND ";
         }
         $add = true;
-        $rawDB .= "fueltype_ref.fueltypeID = " . $data['fuelType'];
+        $rawDB .= "fueltype_ref.fueltypeID = " . $data['fuelTypeID'];
     }
-    if(isset($fromDateFilter) && isset($toDateFilter)){
+    if($data['fromDate'] != null && $data['toDate'] != null){
         if($add){
             $rawDB .= " AND ";
         }
         $rawDB .= "trips.tripDate <= '" . $toDateFilter . "' AND trips.tripDate >= '" . $fromDateFilter. "'";
-    }elseif(!isset($fromDateFilter) && isset($toDateFilter)){
+    }elseif($data['fromDate'] != null && $data['toDate'] != null){
         if($add){
             $rawDB .= " AND ";
         }
         $rawDB .= "trips.tripDate <= '" . $toDateFilter . "'";
-    }elseif(isset($fromDateFilter) && !isset($toDateFilter)){
+    }elseif($data['fromDate'] != null && $data['toDate'] != null){
         if($add){
             $rawDB .= " AND ";
         }
@@ -75,14 +76,13 @@ if(!isset($data)){
     ->get();    
     $chartTitle = "DLSU";
 }
-
 ?>
 
     @section('content')
     <!-- analytics sidenav -->
     <div class="container u-pull-right" id="analytics-sidebar">
         <form method="post" action="{{ route('analytics-test-process') }}">
-           {{ csrf_field() }}
+            {{ csrf_field() }}
             <div class="twelve column bar">
                 <div id="current-user">
                     <p style="text-align: center; border: none;">Analytics Filters</p>
@@ -99,6 +99,7 @@ if(!isset($data)){
                 <br>
                 <div style="padding-left: 5px; padding-right: 5px; border: none;">
                     <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
+                       <option value="">All Institutions</option>
                         @foreach($institutions as $institution)
                           <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
                         @endforeach
@@ -122,7 +123,8 @@ if(!isset($data)){
                 <div style="padding-left: 5px; padding-right: 5px; border: none;">
                     <font color="black">
                         <select class="u-full-width" name="fuelTypeID" id="fuelTypeID">
-                          @foreach($fuelTypes as $fuelType)\
+                         <option value="">All Fuel Types</option>
+                          @foreach($fuelTypes as $fuelType)
                             <option value="{{ $fuelType->fuelTypeID }}">{{ $fuelType->fuelTypeName }}</option>
                           @endforeach
                     </select>
@@ -139,104 +141,114 @@ if(!isset($data)){
                 </div>
             </div>
             <div class="twelve column bar">
-                <input class="button-primary" type="submit"></input>
+                <input class="button-primary" type="submit">
             </div>
         </form>
     </div>
     <!-- analytics sidenav -->
 
-    <div class="twelve columns" id="chartdiv" style="width: 640px; height: 400px;"></div>
+    <div class="twelve columns" id="chartdiv" style="width: 100%; height: 400px; background-color: #222222;" ></div>
 
     @endsection @section('scripts')
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-
+    
     <script type="text/javascript">
         var chart;
         AmCharts.theme = AmCharts.themes.dark;
         var chartTitle = "All Institutions";
         var chartDataIndexes = [];
-        var chartData = [{
-
-            "date": "2009-01-01",
-            "value": 3,
-            "fromValue": 2,
-            "toValue": 5
-        }, {
+        var chartData = [  
+        
+        <?php
+        $x = 1;
+          foreach($emissionData as $emission) {
+            echo '{"date": "' . $emission->tripDate . '",';
+            echo ' "value": ' . $emission->emission . ',';
+            echo ' "regression": 3, ';
+            echo '"sequestration": 30 }';
+            if($x != count($emissionData)) {
+                echo ",
+                ";
+            }
+            $x++;
+          };
+        ?>,
+            {
             "date": "2009-02-01",
             "value": 5,
-            "fromValue": 4,
-            "toValue": 6
+            "regression": 4,
+            "sequestration": 30
         }, {
             "date": "2009-03-01",
             "value": 15,
-            "fromValue": 12,
-            "toValue": 18,
+            "regression": 12,
+            "sequestration": 30,
             "bullet": "round",
             "subSetTitle": "Second level",
             "subSet": [{
                 "date": "2009-03-01",
                 "value": 3,
-                "fromValue": 2,
-                "toValue": 5
+                "regression": 2,
+                "sequestration": 5
             }, {
                 "date": "2009-03-02",
                 "value": 3,
-                "fromValue": 2,
-                "toValue": 5
+                "regression": 2,
+                "sequestration": 5
             }, {
                 "date": "2009-03-03",
                 "value": 3,
-                "fromValue": 2,
-                "toValue": 5
+                "regression": 2,
+                "sequestration": 5
             }, {
                 "date": "2009-03-04",
                 "value": 3,
-                "fromValue": 2,
-                "toValue": 5,
+                "regression": 2,
+                "sequestration": 5,
                 "bullet": "round",
                 "subSetTitle": "Third level",
                 "subSet": [{
                     "date": "2009-03-04 01:00",
                     "value": 3,
-                    "fromValue": 2,
-                    "toValue": 5
+                    "regression": 2,
+                    "sequestration": 5
                 }, {
                     "date": "2009-03-04 02:00",
                     "value": 4,
-                    "fromValue": 3,
-                    "toValue": 6
+                    "regression": 3,
+                    "sequestration": 6
                 }, {
                     "date": "2009-03-04 03:00",
                     "value": 5,
-                    "fromValue": 4,
-                    "toValue": 6,
+                    "regression": 4,
+                    "sequestration": 6,
                     "bullet": "round",
                     "subSetTitle": "Fourth level",
                     "subSet": [{
                         "date": "2009-03-04 03:10",
                         "value": 3,
-                        "fromValue": 2,
-                        "toValue": 5
+                        "regression": 2,
+                        "sequestration": 5
                     }, {
                         "date": "2009-03-04 03:20",
                         "value": 2,
-                        "fromValue": 1,
-                        "toValue": 3
+                        "regression": 1,
+                        "sequestration": 3
                     }, {
                         "date": "2009-03-04 03:30",
                         "value": 3,
-                        "fromValue": 2,
-                        "toValue": 5
+                        "regression": 2,
+                        "sequestration": 5
                     }, {
                         "date": "2009-03-04 03:40",
                         "value": 4,
-                        "fromValue": 3,
-                        "toValue": 5
+                        "regression": 3,
+                        "sequestration": 5
                     }, {
                         "date": "2009-03-04 03:50",
                         "value": 3,
-                        "fromValue": 2,
-                        "toValue": 5,
+                        "regression": 2,
+                        "sequestration": 5,
                         // "bullet": "round",
                         "subSet": [
                             // And so on...
@@ -245,75 +257,75 @@ if(!isset($data)){
                 }, {
                     "date": "2009-03-04 04:00",
                     "value": 3,
-                    "fromValue": 2,
-                    "toValue": 5
+                    "regression": 2,
+                    "sequestration": 5
                 }, {
                     "date": "2009-03-04 05:00",
                     "value": 1,
-                    "fromValue": 0,
-                    "toValue": 2
+                    "regression": 0,
+                    "sequestration": 2
                 }]
             }, {
                 "date": "2009-03-05",
                 "value": 3,
-                "fromValue": 2,
-                "toValue": 5
+                "regression": 2,
+                "sequestration": 5
             }, {
                 "date": "2009-03-06",
                 "value": 3,
-                "fromValue": 2,
-                "toValue": 5
+                "regression": 2,
+                "sequestration": 5
             }, {
                 "date": "2009-03-07",
                 "value": 3,
-                "fromValue": 2,
-                "toValue": 5
+                "regression": 2,
+                "sequestration": 5
             }]
         }, {
             "date": "2009-04-01",
             "value": 13,
-            "fromValue": 10.4,
-            "toValue": 15.6
+            "regression": 10.4,
+            "sequestration": 30
         }, {
             "date": "2009-05-01",
             "value": 17,
-            "fromValue": 13.6,
-            "toValue": 20.4
+            "regression": 13.6,
+            "sequestration": 30
         }, {
             "date": "2009-06-01",
             "value": 15,
-            "fromValue": 12,
-            "toValue": 18
+            "regression": 12,
+            "sequestration": 30
         }, {
             "date": "2009-07-01",
             "value": 19,
-            "fromValue": 15.2,
-            "toValue": 22.8
+            "regression": 15.2,
+            "sequestration": 30
         }, {
             "date": "2009-08-01",
             "value": 21,
-            "fromValue": 16.8,
-            "toValue": 25.2
+            "regression": 16.8,
+            "sequestration": 30
         }, {
             "date": "2009-09-01",
             "value": 20,
-            "fromValue": 16,
-            "toValue": 24
+            "regression": 16,
+            "sequestration": 30
         }, {
             "date": "2009-10-01",
             "value": 20,
-            "fromValue": 16,
-            "toValue": 24
+            "regression": 16,
+            "sequestration": 30
         }, {
             "date": "2009-11-01",
             "value": 19,
-            "fromValue": 15.2,
-            "toValue": 22.8
+            "regression": 15.2,
+            "sequestration": 30
         }, {
             "date": "2009-12-01",
             "value": 25,
-            "fromValue": 20,
-            "toValue": 30
+            "regression": 20,
+            "sequestration": 30
         }];
         chart = AmCharts.makeChart("chartdiv", {
             "backgroundAlpha": 1,
@@ -324,6 +336,12 @@ if(!isset($data)){
             "titles": [{
                 "text": chartTitle
             }],
+            "colors": [
+                "#de4c4f",
+                "#d8854f",
+                "#77ee38",
+                "#a7a737"
+            ],
             "allLabels": [{
                 "text": "",
                 "x": 10,
@@ -337,19 +355,15 @@ if(!isset($data)){
                 "position": "left"
             }],
             "graphs": [{
-                "id": "fromGraph",
-                "lineAlpha": 0,
-                "showBalloon": false,
-                "valueField": "fromValue",
-                "fillAlphas": 0
-            }, {
-                "fillAlphas": 0.2,
-                "fillToGraph": "fromGraph",
-                "lineAlpha": 0,
-                "showBalloon": false,
-                "valueField": "toValue"
-            }, {
                 "valueField": "value",
+                "fillAlphas": 0,
+                "bulletField": "bullet"
+            },{
+                "valueField": "regression",
+                "fillAlphas": 0,
+                "bulletField": "bullet"
+            },{
+                "valueField": "sequestration",
                 "fillAlphas": 0,
                 "bulletField": "bullet"
             }],
@@ -408,8 +422,6 @@ if(!isset($data)){
             chart.dataProvider = previousData;
             chart.validateData();
         }
-    </script>
-    <script>
     </script>
 
     @endsection
