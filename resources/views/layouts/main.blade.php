@@ -217,7 +217,16 @@ use Illuminate\Support\Facades\Route;
   function goBack() {
     window.history.back();
   }
-  </script>
+</script>
+<script>
+  var $root = $('html, body');
+  $('a[href^="#"]').click(function () {
+    $root.animate({
+        scrollTop: $( $.attr(this, 'href') ).offset().top
+    }, 800);
+    return false;
+  });
+</script>
 @show
 
 </html>
