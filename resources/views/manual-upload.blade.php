@@ -34,7 +34,7 @@
     @endif 
     <form method="post" action="{{ route('manual-upload-process') }}">
       {{ csrf_field() }}
-      <div class="six columns">
+      <div class="six columns" style="margin-left: 0px;">
         <label for="tripDate">Trip Date:</label>
         <input class="u-full-width" type="date" name="tripDate" id="tripDate">
       </div>
