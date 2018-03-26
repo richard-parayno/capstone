@@ -422,7 +422,7 @@ class ExcelController extends Controller
                     break;
                     //if it's gas
                     case 2:
-                    $gasEmissionInTonnes = ((6760 / $selectedCarTypeMPG) * $currentKMReading) * 100000000000000000000;
+                    $gasEmissionInTonnes = ((6760 / $selectedCarTypeMPG) * $currentKMReading) * 0.000001;
                     $totalEmission += $gasEmissionInTonnes;
                     
                     //create a new trip object (to be placed in the db)                        

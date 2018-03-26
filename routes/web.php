@@ -68,8 +68,8 @@ Route::get('/dashboard/department-view-search', 'ViewUserController@viewDepartme
 Route::get('/department-search','ViewUserController@viewDepartmentsProcess')->name('department-search')->middleware('auth');
 
 /*filtering analytics*/
-Route::get('/analytics-test', 'AddController@filterDashboard')->name('analytics-test')->middleware('auth');
-Route::post('/analytics-test-process', 'FilterController@filter')->name('analytics-test-process')->middleware('auth');
+Route::get('/dashboard', 'AddController@filterDashboard')->name('dashboard')->middleware('auth');
+Route::post('/dashboard-process', 'FilterController@filter')->name('dashboard-process')->middleware('auth');
 
 
 /* Add New Department/Offices */

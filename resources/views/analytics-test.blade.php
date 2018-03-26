@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-@extends('layouts.main') @section('styling')
+<!DOCTYPE html> @extends('layouts.main') @section('styling')
 <style>
     #main-content {
         padding-right: 200px;
@@ -8,15 +7,66 @@
 @endsection
 
 <?php
-/*
-$filterData = true;
-$institutionID = 1;
-$carFilter = 2;
-$gasFilter = 1;
-$fromDateFilter = "2017-6-12";
-$toDateFilter = "2017-8-15";
-*/
-if(!isset($data)){
+
+function getRegressionLine($emissionData){
+            //step 1
+            //calculate pearson's correlation coefficient - r
+            //step 2
+            //compute for the standard deviation of months (x) and emisisons (y) - Sx and Sy
+            //step 3
+            //compute for slope - b
+            //step 4
+            //compute for y-intercept - a
+            //Linear Regression
+            //y = a + bx
+
+            //Pearson's Correlation Coefficient calculation
+            //numerator calculation
+            $r = 0;
+            $summationOfNumerator = 0;
+            $xAve = 0;
+            $yAve = 0;
+            for($x = 1; $x <= count($emissionData); $x++) {
+                $xAve += $x;
+            }
+            for($x = 0; $x < count($emissionData); $x++) {
+                $yAve += $emissionData[$x][1];
+            }
+            $xAve = $xAve/count($emissionData);
+            $yAve = $yAve/count($emissionData);
+            for($x = 1; $x <= count($emissionData); $x++) {
+                $summationOfNumerator+=($x - $xAve)*($emissionData[$x - 1][1] - $yAve);
+            }
+
+            //denominator 
+            $denominator = 0;
+            $summationTerm1 = 0;
+            $summationTerm2 = 0;
+            for($x = 1; $x <= count($emissionData); $x++) {
+                $summationTerm1+=($x - $xAve)*($x - $xAve);
+                $summationTerm2+=($emissionData[$x - 1][1] - $yAve)*($emissionData[$x - 1][1] - $yAve);
+            }
+
+            $denominator = sqrt($summationTerm1 * $summationTerm2);
+            $r = $summationOfNumerator/$denominator;
+
+            //standard deviation calculation
+            $Sy = sqrt($summationTerm2/(count($emissionData)-1));
+            $Sx = sqrt($summationTerm1/(count($emissionData)-1));
+
+            //slope calculation
+            $b = $r * ($Sy/$Sx);
+
+            //y-intercept calculation
+            $a;
+            $a = $yAve - ($b * $xAve);
+
+            $regressionLine = array($a, $b);
+
+            return $regressionLine;
+        }
+
+if(!isset($data['institution'])){
     $chartTitle = 'All Universities';   
     $emissionData = DB::table('trips')
     ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
@@ -26,6 +76,7 @@ if(!isset($data)){
     ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
     ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
 'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active')
+    ->orderBy('trips.tripDate', 'asc')
     ->get();
 } else{
     $rawDB = "";
@@ -70,9 +121,11 @@ if(!isset($data)){
     ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
     ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+    ->join('institutions', 'deptsperinstitution.institutionID', '=', 'institution.institutionID')
     ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
-'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active')
+'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active', 'institutions.institutionName') 
     ->whereRaw($rawDB)
+    ->orderBy('trips.tripDate', 'asc')
     ->get();    
     $chartTitle = "DLSU";
 }
@@ -111,6 +164,7 @@ if(!isset($data)){
                 <br>
                 <div style="padding-left: 5px; padding-right: 5px; border: none;">
                     <select class="u-full-width" name="carTypeID" id="carTypeID" style="color: black;">
+                       <option value="">All Car Types</option>
                         @foreach($carTypes as $carType)
                           <option value="{{ $carType->carTypeID }}">{{ $carType->carTypeName }}</option>
                         @endforeach
@@ -147,186 +201,97 @@ if(!isset($data)){
     </div>
     <!-- analytics sidenav -->
 
-    <div class="twelve columns" id="chartdiv" style="width: 100%; height: 400px; background-color: #222222;" ></div>
+    <div class="twelve columns" id="chartdiv" style="width: 100%; height: 400px; background-color: #222222;"></div>
 
     @endsection @section('scripts')
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-    
+
     <script type="text/javascript">
         var chart;
         AmCharts.theme = AmCharts.themes.dark;
-        var chartTitle = "All Institutions";
+        var chartTitle = <?php echo $chartTitle; ?>;
         var chartDataIndexes = [];
-        var chartData = [  
-        
+        var chartData = [
         <?php
         $x = 1;
+        $prev;
+        $monthlyEmissions = [];
+        $monthCtr = 0;
           foreach($emissionData as $emission) {
+                if($x == 1){
+                    $monthSum = 0;
+                    $prev = substr($emission->tripDate, 0, 7);
+                }
+                if($prev == substr($emission->tripDate, 0, 7)){
+                    $monthSum += $emission->emission; 
+                    $x++;
+                    if($x == count($emissionData) - 1){
+                        $monthlyEmissions[$monthCtr] = [$prev, $monthSum];
+                        $prev = substr($emission->tripDate, 0, 7);
+                        $monthSum = 0;
+                        $monthCtr++;
+                    }
+                }else{
+                        $monthlyEmissions[$monthCtr] = [$prev, $monthSum];
+                        $prev = substr($emission->tripDate, 0, 7);
+                        $monthSum = 0;
+                        $monthCtr++;
+                    };
+          }
+        $regressionLine = getRegressionLine($monthlyEmissions);
+        for($x = 0 ; $x < count($monthlyEmissions); $x++) {
+            echo '{
+            "date": "' . $monthlyEmissions[$x][0].'",';
+            echo '
+            "value": ' . $monthlyEmissions[$x][1].',';
+            echo ' 
+            "regression": ' . ($regressionLine[0] + ($regressionLine[0] * $x)) . ', ';
+            echo '
+            "sequestration": 30,';
+            echo ' 
+            "bullet": "round"';
+            /*
+            echo '
+            "subSetTitle": "Second level",';
+            echo  '
+            "subSet": []';
+            */
+              echo '
+            },';
+        }
+           
+            /*
+            
             echo '{"date": "' . $emission->tripDate . '",';
             echo ' "value": ' . $emission->emission . ',';
             echo ' "regression": 3, ';
-            echo '"sequestration": 30 }';
+            echo '"sequestration": 30,';
+            echo ' "bullet": "round"';
+              echo '}';
             if($x != count($emissionData)) {
                 echo ",
                 ";
             }
             $x++;
           };
-        ?>,
-            {
-            "date": "2009-02-01",
-            "value": 5,
-            "regression": 4,
-            "sequestration": 30
-        }, {
-            "date": "2009-03-01",
-            "value": 15,
-            "regression": 12,
-            "sequestration": 30,
-            "bullet": "round",
-            "subSetTitle": "Second level",
-            "subSet": [{
-                "date": "2009-03-01",
-                "value": 3,
-                "regression": 2,
-                "sequestration": 5
-            }, {
-                "date": "2009-03-02",
-                "value": 3,
-                "regression": 2,
-                "sequestration": 5
-            }, {
-                "date": "2009-03-03",
-                "value": 3,
-                "regression": 2,
-                "sequestration": 5
-            }, {
-                "date": "2009-03-04",
-                "value": 3,
-                "regression": 2,
-                "sequestration": 5,
-                "bullet": "round",
-                "subSetTitle": "Third level",
-                "subSet": [{
-                    "date": "2009-03-04 01:00",
-                    "value": 3,
-                    "regression": 2,
-                    "sequestration": 5
-                }, {
-                    "date": "2009-03-04 02:00",
-                    "value": 4,
-                    "regression": 3,
-                    "sequestration": 6
-                }, {
-                    "date": "2009-03-04 03:00",
-                    "value": 5,
-                    "regression": 4,
-                    "sequestration": 6,
-                    "bullet": "round",
-                    "subSetTitle": "Fourth level",
-                    "subSet": [{
-                        "date": "2009-03-04 03:10",
-                        "value": 3,
-                        "regression": 2,
-                        "sequestration": 5
-                    }, {
-                        "date": "2009-03-04 03:20",
-                        "value": 2,
-                        "regression": 1,
-                        "sequestration": 3
-                    }, {
-                        "date": "2009-03-04 03:30",
-                        "value": 3,
-                        "regression": 2,
-                        "sequestration": 5
-                    }, {
-                        "date": "2009-03-04 03:40",
-                        "value": 4,
-                        "regression": 3,
-                        "sequestration": 5
-                    }, {
-                        "date": "2009-03-04 03:50",
-                        "value": 3,
-                        "regression": 2,
-                        "sequestration": 5,
-                        // "bullet": "round",
-                        "subSet": [
-                            // And so on...
-                        ]
-                    }]
-                }, {
-                    "date": "2009-03-04 04:00",
-                    "value": 3,
-                    "regression": 2,
-                    "sequestration": 5
-                }, {
-                    "date": "2009-03-04 05:00",
-                    "value": 1,
-                    "regression": 0,
-                    "sequestration": 2
-                }]
-            }, {
-                "date": "2009-03-05",
-                "value": 3,
-                "regression": 2,
-                "sequestration": 5
-            }, {
-                "date": "2009-03-06",
-                "value": 3,
-                "regression": 2,
-                "sequestration": 5
-            }, {
-                "date": "2009-03-07",
-                "value": 3,
-                "regression": 2,
-                "sequestration": 5
-            }]
-        }, {
-            "date": "2009-04-01",
-            "value": 13,
-            "regression": 10.4,
-            "sequestration": 30
-        }, {
-            "date": "2009-05-01",
-            "value": 17,
-            "regression": 13.6,
-            "sequestration": 30
-        }, {
-            "date": "2009-06-01",
-            "value": 15,
-            "regression": 12,
-            "sequestration": 30
-        }, {
-            "date": "2009-07-01",
-            "value": 19,
-            "regression": 15.2,
-            "sequestration": 30
-        }, {
-            "date": "2009-08-01",
-            "value": 21,
-            "regression": 16.8,
-            "sequestration": 30
-        }, {
-            "date": "2009-09-01",
-            "value": 20,
-            "regression": 16,
-            "sequestration": 30
-        }, {
-            "date": "2009-10-01",
-            "value": 20,
-            "regression": 16,
-            "sequestration": 30
-        }, {
-            "date": "2009-11-01",
-            "value": 19,
-            "regression": 15.2,
-            "sequestration": 30
-        }, {
-            "date": "2009-12-01",
-            "value": 25,
-            "regression": 20,
-            "sequestration": 30
-        }];
+          */
+        ?>{ 
+                "date": <?php
+                $yrmonth = end($monthlyEmissions);
+                $month = (int) substr($yrmonth[0], 5, 2);
+                $yr = (int) substr($yrmonth[0], 0, 4);
+                if($month==12){
+                    $month = (string) "01";
+                    $yr++;
+                }elseif($month>=9){
+                    $month = (string) $month++;
+                }else{
+                    $month = (string) "0" . ($month + 1);
+                }
+                echo '"'.$yr . "-" . $month.'",
+                ';
+                 ?>"regression": <?php echo $regressionLine[0] + ($regressionLine[0] * count($monthlyEmissions) + 1); ?>}
+        ];
         chart = AmCharts.makeChart("chartdiv", {
             "backgroundAlpha": 1,
             "export": {
@@ -358,11 +323,11 @@ if(!isset($data)){
                 "valueField": "value",
                 "fillAlphas": 0,
                 "bulletField": "bullet"
-            },{
+            }, {
                 "valueField": "regression",
                 "fillAlphas": 0,
                 "bulletField": "bullet"
-            },{
+            }, {
                 "valueField": "sequestration",
                 "fillAlphas": 0,
                 "bulletField": "bullet"

@@ -32,7 +32,7 @@ class Trip extends Eloquent
 	protected $casts = [
 		'deptID' => 'int',
 		'kilometerReading' => 'decimal',
-		'emissions' => 'float',
+		'emissions' => 'decimal',
 	];
 
 	protected $fillable = [
