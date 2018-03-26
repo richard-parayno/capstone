@@ -15,6 +15,41 @@ use Illuminate\Support\Facades\Route;
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/skeleton.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/style-dash.css') }}">
   <link rel="stylesheet" href="https://unpkg.com/js-datepicker/datepicker.css">
+  <script>
+    (function(){
+      function id(v){ return document.getElementById(v); }
+      function loadbar() {
+        var ovrl = id("overlay"),
+            prog = id("progress"),
+            stat = id("progstat"),
+            img = document.images,
+            c = 0,
+            tot = img.length;
+        if(tot == 0) return doneLoading();
+
+        function imgLoaded(){
+          c += 1;
+          var perc = ((100/tot*c) << 0) +"%";
+          prog.style.width = perc;
+          stat.innerHTML = "Loading "+ perc;
+          if(c===tot) return doneLoading();
+        }
+        function doneLoading(){
+          ovrl.style.opacity = 0;
+          setTimeout(function(){ 
+            ovrl.style.display = "none";
+          }, 1200);
+        }
+        for(var i=0; i<tot; i++) {
+          var tImg     = new Image();
+          tImg.onload  = imgLoaded;
+          tImg.onerror = imgLoaded;
+          tImg.src     = img[i].src;
+        }    
+      }
+      document.addEventListener('DOMContentLoaded', loadbar, false);
+    }());
+  </script>
   <script src="https://unpkg.com/js-datepicker"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
@@ -22,41 +57,7 @@ use Illuminate\Support\Facades\Route;
   <script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
   <script src="https://www.amcharts.com/lib/3/plugins/export/export.js" type="text/javascript"></script>
   <link href="https://www.amcharts.com/lib/3/plugins/export/export.css" rel="stylesheet" type="text/css">
-  <script>
-  (function(){
-    function id(v){ return document.getElementById(v); }
-    function loadbar() {
-      var ovrl = id("overlay"),
-          prog = id("progress"),
-          stat = id("progstat"),
-          img = document.images,
-          c = 0,
-          tot = img.length;
-      if(tot == 0) return doneLoading();
 
-      function imgLoaded(){
-        c += 1;
-        var perc = ((100/tot*c) << 0) +"%";
-        prog.style.width = perc;
-        stat.innerHTML = "Loading "+ perc;
-        if(c===tot) return doneLoading();
-      }
-      function doneLoading(){
-        ovrl.style.opacity = 0;
-        setTimeout(function(){ 
-          ovrl.style.display = "none";
-        }, 1200);
-      }
-      for(var i=0; i<tot; i++) {
-        var tImg     = new Image();
-        tImg.onload  = imgLoaded;
-        tImg.onerror = imgLoaded;
-        tImg.src     = img[i].src;
-      }    
-    }
-    document.addEventListener('DOMContentLoaded', loadbar, false);
-  }());
-</script>
 </head>
 
 @section('styling')
@@ -242,7 +243,7 @@ use Illuminate\Support\Facades\Route;
   
   <!-- main content -->
   <div id="overlay">
-    <div id="progstat"></div>
+    <div id="progstat">Loading page...</div>
     <div id="progress"></div>
   </div>
   <div class="container" id="main-content">
