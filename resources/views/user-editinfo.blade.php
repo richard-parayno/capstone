@@ -29,7 +29,7 @@
           $currentUser = $_GET['user'];
          
           $userdata = DB::table('users')->where('id', $currentUser)->first();
-          $usertype = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $currentUser)->first();
+          $usertype = DB::table('usertypes_ref')->select('userTypeName')->where('userTypeID', $userdata->userTypeID)->first();
 
           echo "<p>Selected User: ".$userdata->accountName."</p>";
           echo "<p>User Type: ".$usertype->userTypeName."</p>";
