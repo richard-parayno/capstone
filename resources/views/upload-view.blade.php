@@ -51,7 +51,10 @@
       </tbody>
       <!-- action shortcuts -->
       <a href="{{ route('upload-files') }}">
-        <button class="button-primary">Upload Trip Data</button>
+        <button class="button-primary">Upload Trip Data (Excel)</button>
+      </a>
+      <a href="{{ route('manual-upload') }}">
+        <button class="button-primary">Upload Trip Data (Manual)</button>
       </a>
       <!-- action shortcuts -->   
     </table>

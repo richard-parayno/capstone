@@ -213,6 +213,11 @@ use Illuminate\Support\Facades\Route;
 </body>
 
 @section('scripts')
+<script language="javascript/text">
+  function copyDetails(text, field) {
+    document.getElementById(field).value = text;
+  }
+</script>
 <script>
   function goBack() {
     window.history.back();
@@ -227,6 +232,8 @@ use Illuminate\Support\Facades\Route;
     return false;
   });
 </script>
+
+
 @show
 
 </html>

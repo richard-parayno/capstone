@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Input;
 use DB;
 use App\Models\Trip;
 use App\Models\Monthlyemissionsperschool;
+use App\Models\Deptsperinstitution;
 use DateTime;
 use Debugbar;
 use PHPExcel_Cell;
@@ -22,6 +23,184 @@ class ExcelController extends Controller
         $trips = Trip::all();
 
         return view('upload-files', compact('trips'));
+    }
+
+    public function showManual() {
+        $departments = Deptsperinstitution::all();
+        $vehicles = DB::table('vehicles_mv')->where('active', 1)->get();
+        $inactive = DB::table('vehicles_mv')->where('active', 0)->get();
+        $brands = DB::table('carbrand_ref')->get();
+        $institutions = DB::table('institutions')->get(); 
+        $fueltype = DB::table('fueltype_ref')->get();
+        $cartypes = DB::table('cartype_ref')->get();
+
+        return view('manual-upload', compact('departments', 'vehicles', 'inactive', 'brands', 'institutions', 'fueltype', 'cartypes'));
+    }
+
+    public function showManualProcess(Request $request) {
+        $allEmissions = Monthlyemissionsperschool::all();
+
+        if ($allEmissions->isEmpty()) {
+            $firstrun = true;
+        } else {
+            $firstrun = false;
+        }
+
+        //audit vars
+        $totalEmission = 0;
+        if (DB::table('trips')->max('batch') == null) {
+            $lastTripsBatchNumber = 0;
+        }  else {
+            $lastTripsBatchNumber = DB::table('trips')->max('batch'); 
+        }
+        Debugbar::info("lastTripsBatchNumber pre loop: ".$lastTripsBatchNumber);
+         
+        $currentAuditDate = Carbon::now();
+        $formattedCurrentAuditDate = $currentAuditDate->toDateTimeString();   
+
+        
+        $currentMonthInExcel = $request->tripDate;
+        $tripTime = $request->tripTime;
+        $currentDeptID = $request->deptID;
+        $plateNumber = $request->plateNumber;
+        $currentKMReading = $request->kilometerReading;
+        $destinations = $request->remarks;
+
+        $currentInstitution = DB::table('deptsperinstitution')->where('deptID', $currentDeptID)->value('institutionID');        
+
+
+        //check the vehicles_mv table if theres a match for the currentplatenumber
+        if (DB::table('vehicles_mv')->where('plateNumber', $plateNumber)->first()) {
+            //get the values if there's a match
+            $selected = DB::table('vehicles_mv')->where('plateNumber', $plateNumber)->first();
+            $carType = DB::table('vehicles_mv')->where('plateNumber', $plateNumber)->value('carTypeID');
+            $fuelType = DB::table('vehicles_mv')->where('plateNumber', $plateNumber)->value('fuelTypeID');
+            $selectedFuelType = DB::table('fueltype_ref')->where('fuelTypeID', $fuelType)->value('fuelTypeID');
+            $selectedCarTypeMPG = DB::table('cartype_ref')->where('carTypeID', $carType)->value('mpg');
+            
+            //check the fuel type
+            switch ($selectedFuelType) {
+                //if it's diesel
+                case 1:
+                $dieselEmissionInTonnes = (($currentKMReading * 0.621371) * 19.36) / 2204.6;
+                $totalEmission += $dieselEmissionInTonnes;
+                
+                //create a new trip object (to be placed in the db)
+                $trips = new Trip;
+                $trips->deptID = $currentDeptID;
+                $trips->remarks = $destinations;
+                $trips->plateNumber = $plateNumber;
+                $trips->kilometerReading = $currentKMReading;
+                $trips->emissions = $dieselEmissionInTonnes;
+                $trips->tripTime = $tripTime;
+                $trips->tripDate = $currentMonthInExcel;
+                $trips->batch = $lastTripsBatchNumber + 1;                    
+                Debugbar::info("lastTripsBatchNumber post insert: ".$trips->batch);
+
+                //add date
+                $trips->uploaded_at = $formattedCurrentAuditDate;
+
+                $trips->save();
+                
+                //MONTHLY EMISSIONS
+                $currentMonth = $currentMonthInExcel;
+                $carbonMonthYearExcel = Carbon::parse($currentMonth);
+                Debugbar::info("current carbon month excel: ".$carbonMonthYearExcel);
+                
+
+                if ($firstrun == true) {
+                    $monthlyEmission = new Monthlyemissionsperschool;
+                    $monthlyEmission->institutionID = $currentInstitution;
+                    $monthlyEmission->emission = $totalEmission;
+                    $newDate = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);                        
+                    $monthlyEmission->monthYear = $newDate;
+                    $monthlyEmission->save();
+                    $firstrun = false;
+                } elseif ($firstrun == false) {
+                    foreach($allEmissions as $all) {
+                        $carbonMonthYearDB = Carbon::parse($all->monthYear);
+                        $newDateExcel = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);
+                        $newDateDB = Carbon::create($carbonMonthYearDB->year, $carbonMonthYearDB->month, 1, 0);
+                        Debugbar::info("current carbon month db: ".$newDateDB);
+                        
+
+                        if (Monthlyemissionsperschool::where('monthYear', $newDateExcel)->exists()) {
+                            $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);
+                        } else {
+                            $newMonthlyEmissions = new Monthlyemissionsperschool;
+                            $newMonthlyEmissions->institutionID = $currentInstitution;
+                            $newMonthlyEmissions->emission = $totalEmission;                        
+                            $newMonthlyEmissions->monthYear = $newDateExcel;
+                            $newMonthlyEmissions->save();
+                        }
+                    }
+                }
+               
+
+                
+                break;
+                //if it's gas
+                case 2:
+                $gasEmissionInTonnes = ((6760 / $selectedCarTypeMPG) * $currentKMReading) * 100000000000000000000;
+                $totalEmission += $gasEmissionInTonnes;
+                
+                //create a new trip object (to be placed in the db)                        
+                $trips = new Trip;
+                $trips->deptID = $currentDeptID;   
+                $trips->remarks = $destinations;                         
+                $trips->plateNumber = $plateNumber;
+                $trips->kilometerReading = $currentKMReading;
+                $trips->emissions = $gasEmissionInTonnes;
+                $trips->tripTime = $tripTime;  
+                $trips->tripDate = $currentMonthInExcel;
+                $trips->batch = $lastTripsBatchNumber + 1;                    
+                Debugbar::info("lastTripsBatchNumber post insert: ".$trips->batch);
+
+                //add date
+                $trips->uploaded_at = $formattedCurrentAuditDate;
+                
+                                                            
+                $trips->save();   
+                
+                //MONTHLY EMISSIONS
+                $currentMonth = $currentMonthInExcel;
+                $carbonMonthYearExcel = Carbon::parse($currentMonth);
+                Debugbar::info("current carbon month excel: ".$carbonMonthYearExcel);
+                
+
+                if ($firstrun == true) {
+                    $monthlyEmission = new Monthlyemissionsperschool;
+                    $monthlyEmission->institutionID = $currentInstitution;
+                    $monthlyEmission->emission = $totalEmission;
+                    $newDate = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);                        
+                    $monthlyEmission->monthYear = $newDate;
+                    $monthlyEmission->save();
+                    $firstrun = false;
+                } elseif ($firstrun == false) {
+                    foreach($allEmissions as $all) {
+                        $carbonMonthYearDB = Carbon::parse($all->monthYear);
+                        $newDateExcel = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);
+                        $newDateDB = Carbon::create($carbonMonthYearDB->year, $carbonMonthYearDB->month, 1, 0);
+                        Debugbar::info("current carbon month db: ".$newDateDB);
+                        
+
+                        if (Monthlyemissionsperschool::where('monthYear', $newDateExcel)->exists()) {
+                            $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);
+                        } else {
+                            $newMonthlyEmissions = new Monthlyemissionsperschool;
+                            $newMonthlyEmissions->institutionID = $currentInstitution;
+                            $newMonthlyEmissions->emission = $totalEmission;                        
+                            $newMonthlyEmissions->monthYear = $newDateExcel;
+                            $newMonthlyEmissions->save();
+                        }
+                    }
+                }
+
+                
+                break;
+            }
+        }
+
     }
 
     public function showUploaded() {

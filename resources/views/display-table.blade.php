@@ -99,7 +99,15 @@
 <div class="ten columns offset-by-one" id="box-form">
   <div id="data-set-errors">
     <h1>Data Set Errors</h1>
+    <div class="twelve columns" id="success-message" style="color: red; margin-bottom: 20px;">
+        <strong>The following table shows errors in the dataset that you uploaded. Errors include the following: </strong> <br> <br>
+        <strong>VEHICLE not existing in the System.</strong> <br>
+        <strong>REQUESTING DEPARTMENT not existing in the System.</strong> <br> <br>
+        <strong>It is recommended that you add the specific VEHICLE or DEPARTMENT needed before proceeding with the upload for it to be uploaded in the system.</strong>
+    </div>
     <a class="button button-primary u-pull-left" href="#trip-data">View Trip Data to be Confirmed</a>      
+    <a class="button button-primary u-pull-right" onClick="goBack()">Go Back</a>  
+    
     <table>
       <thead>
         <tr>

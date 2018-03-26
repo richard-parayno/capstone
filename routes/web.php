@@ -34,6 +34,8 @@ Route::post('/dashboard/process-file', 'ExcelController@saveToDb')->name('proces
 Route::get('/dashboard/tree-plant', 'AddController@loadToBatchPlant')->name('tree-plant')->middleware('auth');
 Route::get('/dashboard/tree-view', 'AddController@viewPlanted')->name('tree-view')->middleware('auth');
 Route::post('/dashboard/process-trees', 'InstitutionBatchPlantController@add')->name('process-trees')->middleware('auth');
+Route::get('/dashboard/manual-upload', 'ExcelController@showManual')->name('manual-upload')->middleware('auth');
+Route::post('/dashboard/manual-upload-process', 'ExcelController@showManualProcess')->name('manual-upload-process')->middleware('auth');
 
 /* User Account Management Routes */
 /* View Users */

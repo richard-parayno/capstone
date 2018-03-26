@@ -37,7 +37,6 @@
         <th>Car Type</th>
         <th>Car Model</th>
         <th>Plate Number</th>
-        <th>Manufacturing Year</th>
         <th>Home Campus</th>
         <th>Fuel Type</th>
         <th>Status</th>
@@ -56,7 +55,6 @@
 
         <td>{{ $vehicle->modelName }}</td>
         <td>{{ $vehicle->plateNumber }}</td>
-        <td>TODO</td>
 
         @foreach($institutions as $institution)
           @if($vehicle->institutionID == $institution->institutionID)
@@ -110,7 +108,6 @@ $inactive = DB::table('vehicles_mv')->where('active', 0)->get();
         <th>Car Type</th>
         <th>Car Model</th>
         <th>Plate Number</th>
-        <th>Manufacturing Year</th>
         <th>Home Campus</th>
         <th>Fuel Type</th>
         <th>Status</th>
@@ -129,7 +126,6 @@ $inactive = DB::table('vehicles_mv')->where('active', 0)->get();
 
         <td>{{ $inactiveVehicle->modelName }}</td>
         <td>{{ $inactiveVehicle->plateNumber }}</td>
-        <td>TODO</td>
 
         @foreach($institutions as $institution)
           @if($inactiveVehicle->institutionID == $institution->institutionID)

@@ -109,13 +109,11 @@ if(!isset($data)){
                 <p><strong>Vehicle Type</strong></p>
                 <br>
                 <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <font color="black">
-                        <select class="u-full-width" name="carTypeID" id="carTypeID">
-                          @foreach($carTypes as $carType)
-                            <option value="{{ $carType->carTypeID }}">{{ $carType->carTypeName }}</option>
-                          @endforeach
+                    <select class="u-full-width" name="carTypeID" id="carTypeID" style="color: black;">
+                        @foreach($carTypes as $carType)
+                          <option value="{{ $carType->carTypeID }}">{{ $carType->carTypeName }}</option>
+                        @endforeach
                     </select>
-                    </font>
                 </div>
             </div>
             <div class="twelve column bar">
