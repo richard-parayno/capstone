@@ -43,4 +43,13 @@ class AddController extends Controller
 
         return view('tree-view', compact('institutions', 'treesPlanted'));
     }
+    
+    public function filterDashboard() {
+        $institutions = Institution::all();
+        $departments = DB::table('deptsperinstitution')->get();   
+        $fuelTypes = DB::table('fueltype_ref')->get();
+        $carTypes = DB::table('cartype_ref')->get();
+
+        return view('analytics-test', compact('institutions', 'departments','fuelTypes', 'carTypes'));
+    }
 }

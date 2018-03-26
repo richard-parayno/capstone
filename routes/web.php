@@ -18,7 +18,7 @@ Route::get('/', function() {
 });
 
 
-Route::get('/analytics-test', 'DashboardController@main')->name('analytics-test')->middleware('auth');
+//Route::get('/analytics-test', 'DashboardController@main')->name('analytics-test')->middleware('auth');
 
 Route::resource('institution', 'InstitutionController');
 
@@ -64,6 +64,11 @@ Route::get('/dashboard/campus-editinfo-process', 'InstitutionController@edit')->
 Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->name('department-view')->middleware('auth');
 Route::get('/dashboard/department-view-search', 'ViewUserController@viewDepartmentsSearch')->name('department-view-search')->middleware('auth');
 Route::get('/department-search','ViewUserController@viewDepartmentsProcess')->name('department-search')->middleware('auth');
+
+/*filtering analytics*/
+Route::get('/analytics-test', 'AddController@filterDashboard')->name('analytics-test')->middleware('auth');
+Route::post('/analytics-test-process', 'FilterController@filter')->name('analytics-test-process')->middleware('auth');
+
 
 /* Add New Department/Offices */
 Route::get('/dashboard/department-add', 'AddController@loadToDepartment')->name('department-add')->middleware('auth');

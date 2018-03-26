@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('styling')
+@extends('layouts.main') @section('styling')
 <style>
     #main-content {
         padding-right: 200px;
@@ -9,13 +7,15 @@
 @endsection
 
 <?php
+/*
 $filterData = true;
 $institutionID = 1;
 $carFilter = 2;
 $gasFilter = 1;
 $fromDateFilter = "2017-6-12";
 $toDateFilter = "2017-8-15";
-if(!$filterData){
+*/
+if(!isset($data)){
     $chartTitle = 'All Universities';   
     $emissionData = DB::table('trips')
     ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
@@ -30,14 +30,14 @@ if(!$filterData){
     $rawDB = "";
     $add = false;
     if(isset($universityIDFilter)){
-        $rawDB .= " institutionID = " . $universityIDFilter;
+        $rawDB .= " institutionID = " . $data['institutionID'];
         $add = true;
     }
     if(isset($carFilter)){
         if($add){
             $rawDB .= " AND ";
         }
-        $rawDB .= "cartype_ref.carTypeID = " . $carFilter;
+        $rawDB .= "cartype_ref.carTypeID = " . $data['carType'];
         $add = true;
     }
     if(isset($gasFilter)){
@@ -45,7 +45,7 @@ if(!$filterData){
             $rawDB .= " AND ";
         }
         $add = true;
-        $rawDB .= "fueltype_ref.fueltypeID = " . $gasFilter;
+        $rawDB .= "fueltype_ref.fueltypeID = " . $data['fuelType'];
     }
     if(isset($fromDateFilter) && isset($toDateFilter)){
         if($add){
@@ -81,60 +81,75 @@ if(!$filterData){
     @section('content')
     <!-- analytics sidenav -->
     <div class="container u-pull-right" id="analytics-sidebar">
-        <div class="twelve column bar">
-            <div id="current-user">
-                <p style="text-align: center; border: none;">Analytics Filters</p>
+        <form method="post" action="{{ route('analytics-test-process') }}">
+           {{ csrf_field() }}
+            <div class="twelve column bar">
+                <div id="current-user">
+                    <p style="text-align: center; border: none;">Analytics Filters</p>
+                </div>
             </div>
-        </div>
-        <style>
-            #topbar {
-                background-color: black;
-            }
-        </style>
+            <style>
+                #topbar {
+                    background-color: black;
+                }
+            </style>
 
-        <div class="twelve column bar">
-            <p><strong>Campus</strong></p>
-            <br>
-            <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
-
-        </select>
+            <div class="twelve column bar">
+                <p><strong>Campus</strong></p>
+                <br>
+                <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                    <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
+                        @foreach($institutions as $institution)
+                          <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="twelve column bar">
-            <p><strong>Vehicle Type</strong></p>
-            <br>
-            <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                <select class="u-full-width" name="carFilter" id="carFilter" style="color: black;">
-
-        </select>
+            <div class="twelve column bar">
+                <p><strong>Vehicle Type</strong></p>
+                <br>
+                <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                    <font color="black">
+                        <select class="u-full-width" name="carTypeID" id="carTypeID">
+                          @foreach($carTypes as $carType)
+                            <option value="{{ $carType->carTypeID }}">{{ $carType->carTypeName }}</option>
+                          @endforeach
+                    </select>
+                    </font>
+                </div>
             </div>
-        </div>
-        <div class="twelve column bar">
-            <p><strong>Fuel Type</strong></p>
-            <br>
-            <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                <select class="u-full-width" name="gasFilter" id="gasFilter" style="color: black;">
-
-        </select>
+            <div class="twelve column bar">
+                <p><strong>Fuel Type</strong></p>
+                <br>
+                <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                    <font color="black">
+                        <select class="u-full-width" name="fuelTypeID" id="fuelTypeID">
+                          @foreach($fuelTypes as $fuelType)\
+                            <option value="{{ $fuelType->fuelTypeID }}">{{ $fuelType->fuelTypeName }}</option>
+                          @endforeach
+                    </select>
+                    </font>
+                </div>
             </div>
-        </div>
-        <div class="twelve column bar">
-            <p><strong>Date</strong></p>
-            <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                <p style="text-align: left;">From: </p>
-                <input class="u-full-width" type="date" name="fromDate" id="fromDate">
-                <p style="text-align: left;">Until: </p>
-                <input class="u-full-width" type="date" name="toDate" id="toDate">
+            <div class="twelve column bar">
+                <p><strong>Date</strong></p>
+                <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                    <p style="text-align: left;">From: </p>
+                    <input class="u-full-width" type="date" name="fromDate" id="fromDate">
+                    <p style="text-align: left;">Until: </p>
+                    <input class="u-full-width" type="date" name="toDate" id="toDate">
+                </div>
             </div>
-        </div>
+            <div class="twelve column bar">
+                <button class="submit">Filter</button>
+            </div>
+        </form>
     </div>
     <!-- analytics sidenav -->
 
     <div class="twelve columns" id="chartdiv" style="width: 640px; height: 400px;"></div>
 
-    @endsection 
-    @section('scripts')
+    @endsection @section('scripts')
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 
     <script type="text/javascript">
@@ -397,7 +412,6 @@ if(!$filterData){
         }
     </script>
     <script>
-
     </script>
 
     @endsection
