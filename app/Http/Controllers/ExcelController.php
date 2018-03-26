@@ -37,6 +37,7 @@ class ExcelController extends Controller
         return view('manual-upload', compact('departments', 'vehicles', 'inactive', 'brands', 'institutions', 'fueltype', 'cartypes'));
     }
 
+    // move this @kurt
     public function showManualProcess(Request $request) {
         $allEmissions = Monthlyemissionsperschool::all();
         $trips = Trip::all();
@@ -83,7 +84,7 @@ class ExcelController extends Controller
             switch ($selectedFuelType) {
                 //if it's diesel
                 case 1:
-                $dieselEmissionInTonnes = (($currentKMReading * 0.621371) * 19.36) / 2204.6;
+                $dieselEmissionInTonnes = ((($currentKMReading * 0.621371) * 19.36) / $selectedCarTypeMPG) / 2204.6;
                 $totalEmission += $dieselEmissionInTonnes;
                 
                 //create a new trip object (to be placed in the db)
@@ -142,7 +143,7 @@ class ExcelController extends Controller
                 break;
                 //if it's gas
                 case 2:
-                $gasEmissionInTonnes = ((6760 / $selectedCarTypeMPG) * $currentKMReading) * 100000000000000000000;
+                $gasEmissionInTonnes = ((6760 / $selectedCarTypeMPG) * $currentKMReading) * 0.000001;
                 $totalEmission += $gasEmissionInTonnes;
                 
                 //create a new trip object (to be placed in the db)                        
@@ -288,6 +289,7 @@ class ExcelController extends Controller
 
     }
 
+    // move this @kurt    
     public function saveToDb(Request $request) {
         $load = json_decode($request->data, true);
         //audit vars
@@ -361,7 +363,7 @@ class ExcelController extends Controller
                 switch ($selectedFuelType) {
                     //if it's diesel
                     case 1:
-                    $dieselEmissionInTonnes = (($currentKMReading * 0.621371) * 19.36) / 2204.6;
+                    $dieselEmissionInTonnes = ((($currentKMReading * 0.621371) * 19.36) / $selectedCarTypeMPG) / 2204.6;                    
                     $totalEmission += $dieselEmissionInTonnes;
                     
                     //create a new trip object (to be placed in the db)
