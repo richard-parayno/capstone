@@ -238,7 +238,6 @@ if(!isset($data)){
           }
         $regressionLine = getRegressionLine($monthlyEmissions);
         $saveIndex = 0;
-        $matched = false;
         for($x = 0 ; $x < count($monthlyEmissions); $x++) {
             echo '{
             "date": "' . $monthlyEmissions[$x][0].'",';
@@ -249,45 +248,38 @@ if(!isset($data)){
             echo '
             "sequestration": 30,';
             echo ' 
-            "bullet": "round"';
+            "bullet": "round",';
             echo '
-            "subSetTitle": "Second level",';
+            "subSetTitle": "Monthly Emissions",';
             echo  '
             "subSet": [';
-            foreach($emissionData as $emission){
-                if(substr($emission->tripDate, 0, 7) == $monthlyEmissions[$x][0] ){
-                    $matched = true;
+            for($y = $saveIndex; $y < count($emissionData); $y++){
+                if($y==$saveIndex){
+                    $prev = substr($emissionData[$y]->tripDate, 0 , 7);
+                }
+                if(substr($emissionData[$y]->tripDate, 0 , 7) == $prev){
                     echo '
                     {
-                    "date": "' . $emission->tripDate . '",';
+                    "date": "' . $emissionData[$y]->tripDate . '",';
                     echo '
-                    "value": "' . $emission->emission . '",';
+                    "value": "' . $emissionData[$y]->emission . '",';
                     echo '
-                    "regression: "' . ($regressionLine[0] + ($regressionLine[0] * $x)) . ', ';
+                    "regression": ' . ($regressionLine[0] + ($regressionLine[0] * $x)) . ', ';
                     echo '
                     "sequestration": "' . 30 . '",';
                     echo '
-                    "bullet": "round" } ';
+                    "bullet": "round"  ';
+                    $test = $y + 1;
+                    if(substr($emissionData[$test]->tripDate, 0 , 7) != $prev){
+                        $saveIndex = $y;
+                        echo '}]},';
+                    }else {
+                        echo '},';
                     }
-            }        
-        }
-        echo '},';
-           
-            /*
-            
-            echo '{"date": "' . $emission->tripDate . '",';
-            echo ' "value": ' . $emission->emission . ',';
-            echo ' "regression": 3, ';
-            echo '"sequestration": 30,';
-            echo ' "bullet": "round"';
-              echo '}';
-            if($x != count($emissionData)) {
-                echo ",
-                ";
+                    
+                }
             }
-            $x++;
-          };
-          */
+        }
         ?> {
                 "date": <?php
                 $yrmonth = end($monthlyEmissions);
