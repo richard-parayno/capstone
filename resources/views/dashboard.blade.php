@@ -267,12 +267,11 @@ if(!isset($data)){
                     echo '
                     "sequestration": "' . 30 . '",';
                     echo '
-                    "bullet": "round" }';
+                    "bullet": "round" } ';
                     }
             }        
         }
         echo '},';
-        }
            
             /*
             
