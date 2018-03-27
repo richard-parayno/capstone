@@ -42,9 +42,9 @@
             @if($trees->institutionID == $institution->institutionID)
               <td>{{ $institution->institutionName }}</td>
             @endif
-            <td> {{ $trees->numOfPlantedTrees }} </td>
-            <td> {{ $trees->datePlanted }} </td>
           @endforeach
+          <td> {{ $trees->numOfPlantedTrees }} </td>
+          <td> {{ $trees->datePlanted }} </td>
         </tr>
         @endforeach
       </tbody>
