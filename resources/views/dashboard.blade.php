@@ -66,7 +66,7 @@ function getRegressionLine($emissionData){
             return $regressionLine;
         }
 
-if(!isset($data['institution'])){
+if(!isset($data)){
     $chartTitle = 'All Universities';   
     $emissionData = DB::table('trips')
     ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
@@ -103,38 +103,36 @@ if(!isset($data['institution'])){
         if($add){
             $rawDB .= " AND ";
         }
-        $rawDB .= "trips.tripDate <= '" . $toDateFilter . "' AND trips.tripDate >= '" . $fromDateFilter. "'";
+        $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
     }elseif($data['fromDate'] != null && $data['toDate'] != null){
         if($add){
             $rawDB .= " AND ";
         }
-        $rawDB .= "trips.tripDate <= '" . $toDateFilter . "'";
+        $rawDB .= "trips.tripDate <= '" . $toDate . "'";
     }elseif($data['fromDate'] != null && $data['toDate'] != null){
         if($add){
             $rawDB .= " AND ";
         }
-        $rawDB .= "trips.tripDate >= '" . $fromDateFilter . "'";
-    }
+        $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+    } 
     $emissionData = DB::table('trips')
     ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
     ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
     ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
     ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-    ->join('institutions', 'deptsperinstitution.institutionID', '=', 'institution.institutionID')
     ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
-'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active', 'institutions.institutionName') 
+'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
     ->whereRaw($rawDB)
     ->orderBy('trips.tripDate', 'asc')
-    ->get();    
-    $chartTitle = "DLSU";
+    ->get(); 
 }
 ?>
 
     @section('content')
     <!-- analytics sidenav -->
     <div class="container u-pull-right" id="analytics-sidebar">
-        <form method="post" action="{{ route('analytics-test-process') }}">
+        <form method="post" action="{{ route('dashboard-process') }}">
             {{ csrf_field() }}
             <div class="twelve column bar">
                 <div id="current-user">
@@ -209,10 +207,10 @@ if(!isset($data['institution'])){
     <script type="text/javascript">
         var chart;
         AmCharts.theme = AmCharts.themes.dark;
-        var chartTitle = <?php echo $chartTitle; ?>;
+        var chartTitle = "Carbon Emission Chart"
         var chartDataIndexes = [];
         var chartData = [
-        <?php
+            <?php
         $x = 1;
         $prev;
         $monthlyEmissions = [];
@@ -239,6 +237,8 @@ if(!isset($data['institution'])){
                     };
           }
         $regressionLine = getRegressionLine($monthlyEmissions);
+        $saveIndex = 0;
+        $matched = false;
         for($x = 0 ; $x < count($monthlyEmissions); $x++) {
             echo '{
             "date": "' . $monthlyEmissions[$x][0].'",';
@@ -250,14 +250,28 @@ if(!isset($data['institution'])){
             "sequestration": 30,';
             echo ' 
             "bullet": "round"';
-            /*
             echo '
             "subSetTitle": "Second level",';
             echo  '
-            "subSet": []';
-            */
-              echo '
-            },';
+            "subSet": [';
+            foreach($emissionData as $emission){
+                if(substr($emission->tripDate, 0, 7) == $monthlyEmissions[$x][0] ){
+                    $matched = true;
+                    echo '
+                    {
+                    "date": "' . $emission->tripDate . '",';
+                    echo '
+                    "value": "' . $emission->emission . '",';
+                    echo '
+                    "regression: "' . ($regressionLine[0] + ($regressionLine[0] * $x)) . ', ';
+                    echo '
+                    "sequestration": "' . 30 . '",';
+                    echo '
+                    "bullet": "round" }';
+                    }
+            }        
+        }
+        echo '},';
         }
            
             /*
@@ -275,7 +289,7 @@ if(!isset($data['institution'])){
             $x++;
           };
           */
-        ?>{ 
+        ?> {
                 "date": <?php
                 $yrmonth = end($monthlyEmissions);
                 $month = (int) substr($yrmonth[0], 5, 2);
@@ -290,7 +304,9 @@ if(!isset($data['institution'])){
                 }
                 echo '"'.$yr . "-" . $month.'",
                 ';
-                 ?>"regression": <?php echo $regressionLine[0] + ($regressionLine[0] * count($monthlyEmissions) + 1); ?>}
+                 ?>
+                "regression": <?php echo $regressionLine[0] + ($regressionLine[0] * count($monthlyEmissions) + 1); ?>
+            }
         ];
         chart = AmCharts.makeChart("chartdiv", {
             "backgroundAlpha": 1,

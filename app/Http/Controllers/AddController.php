@@ -50,6 +50,6 @@ class AddController extends Controller
         $fuelTypes = DB::table('fueltype_ref')->get();
         $carTypes = DB::table('cartype_ref')->get();
 
-        return view('analytics-test', compact('institutions', 'departments','fuelTypes', 'carTypes'));
+        return view('dashboard', compact('institutions', 'departments','fuelTypes', 'carTypes'));
     }
 }

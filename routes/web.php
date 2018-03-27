@@ -22,10 +22,14 @@ Route::get('/', function() {
 
 Route::resource('institution', 'InstitutionController');
 
-/* Dashboard Route */
+/* Dashboard Route 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard')->middleware('auth');
+/*filtering analytics*/
+Route::get('/dashboard', 'AddController@filterDashboard')->name('dashboard')->middleware('auth');
+Route::post('/dashboard-process', 'FilterController@filter')->name('dashboard-process')->middleware('auth');
+
 /* Excel Upload Route */
 Route::get('/dashboard/upload-files', 'ExcelController@show')->name('upload-files')->middleware('auth');
 Route::get('/dashboard/upload-view', 'ExcelController@showUploaded')->name('upload-view')->middleware('auth');
@@ -67,9 +71,7 @@ Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->
 Route::get('/dashboard/department-view-search', 'ViewUserController@viewDepartmentsSearch')->name('department-view-search')->middleware('auth');
 Route::get('/department-search','ViewUserController@viewDepartmentsProcess')->name('department-search')->middleware('auth');
 
-/*filtering analytics*/
-Route::get('/dashboard', 'AddController@filterDashboard')->name('dashboard')->middleware('auth');
-Route::post('/dashboard-process', 'FilterController@filter')->name('dashboard-process')->middleware('auth');
+
 
 
 /* Add New Department/Offices */

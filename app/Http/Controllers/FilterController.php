@@ -15,6 +15,6 @@ class FilterController extends Controller
         $departments = DB::table('deptsperinstitution')->get();   
         $fuelTypes = DB::table('fueltype_ref')->get();
         $carTypes = DB::table('cartype_ref')->get();
-        return view('/analytics-test', compact('data', 'institutions', 'departments', 'fuelTypes', 'carTypes'));
+        return view('/dashboard', compact('data', 'institutions', 'departments', 'fuelTypes', 'carTypes'));
     }
 }
