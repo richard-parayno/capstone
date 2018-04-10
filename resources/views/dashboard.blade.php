@@ -236,6 +236,7 @@ if(!isset($data)){
                         $monthCtr++;
                     };
           }
+
         $regressionLine = getRegressionLine($monthlyEmissions);
         $saveIndex = 0;
         for($x = 0 ; $x < count($monthlyEmissions); $x++) {
