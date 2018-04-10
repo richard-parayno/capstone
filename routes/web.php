@@ -109,3 +109,6 @@ Route::get('/search','SearchController@index')->name('search');
 
 Route::get('/search-process','SearchController@search')->name('search-process');
 
+/*Decision Support*/
+Route::get('/tree-decision-support', 'DecisionSupportController@index')->name('tree-decision-support')->middleware('auth');
+
