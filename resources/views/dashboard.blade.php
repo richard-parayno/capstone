@@ -209,26 +209,6 @@ if(!isset($data)){
     </div>
     <!-- analytics sidenav -->
 
-<<<<<<< HEAD
- <?php
-        dd($emissionData, $emissionCount);
-        for($x = 0; $x < count($emissionData); $x++){
-            if($x == 0 ){
-                $prev = substr($emissionData[$x]->tripDate, 0 , 7);
-            }
-            if($prev==substr($emissionData[$x]->tripDate, 0 , 7)){
-                $ctr++;
-            }elseif($x == count($emissionData) - 1){
-                $emissionArray[$arrayCount] = $ctr;
-            }
-                else{
-                $emissionArray[$arrayCount] = $ctr;
-                $ctr=0;
-                $arrayCount++;
-            }
-            $prev = substr($emissionData[$x]->tripDate, 0 , 7);
-        }
-=======
     <div class="twelve columns" id="chartdiv" style="width: 100%; height: 400px; background-color: #222222;"></div>
 
     @endsection @section('scripts')
@@ -267,7 +247,6 @@ if(!isset($data)){
                     };
           }
 
->>>>>>> 3031f9e808ada802d238e5201d6d0d568be866b2
         $regressionLine = getRegressionLine($monthlyEmissions);
         $saveIndex = 0;
         for($x = 0 ; $x < count($monthlyEmissions); $x++) {

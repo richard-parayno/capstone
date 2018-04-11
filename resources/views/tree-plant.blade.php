@@ -1,86 +1,218 @@
-@extends('layouts.main')
-
-@section('styling')
+@extends('layouts.main') @section('styling')
+<script src="http://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
 <style>
-  /** TODO: Push margin more to the right. Make the box centered to the user. **/
-  #box-form {
-    background-color: #363635;
-    margin-top: 20px;
-    padding: 40px;
-    box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
-    border-radius: 20px;
-  }
-  #box-form h1 {
-    text-align: center;
-    color: white;
-  }
-  #box-form label {
-    color: white;
-  }
+    /** TODO: Push margin more to the right. Make the box centered to the user. **/
 
-  #box-form select {
-    color: black;
-  }
+    #box-form {
+        background-color: #363635;
+        margin-top: 20px;
+        padding: 40px;
+        box-shadow: 5px 10px 20px 0 rgba(0, 0, 0, 0.20);
+        border-radius: 20px;
+    }
+
+    #box-form h1 {
+        text-align: center;
+        color: white;
+    }
+
+    #box-form label {
+        color: white;
+    }
+
+    #box-form select {
+        color: black;
+    }
 </style>
-@endsection
+@endsection @section('content')
+<?php
 
-@section('content')
-<div class="eight columns offset-by-two" id="box-form">
-  <!-- TODO: Process add-user logic after submitting form. -->
-  <h1>We Planted Trees</h1>    
-  <form method="post" action="{{ route('process-trees') }}">
-    {{ csrf_field() }}
-    @if(Session::has('success'))
-      <div class="twelve columns" id="success-message" style="color: green; margin-bottom: 20px;">
-          <strong>Success! </strong> {{ Session::get('message', '') }}
-      </div>
-    @endif    
-    <div class="twelve columns">
-      <label for="institutionID">Choose a Campus</label>
-      <select class="u-full-width" name="institutionID" id="institution">
+/*
+    
+    get total emissions for institutionID of user
+    get all trees planted by institution
+    start = total trees planted * 22
+    max val = total emission
+    get all threshold data
+    threshold * total emissions = thresholds
+    if start > total emission * 1.5
+        maxVal = start;
+    else maxVal = total emission * 1.5
+    */
+    
+    $totalTreesPlanted = DB::table('institutionbatchplant')
+        ->select(DB::raw('SUM(numOfPlantedTrees) as totalPlanted'))
+        ->whereRaw('institutionID = 1') //dapat institutionID ng naka log in
+        ->get();
+    
+    $totalEmissions = DB::table('monthlyemissionsperschool')
+        ->select(DB::raw('SUM(emission) as totalEmissions'))
+        ->whereRaw('institutionID = 1')
+        ->get();
+    
+    $monthCount = DB::table('monthlyemissionsperschool')
+        ->select(DB::raw('count(emission) as monthcount'))
+        ->whereRaw('institutionID = 1')
+        ->get();
+    
+    $thresholds = DB::table('thresholds_ref')
+        ->select(DB::raw('*'))
+        ->get();
+    
+    $start = $totalTreesPlanted->get(0)->totalPlanted * 22 * 0.001;
+
+    $green = $thresholds->get(0)->value;
+    $orange = $thresholds->get(1)->value;
+    $red = $thresholds->get(2)->value;
+    $yellow = $thresholds->get(3)->value;
+
+    $tillOrange = ($red * $totalEmissions->get(0)->totalEmissions) - $start;
+    $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
+    $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
+
+
+?>
+    <div class="eight columns offset-by-two" id="box-form">
+        <!-- TODO: Process add-user logic after submitting form. -->
+        <h1>We Planted Trees</h1>
+        <form method="post" action="{{ route('process-trees') }}">
+            {{ csrf_field() }} @if(Session::has('success'))
+            <div class="twelve columns" id="success-message" style="color: green; margin-bottom: 20px;">
+                <strong>Success! </strong> {{ Session::get('message', '') }}
+            </div>
+            @endif
+            <div class="twelve columns">
+                <label for="institutionID">Choose a Campus</label>
+                <select class="u-full-width" name="institutionID" id="institution">
         @foreach($institutions as $institution)
           <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
         @endforeach
       </select>
-    </div>
-    @if ($errors->has('institutionID'))
-      <span class="help-block">
+            </div>
+            @if ($errors->has('institutionID'))
+            <span class="help-block">
         <strong>{{ $errors->first('institutionID') }}</strong>
-      </span>
-    @endif
-    <div class="twelve columns">
-      <label for="numOfPlantedTrees">Number of Trees Planted</label>
-      <input class="u-full-width" type="text" name="numOfPlantedTrees" id="numOfPlantedTrees" >
-    </div>
-    @if ($errors->has('numOfPlantedTrees'))
-      <span class="help-block">
+      </span> @endif
+            <div class="twelve columns">
+                <label for="numOfPlantedTrees">Number of Trees Planted</label>
+                <input class="u-full-width" type="text" name="numOfPlantedTrees" id="numOfPlantedTrees">
+            </div>
+            @if ($errors->has('numOfPlantedTrees'))
+            <span class="help-block">
         <strong>{{ $errors->first('numOfPlantedTrees') }}</strong>
-      </span>
-    @endif
-    <div class="twelve columns">
-      <label for="datePlanted">Date Planted</label>
-      <input class="u-full-width" type="date" name="datePlanted" id="datePlanted" >
-    </div>
-    @if ($errors->has('datePlanted'))
-      <span class="help-block">
+      </span> @endif
+            <div class="twelve columns">
+                <label for="datePlanted">Date Planted</label>
+                <input class="u-full-width" type="date" name="datePlanted" id="datePlanted">
+            </div>
+            @if ($errors->has('datePlanted'))
+            <span class="help-block">
         <strong>{{ $errors->first('datePlanted') }}</strong>
-      </span>
-    @endif
+      </span> @endif @if($errors->any())
+            <div>
+                <ul>
+                    @foreach($errors->all() as $error)
+                    <li> {{ $error }} </li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
 
+            <input class="button-primary u-pull-right" type="submit" value="Add Planted Trees" style="color: white;">
+            <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>
 
-    @if($errors->any())
-    <div>
-        <ul>
-            @foreach($errors->all() as $error)
-                <li> {{ $error }} </li>
-            @endforeach
-        </ul>
-    </div> 
-    @endif
+        </form>
+        <div>
+            <canvas id="foo"></canvas>
+            <?php
+            
+            //add change time period
+            //add change threshold values
+        if($tillOrange > 0 ){
+            $treesLeft = ($tillOrange / 0.001) / 22; //number of trees to catch up in a year
+            echo '<br>You need to plant at least ' . round($treesLeft) . " trees to reach the Orange Zone (" . $red * 100 . '%)';
+        }
+        if($tillYellow > 0 ){
+            $treesLeft = ($tillYellow / 0.001) / 22; //number of trees to catch up in a year
+            echo '<br>You need to plant at least ' . round($treesLeft) . " trees to reach the Yellow Zone (" . $orange * 100 . '%)';
+        }
+        if($tillGreen > 0 ){
+            $treesLeft = ($tillGreen / 0.001) / 22; //number of trees to catch up in a year
+            echo '<br>You need to plant at least ' . round($treesLeft) . " trees to reach the Green Zone (" . $yellow * 100 . '%)';
+        }        
+        ?>
 
-    <input class="button-primary u-pull-right" type="submit" value="Add Planted Trees" style="color: white;">
-    <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>
-    
-  </form>
-</div>
-@endsection
+        </div>
+    </div>
+    <script type="application/javascript">
+        <?php
+   
+    echo "var start = " . $start . ';
+    ';
+    if( $start > ($totalEmissions->get(0)->totalEmissions) * ($thresholds->get(0)->value)){
+        echo 'maxVal = ' . $start . ';
+        ';
+    }else echo 'maxVal = ' . $totalEmissions->get(0)->totalEmissions * ($thresholds->get(0)->value). ';
+    ';
+    ?>
+        var opts = {
+            angle: 0.02,
+            lineWidth: 0.2,
+            radiusScale: 1,
+            pointer: {
+                length: 0.51,
+                strokeWidth: 0.018,
+                color: '#000000'
+            },
+            limitMax: false, // If false, max value increases automatically if value > maxValue
+            limitMin: false, // If true, the min value of the gauge will be fixed
+            generateGradient: true,
+            highDpiSupport: true, // High resolution support
+            staticZones: [{
+                    strokeStyle: "#F03E3E",
+                    min: 0,
+                    max: <?php echo $red * ($totalEmissions->get(0)->totalEmissions); ?>
+                },
+                {
+                    strokeStyle: "#f29924",
+                    min: <?php echo $red * ($totalEmissions->get(0)->totalEmissions); ?>,
+                    max: <?php echo $orange * ($totalEmissions->get(0)->totalEmissions); ?>
+                },
+                {
+                    strokeStyle: "#FFDD00",
+                    min: <?php echo $orange * ($totalEmissions->get(0)->totalEmissions); ?>,
+                    max: <?php echo $yellow * ($totalEmissions->get(0)->totalEmissions); ?>
+                },
+                {
+                    strokeStyle: "#30B32D",
+                    min: <?php echo $yellow * ($totalEmissions->get(0)->totalEmissions); ?>,
+                    max: maxVal
+                },
+            ],
+            staticLabels: {
+                font: "10px sans-serif", // Specifies font
+                labels: [<?php echo $red * ($totalEmissions->get(0)->totalEmissions); ?>, <?php echo $orange * ($totalEmissions->get(0)->totalEmissions); ?>, <?php echo $yellow * ($totalEmissions->get(0)->totalEmissions); ?>, maxVal, start], // Print labels at these values
+                color: "#999999", // Optional: Label text color
+                fractionDigits: 2 // Optional: Numerical precision. 0=round off.
+            },
+            // renderTicks is Optional
+            renderTicks: {
+                divisions: 12,
+                divWidth: 1.3,
+                divLength: 0.56,
+                divColor: '#333333',
+                subDivisions: 4,
+                subLength: 0.5,
+                subWidth: 0.6,
+                subColor: '#666666'
+            }
+
+        };
+        var target = document.getElementById('foo'); // your canvas element
+        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+        gauge.maxValue = maxVal; // set max gauge value
+        gauge.setMinValue(0); // Prefer setter over gauge.minValue = 0
+        gauge.animationSpeed = 32; // set animation speed (32 is default value)
+        gauge.set(start); // set actual value
+    </script>
+    @endsection
