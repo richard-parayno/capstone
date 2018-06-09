@@ -1,0 +1,206 @@
+/** TODO: Fix Sidebar links. They're too static atm. **/
+html {
+  height: 100%;
+}
+
+
+body {
+  background: #FBFBFB;
+  font-family: "Lato";  
+}
+
+.bar {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin: 0px;
+
+}
+
+p {
+  margin-bottom: 0px;
+}
+
+img {
+  position: relative;
+  top: 10px;
+
+}
+
+#sidebar {
+  background-color: #0b5023;
+  width: 250px;
+  height: auto !important;
+  min-height: 100%;
+  position: fixed;
+  overflow-y: scroll;
+  color: white;
+  top: 0;
+  bottom: 0;
+}
+
+#sidebar::-webkit-scrollbar {
+  width: 0px;  /* remove scrollbar space */
+
+}
+
+#sidebar ul {
+  list-style: none;
+  text-align: justify;
+  margin: 0px;
+}
+
+#sidebar div {
+  border-top-style: solid;
+  border-width: 2px;
+}
+
+#sidebar ul {
+  padding-left: 20px;
+  padding-right: 20px;
+  
+}
+
+#sidebar div p {
+  text-align: center;
+  padding-top:10px;
+  padding-bottom:10px;
+  border-bottom-style: solid;
+  border-width: 2px;
+}
+
+#sidebar a {
+  color: white;
+  text-decoration: none;
+  list-style: none;
+}
+
+#sidebar li:hover {
+  background: #087830;  
+}
+
+
+#main-content {
+  margin-left: 250px;
+  color: white;
+}
+
+#main-content input {
+  color: black;
+}
+
+#searchBox {
+  color: black;
+}
+
+#topbar { 
+  margin-left: 250px; 
+  height: 84px;
+  color: white;
+}
+
+#current-user {
+  border-top-style: none !important;
+}
+
+#current-user>span {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#current-user>a {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#box-form {
+  background-color: #0b5023 !important;
+}
+
+#success-message {
+  background-color: #E1E1E1;
+  border-radius: 4px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: 1px solid rgb(225, 225, 225)
+}
+
+#analytics-sidebar {
+  background-color: #0b5023;
+  width: 200px;
+  height: auto !important;
+  min-height: 100%;
+  position: fixed;
+  right: 0;
+  overflow-y: scroll;
+  color: white;
+  top: 0;
+  bottom: 0;
+}
+
+#analytics-sidebar::-webkit-scrollbar {
+  width: 0px;  /* remove scrollbar space */
+}
+
+#analytics-sidebar ul {
+  list-style: none;
+  text-align: justify;
+  margin: 0px;
+}
+
+#analytics-sidebar div {
+  border-top-style: solid;
+  border-width: 2px;
+}
+
+#analytics-sidebar ul {
+  padding-left: 20px;
+  padding-right: 20px;
+  
+}
+
+#analytics-sidebar div p {
+  text-align: center;
+  padding-top:10px;
+  padding-bottom:10px;
+  border-bottom-style: solid;
+  border-width: 2px;
+}
+
+
+#analytics-topbar { 
+  margin-left: 250px; 
+  margin-right: 200px;
+  height: 84px;
+  color: white;
+}
+
+#overlay{
+  position:fixed;
+  z-index:99999;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+  background:rgba(0,0,0,0.9);
+  transition: 1s 0.4s;
+}
+#progress{
+  height:1px;
+  background:#fff;
+  position:absolute;
+  width:0;                /* will be increased by JS */
+  top:50%;
+}
+#progstat{
+  font-size:0.7em;
+  letter-spacing: 3px;
+  position:absolute;
+  top:50%;
+  margin-top:-40px;
+  width:100%;
+  text-align:center;
+  color:#fff;
+}
+
