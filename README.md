@@ -34,5 +34,5 @@ The following reports are the requirements for Milestone 1, which is to be fully
 		- Month
 		- Car
 		- Summary
-*I. Fuel Type
-*J. Fuel Efficiency
+* I. Fuel Type
+* J. Fuel Efficiency
