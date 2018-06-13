@@ -99,6 +99,12 @@ Route::get('/dashboard/vehicle-decommission', function() {
 })->name('vehicle-decommission')->middleware('auth');
 Route::get('/dashboard/vehicle-decommission-process', 'VehicleController@decommission')->name('vehicle-decommission-process')->middleware('auth');
 
+/* Report Maker */
+Route::get('/dashboard/report-maker', function() {
+    return view('report-maker');
+})->name('report-maker')->middleware('auth');
+/*Route::get('/dashboard/vehicle-decommission-process', 'VehicleController@decommission')->name('vehicle-decommission-process')->middleware('auth');*/
+
 Auth::routes();
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
