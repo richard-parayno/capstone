@@ -45,6 +45,7 @@
             }];
             $scope.appendColumn = function(input) {
                 $scope.listArea.push(input);
+                
             };
 
             //resets answer field to zero
