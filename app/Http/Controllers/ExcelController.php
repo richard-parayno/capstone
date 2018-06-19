@@ -16,6 +16,7 @@ use PHPExcel_Cell_DataType;
 use PHPExcel_Cell_IValueBinder;
 use PHPExcel_Cell_DefaultValueBinder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class ExcelController extends Controller
 {
@@ -23,6 +24,10 @@ class ExcelController extends Controller
         $trips = Trip::all();
 
         return view('upload-files', compact('trips'));
+    }
+
+    public function downloadTemplate() {
+        return Storage::disk('public')->download('report-template.xlsx');
     }
 
     public function showManual() {
@@ -497,4 +502,5 @@ class ExcelController extends Controller
         return redirect('/dashboard/upload-view')->with(compact('trips'))->with('success', true)->with('message', 'Trip Data Batch #'.$lastTripsBatchNumber.' ('.$formattedCurrentAuditDate.') successfully uploaded!');
 
     }
+
 }
