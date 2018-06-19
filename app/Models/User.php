@@ -51,7 +51,8 @@ class User extends Authenticatable
 		'email',
 		'password',
 		'remember_token',
-		'status'
+		'status',
+		'institutionID'
 	];
 
 	public function usertypes_ref()

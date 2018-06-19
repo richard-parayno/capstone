@@ -387,7 +387,7 @@ if(!isset($data)){
         function goBackChart() {
             var previousData = chartData;
             var tmp = {
-                prev: ""
+                prev: "" 
             }
 
             // Remove latest
