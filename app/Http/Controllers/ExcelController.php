@@ -372,9 +372,10 @@ class ExcelController extends Controller
                     case 1:
                     Debugbar::info('--- CASE 1: DIESEL ---');
                     $dieselEmissionInTonnes = ((($currentKMReading * 0.621371) * 19.36) / $selectedCarTypeMPG) / 2204.6;
-                    Debugbar::info('[DIESEL EMISSION IN TONNES] Initialized: '.$dieselEmissionInTonnes);                    
+                    Debugbar::info('[DIESEL EMISSION IN TONNES] Initialized: '.$dieselEmissionInTonnes);  
+                    Debugbar::info('[TOTAL EMISSION] Pre-Update Value: '.$totalEmission);
                     $totalEmission += $dieselEmissionInTonnes;
-                    Debugbar::info('[TOTAL EMISSION] Current Value: '.$totalEmission);
+                    Debugbar::info('[TOTAL EMISSION] Post-Update Value: '.$totalEmission);
                     //create a new trip object (to be placed in the db)
                     $trips = new Trip;
                     $trips->deptID = $currentDeptID;
@@ -418,7 +419,7 @@ class ExcelController extends Controller
 
                             if (Monthlyemissionsperschool::where('monthYear', $newDateExcel)->exists()) {
                                 Debugbar::info('--- Current Month Exists in monthlyemissionsperschool ---');
-                                $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);
+                                $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);;
                                 Debugbar::info($updateMonthlyEmissions);
                                 Debugbar::info('--- monthlyemissionperschool updated ---');
                             } else {
@@ -435,13 +436,14 @@ class ExcelController extends Controller
                                 $newMonthlyEmissions->monthYear = $newDateExcel;
                                 $newMonthlyEmissions->save();
                                 Debugbar::info('--- monthlyemissionperschool added ---');
-                                Debugbar::info($updateMonthlyEmissions);
+                                Debugbar::info($newMonthlyEmissions);
 
                             }
                         }
                     }
                    
-
+                    Debugbar::info('--- CASE 1 END! ---');
+                    
                     
                     break;
                     //if it's gas
@@ -449,9 +451,9 @@ class ExcelController extends Controller
                     Debugbar::info('--- CASE 2: GAS ---');
                     $gasEmissionInTonnes = ((6760 / $selectedCarTypeMPG) * $currentKMReading) * 0.000001;
                     Debugbar::info('[GAS EMISSION IN TONNES] Initialized: '.$gasEmissionInTonnes);
-
+                    Debugbar::info('[TOTAL EMISSION] Pre-Update Value: '.$totalEmission);
                     $totalEmission += $gasEmissionInTonnes;
-                    Debugbar::info('[TOTAL EMISSION] Current Value: '.$totalEmission);
+                    Debugbar::info('[TOTAL EMISSION] Post-Update Value: '.$totalEmission);
 
                     
                     //create a new trip object (to be placed in the db)                        
@@ -479,6 +481,7 @@ class ExcelController extends Controller
                     
 
                     if ($firstrun == true) {
+                        Debugbar::info('--- CASE 2 FIRST RUN ---');
                         $monthlyEmission = new Monthlyemissionsperschool;
                         $monthlyEmission->institutionID = $currentInstitution;
                         $monthlyEmission->emission = $totalEmission;
@@ -487,6 +490,7 @@ class ExcelController extends Controller
                         $monthlyEmission->save();
                         $firstrun = false;
                     } elseif ($firstrun == false) {
+                        Debugbar::info('--- CASE 2 SUCCEEDING RUN ---');
                         foreach($allEmissions as $all) {
                             $carbonMonthYearDB = Carbon::parse($all->monthYear);
                             $newDateExcel = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);
@@ -495,16 +499,30 @@ class ExcelController extends Controller
                             
 
                             if (Monthlyemissionsperschool::where('monthYear', $newDateExcel)->exists()) {
+                                Debugbar::info('--- Current Month Exists in monthlyemissionsperschool ---');
                                 $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);
+                                Debugbar::info('--- monthlyemissionperschool updated ---');                            
                             } else {
+                                Debugbar::info('--- Current Month does not exist in monthlyemissionsperschool ---');
+                                Debugbar::info('Creating new entry in monthlyemissionsperschool...');
+                                Debugbar::info('VALUES:');
+                                Debugbar::info('Current Institution: '.$currentInstitution);
+                                Debugbar::info('Current total emission: '.$totalEmission);
+                                Debugbar::info('Current month year: '.$newDateExcel);
+
                                 $newMonthlyEmissions = new Monthlyemissionsperschool;
                                 $newMonthlyEmissions->institutionID = $currentInstitution;
                                 $newMonthlyEmissions->emission = $totalEmission;                        
                                 $newMonthlyEmissions->monthYear = $newDateExcel;
                                 $newMonthlyEmissions->save();
+
+                                Debugbar::info('--- monthlyemissionperschool added ---');
+                                Debugbar::info($newMonthlyEmissions);
                             }
                         }
                     }
+
+                    Debugbar::info('--- CASE 2 END! ---');
 
                     
                     break;
@@ -523,7 +541,9 @@ class ExcelController extends Controller
 
         $trips = Trip::all();
 
-        return redirect('/dashboard/upload-view')->with(compact('trips'))->with('success', true)->with('message', 'Trip Data Batch #'.$lastTripsBatchNumber.' ('.$formattedCurrentAuditDate.') successfully uploaded!');
+        return view('display-table');
+
+        //return redirect('/dashboard/upload-view')->with(compact('trips'))->with('success', true)->with('message', 'Trip Data Batch #'.$lastTripsBatchNumber.' ('.$formattedCurrentAuditDate.') successfully uploaded!');
 
     }
 
