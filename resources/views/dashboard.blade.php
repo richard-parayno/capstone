@@ -1,13 +1,49 @@
-<!DOCTYPE html> @extends('layouts.main') @section('styling')
+@extends('layouts.main') @section('styling')
 <style>
-    #main-content {
-        padding-right: 200px;
+    /** TODO: Push margin more to the right. Make the box centered to the user. **/
+
+    #box-form {
+        background-color: #363635;
+        margin-top: 20px;
+        padding: 40px;
+        border-radius: 10px;
+    }
+
+    #box-form h1 {
+        text-align: center;
+        color: white;
+    }
+
+    #box-form input {
+        color: white;
+    }
+
+    #institutionChartDiv {
+        width: 100%;
+        height: 500px;
     }
 </style>
-@endsection
+@endsection @section('content')
+<div class="ten columns offset-by-one" id="box-form" ng-app="myapp">
+    <div ng-controller="MyController">
+        <h7>Unit of measurement:&nbsp;</h7>
+        <select style="color:black;" ng-model="dboard">
+            <option ng-repeat="type in dboardType" value="<?php echo '{{type}}'; ?>" style="color:black;"><?php echo "{{type}}";?></option>
+        </select>
+        <div class="twelve columns" ng-show="dboard=='Emissions'">
 
-<?php
 
+            <div id="institutionChartDiv"></div>
+        </div>
+        <div class="twelve columns" ng-show="dboard=='Number of Trips'">
+            <?php
+            //by number of trips data
+            ?>
+
+        </div>
+    </div>
+    <?php
+/*
 function getRegressionLine($emissionData){
             //step 1
             //calculate pearson's correlation coefficient - r
@@ -139,88 +175,88 @@ if(!isset($data)){
 }
 ?>
 
-    @section('content')
-    <!-- analytics sidenav -->
-    <div class="container u-pull-right" id="analytics-sidebar">
-        <form method="post" action="{{ route('dashboard-process') }}">
-            {{ csrf_field() }}
-            <div class="twelve column bar">
-                <div id="current-user">
-                    <p style="text-align: center; border: none;">Analytics Filters</p>
+        @section('content')
+        <!-- analytics sidenav -->
+        <div class="container u-pull-right" id="analytics-sidebar">
+            <form method="post" action="{{ route('dashboard-process') }}">
+                {{ csrf_field() }}
+                <div class="twelve column bar">
+                    <div id="current-user">
+                        <p style="text-align: center; border: none;">Analytics Filters</p>
+                    </div>
                 </div>
-            </div>
-            <style>
-                #topbar {
-                    background-color: black;
-                }
-            </style>
+                <style>
+                    #topbar {
+                        background-color: black;
+                    }
+                </style>
 
-            <div class="twelve column bar">
-                <p><strong>Campus</strong></p>
-                <br>
-                <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
+                <div class="twelve column bar">
+                    <p><strong>Campus</strong></p>
+                    <br>
+                    <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                        <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
                        <option value="">All Institutions</option>
                         @foreach($institutions as $institution)
                           <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
                         @endforeach
                     </select>
+                    </div>
                 </div>
-            </div>
-            <div class="twelve column bar">
-                <p><strong>Vehicle Type</strong></p>
-                <br>
-                <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <select class="u-full-width" name="carTypeID" id="carTypeID" style="color: black;">
+                <div class="twelve column bar">
+                    <p><strong>Vehicle Type</strong></p>
+                    <br>
+                    <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                        <select class="u-full-width" name="carTypeID" id="carTypeID" style="color: black;">
                        <option value="">All Car Types</option>
                         @foreach($carTypes as $carType)
                           <option value="{{ $carType->carTypeID }}">{{ $carType->carTypeName }}</option>
                         @endforeach
                     </select>
+                    </div>
                 </div>
-            </div>
-            <div class="twelve column bar">
-                <p><strong>Fuel Type</strong></p>
-                <br>
-                <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <font color="black">
-                        <select class="u-full-width" name="fuelTypeID" id="fuelTypeID">
+                <div class="twelve column bar">
+                    <p><strong>Fuel Type</strong></p>
+                    <br>
+                    <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                        <font color="black">
+                            <select class="u-full-width" name="fuelTypeID" id="fuelTypeID">
                          <option value="">All Fuel Types</option>
                           @foreach($fuelTypes as $fuelType)
                             <option value="{{ $fuelType->fuelTypeID }}">{{ $fuelType->fuelTypeName }}</option>
                           @endforeach
                     </select>
-                    </font>
+                        </font>
+                    </div>
                 </div>
-            </div>
-            <div class="twelve column bar">
-                <p><strong>Date</strong></p>
-                <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <p style="text-align: left;">From: </p>
-                    <input class="u-full-width" type="date" name="fromDate" id="fromDate">
-                    <p style="text-align: left;">Until: </p>
-                    <input class="u-full-width" type="date" name="toDate" id="toDate">
+                <div class="twelve column bar">
+                    <p><strong>Date</strong></p>
+                    <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                        <p style="text-align: left;">From: </p>
+                        <input class="u-full-width" type="date" name="fromDate" id="fromDate">
+                        <p style="text-align: left;">Until: </p>
+                        <input class="u-full-width" type="date" name="toDate" id="toDate">
+                    </div>
                 </div>
-            </div>
-            <div class="twelve column bar">
-                <input class="button-primary" type="submit">
-            </div>
-        </form>
-    </div>
-    <!-- analytics sidenav -->
+                <div class="twelve column bar">
+                    <input class="button-primary" type="submit">
+                </div>
+            </form>
+        </div>
+        <!-- analytics sidenav -->
 
-    <div class="twelve columns" id="chartdiv" style="width: 100%; height: 400px; background-color: #222222;"></div>
+        <div class="twelve columns" id="chartdiv" style="width: 100%; height: 400px; background-color: #222222;"></div>
 
-    @endsection @section('scripts')
-    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        @endsection @section('scripts')
+        <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 
-    <script type="text/javascript">
-        var chart;
-        AmCharts.theme = AmCharts.themes.dark;
-        var chartTitle = "Carbon Emission Chart"
-        var chartDataIndexes = [];
-        var chartData = [
-            <?php
+        <script type="text/javascript">
+            var chart;
+            AmCharts.theme = AmCharts.themes.dark;
+            var chartTitle = "Carbon Emission Chart"
+            var chartDataIndexes = [];
+            var chartData = [
+                <?php
         $x = 1;
         $prev;
         $monthlyEmissions = [];
@@ -291,8 +327,9 @@ if(!isset($data)){
                 }
             }
         }
+
         ?> {
-                "date": <?php
+                    "date": <?php
                 $yrmonth = end($monthlyEmissions);
                 $month = (int) substr($yrmonth[0], 5, 2);
                 $yr = (int) substr($yrmonth[0], 0, 4);
@@ -307,104 +344,398 @@ if(!isset($data)){
                 echo '"'.$yr . "-" . $month.'",
                 ';
                  ?>
-                "regression": <?php echo $regressionLine[0] + ($regressionLine[0] * count($monthlyEmissions) + 1); ?>
+                    "regression": <?php echo $regressionLine[0] + ($regressionLine[0] * count($monthlyEmissions) + 1); ?>
+                }
+            ];
+            chart = AmCharts.makeChart("chartdiv", {
+                "backgroundAlpha": 1,
+                "export": {
+                    "enabled": true
+                },
+                "type": "serial",
+                "titles": [{
+                    "text": chartTitle
+                }],
+                "colors": [
+                    "#de4c4f",
+                    "#d8854f",
+                    "#77ee38",
+                    "#a7a737"
+                ],
+                "allLabels": [{
+                    "text": "",
+                    "x": 10,
+                    "y": 15,
+                    "url": "javascript: goBackChart();void(0);"
+                }],
+                "dataProvider": chartData,
+                "valueAxes": [{
+                    "axisAlpha": 0,
+                    "dashLength": 4,
+                    "position": "left"
+                }],
+                "graphs": [{
+                    "valueField": "value",
+                    "fillAlphas": 0,
+                    "bulletField": "bullet"
+                }, {
+                    "valueField": "regression",
+                    "fillAlphas": 0,
+                    "bulletField": "bullet"
+                }, {
+                    "valueField": "sequestration",
+                    "fillAlphas": 0,
+                    "bulletField": "bullet"
+                }],
+                "chartCursor": {
+                    "zoomable": false,
+                    "fullWidth": true,
+                    "cursorAlpha": 0.1,
+                    "categoryBalloonEnabled": false
+                },
+                "dataDateFormat": "YYYY-MM-DD HH:NN:SS",
+                "categoryField": "date",
+                "categoryAxis": {
+                    "parseDates": true,
+                    "minPeriod": "mm",
+                    "axisAlpha": 0,
+                    "minHorizontalGap": 50,
+                    "gridAlpha": 0,
+                    "tickLength": 0
+                },
+            });
+
+
+            chart.addListener('clickGraphItem', function(evt) {
+                if (evt.item.dataContext.subSet) {
+                    chartDataIndexes.push({
+                        index: evt.index,
+                        title: evt.item.dataContext.subSetTitle,
+                        prev: evt.chart.titles[0].text
+                    });
+                    evt.chart.dataProvider = evt.item.dataContext.subSet;
+                    evt.chart.allLabels[0].text = "Go Back " + evt.chart.titles[0].text;
+                    evt.chart.titles[0].text = evt.item.dataContext.subSetTitle;
+                    evt.chart.validateData();
+
+                }
+            });
+
+            function goBackChart() {
+                var previousData = chartData;
+                var tmp = {
+                    prev: ""
+                }
+
+                // Remove latest
+                chartDataIndexes.pop();
+
+                // Get previous cached object
+                for (var i = 0; i < chartDataIndexes.length; i++) {
+                    tmp = chartDataIndexes[i];
+                    previousData = previousData[tmp.index].subSet;
+                }
+
+                // Apply titles and stuff
+                chart.allLabels[0].text = tmp.prev ? "Go Back " + tmp.prev : "";
+                chart.titles[0].text = tmp.title || chartTitle;
+                chart.dataProvider = previousData;
+                chart.validateData();
             }
-        ];
-        chart = AmCharts.makeChart("chartdiv", {
-            "backgroundAlpha": 1,
-            "export": {
-                "enabled": true
-            },
-            "type": "serial",
-            "titles": [{
-                "text": chartTitle
-            }],
-            "colors": [
-                "#de4c4f",
-                "#d8854f",
-                "#77ee38",
-                "#a7a737"
-            ],
-            "allLabels": [{
-                "text": "",
-                "x": 10,
-                "y": 15,
-                "url": "javascript: goBackChart();void(0);"
-            }],
-            "dataProvider": chartData,
-            "valueAxes": [{
-                "axisAlpha": 0,
-                "dashLength": 4,
-                "position": "left"
-            }],
-            "graphs": [{
-                "valueField": "value",
-                "fillAlphas": 0,
-                "bulletField": "bullet"
-            }, {
-                "valueField": "regression",
-                "fillAlphas": 0,
-                "bulletField": "bullet"
-            }, {
-                "valueField": "sequestration",
-                "fillAlphas": 0,
-                "bulletField": "bullet"
-            }],
-            "chartCursor": {
-                "zoomable": false,
-                "fullWidth": true,
-                "cursorAlpha": 0.1,
-                "categoryBalloonEnabled": false
-            },
-            "dataDateFormat": "YYYY-MM-DD HH:NN:SS",
-            "categoryField": "date",
-            "categoryAxis": {
-                "parseDates": true,
-                "minPeriod": "mm",
-                "axisAlpha": 0,
-                "minHorizontalGap": 50,
-                "gridAlpha": 0,
-                "tickLength": 0
-            },
-        });
+        </script>
+        */?>
+</div>
+@endsection @section('scripts')
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js" type="text/javascript"></script>
+<!--angular js script-->
+<script>
+    var app = angular
+        .module("myapp", [])
+        .controller("MyController", function($scope) {
+            $scope.dboardType = ['Emissions', 'Number of Trips'];
 
+            /*
+            $scope.operate = function(input) {
+                $scope.holder = $scope.answer;
+                $scope.operation = input;
+                $scope.reset();
+            };
 
-        chart.addListener('clickGraphItem', function(evt) {
-            if (evt.item.dataContext.subSet) {
-                chartDataIndexes.push({
-                    index: evt.index,
-                    title: evt.item.dataContext.subSetTitle,
-                    prev: evt.chart.titles[0].text
+            $scope.equals = function() {
+                switch ($scope.operation) {
+                    case '+':
+                        {
+                            $scope.answer = $scope.holder + $scope.answer;
+                            break;
+                        }
+                    case '-':
+                        {
+                            $scope.answer = $scope.holder - $scope.answer;
+                            break;
+                        }
+                    case '*':
+                        {
+                            $scope.answer = $scope.holder * $scope.answer;
+                            break;
+                        }
+                    case '/':
+                        {
+                            $scope.answer = $scope.holder / $scope.answer;
+                            break;
+                        }
+                    default:
+                        {
+                            $scope.reset();
+                        }
+                }
+            };
+
+            //cart functions
+            $scope.itemList = [];
+            $scope.cart = [];
+            $scope.name = "";
+            $scope.price = "";
+
+            //adds item x quantity to inventory
+            $scope.addItem = function(name, priceEach) {
+                $scope.itemList.push({
+                    itemName: name,
+                    priceEach: priceEach
                 });
-                evt.chart.dataProvider = evt.item.dataContext.subSet;
-                evt.chart.allLabels[0].text = "Go Back " + evt.chart.titles[0].text;
-                evt.chart.titles[0].text = evt.item.dataContext.subSetTitle;
-                evt.chart.validateData();
+                $scope.name = "";
+                $scope.price = "";
+            };
 
-            }
+            //adds item and quantity to cart
+            $scope.addToCart = function(name, priceeach, quantity) {
+                $scope.cart.push({
+                    itemName: name,
+                    priceEach: priceeach,
+                    itemQuantity: quantity
+                });
+            };
+
+            //totals all in cart
+            $scope.totalCart = 0;
+            $scope.checkout = function() {
+                for (var x = 0; x < $scope.cart.length; x++) {
+                    $scope.totalCart += $scope.cart[x].priceEach * $scope.cart[x].itemQuantity;
+                }
+            };
+
+            //resets all in cart
+            $scope.resetCart = function() {
+                $scope.cart = [];
+            };
+            */
         });
-
-        function goBackChart() {
-            var previousData = chartData;
-            var tmp = {
-                prev: "" 
-            }
-
-            // Remove latest
-            chartDataIndexes.pop();
-
-            // Get previous cached object
-            for (var i = 0; i < chartDataIndexes.length; i++) {
-                tmp = chartDataIndexes[i];
-                previousData = previousData[tmp.index].subSet;
-            }
-
-            // Apply titles and stuff
-            chart.allLabels[0].text = tmp.prev ? "Go Back " + tmp.prev : "";
-            chart.titles[0].text = tmp.title || chartTitle;
-            chart.dataProvider = previousData;
-            chart.validateData();
+</script>
+<!--top 2 institution chart-->
+<script>
+    <?php
+     /*
+    //month -> trips drilldown data of top 2 institutions 
+    $institutionEmissions = DB::table('monthlyemissionsperschool')
+        ->join('institutions', 'monthlyemissionsperschool.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', 'institutions.institutionID', DB::raw('SUM(monthlyemissionsperschool.emission) AS emission'))
+        ->groupBy('institutions.institutionID')
+        ->orderByRaw('SUM(monthlyemissionsperschool.emission) DESC')
+        ->limit(2)
+        ->get();
+        
+        if(isset($institutionEmissions[1])){
+            $institutionEmissionsTripRows = DB::table('trips')
+                ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+                ->join('institutions', 'vehicles_mv.institutionID', '=', 'institutions.institutionID')
+                ->select(DB::raw(''))
+                ->whereRaw('vehicles_mv.institutionID = \''.$institutionEmissions[0]->institutionID.'\' || institutionID = \''.$institutionEmissions[1]->institutionID.'\'')
+                ->get();  
+        }else{
+            $institutionEmissionsTripRows = DB::table('trips')
+                ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+                ->join('institutions', 'vehicles_mv.institutionID', '=', 'institutions.institutionID')
+                ->select(DB::raw('*'))
+                ->whereRaw('vehicles_mv.institutionID = \''.$institutionEmissions[0]->institutionID.'\'')
+                ->get();
         }
-    </script>
+        
+        //carbrand to trips drilldown data for top2 brands
+        
+        //get most car brand type contributions (emission total)
+        $carBrandContributions = DB::table('trips')
+            ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+            ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
+            ->select('carbrand_ref.carbrandName', DB::raw('SUM(trips.emissions) AS totalEmissions'))
+            ->groupBy('carbrandName')
+            ->orderByRaw('SUM(trips.emissions) DESC')
+            ->limit(2)
+            ->get();
+    
+        if(isset($carBrandContributions[1])){
+            $carBrandTripRows = DB::table('trips')
+                ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+                ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
+                ->select(DB::raw('*'))
+                ->whereRaw('carBrandName = \''.$carBrandContributions[0]->carbrandName.'\' || carBrandName = \''.$carBrandContributions[1]->carbrandName.'\'')
+                ->get();
+        }else{
+            $carBrandTripRows = DB::table('trips')
+                ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+                ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
+                ->select(DB::raw('*'))
+                ->whereRaw('carBrandName = \''.$carBrandContributions[0]->carbrandName.'\'')
+                ->get();
+        }
+    */
+    
+        $institutionEmissions = DB::table('monthlyemissionsperschool')
+        ->join('institutions', 'monthlyemissionsperschool.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw('SUM(monthlyemissionsperschool.emission) AS emission'))
+        ->groupBy('institutions.institutionID')
+        ->orderByRaw('SUM(monthlyemissionsperschool.emission) DESC')
+        ->limit(2)
+        ->get();
+        
+        if(isset($institutionEmissions[1])){
+            $institutionEmissionsTripRows = DB::table('monthlyemissionsperschool')
+            ->join('institutions', 'monthlyemissionsperschool.institutionID', '=', 'institutions.institutionID')
+                ->select(DB::raw('*'))
+                ->whereRaw('institutions.institutionName = \''.$institutionEmissions[0]->institutionName.'\' || institutionName = \''.$institutionEmissions[1]->institutionName.'\'')
+                ->get();  
+        }else{
+            $institutionEmissionsTripRows = DB::table('monthlyemissionsperschool')
+                ->join('institutions', 'monthlyemissionsperschool.institutionID', '=', 'institutions.institutionID')
+                ->select(DB::raw('*'))
+                ->whereRaw('institutions.institutionName = \''.$institutionEmissions[0]->institutionName.'\'')
+                ->get();
+        }
+    
+       echo "var institutionChart = [";
+            for($x = 0; $x < count($institutionEmissions); $x++){
+                echo '{
+                    "Institution": "'.$institutionEmissions[$x]->institutionName.'",
+                    "Emission": '.$institutionEmissions[$x]->emission.',
+                    "url": "#",
+                    "description": "Click for Department data",
+                    "months": [';
+                    for($y = 0; $y < count($institutionEmissionsTripRows); $y++){
+                        echo '{
+                            "Date": "'.$institutionEmissionsTripRows[$y]->monthYear.'",
+                            "Emission": '.$institutionEmissionsTripRows[$y]->emission.'
+                        }';
+                        if($y!=count($institutionEmissionsTripRows)-1){
+                            echo ',';
+                        }
+                    }
+                    echo ']';
+                    echo '
+                    }';
+                    if($x!=count($institutionEmissions)-1){
+                        echo ',';
+                    }
+                }
+            echo "];
+            "
+    /*    
+    var institutionChart = [{
+        "Institution": 2009,
+        "Emission": 23.5,
+        "url": "#",
+        "description": "Click for Department data",
+        "months": [{
+            "category": 1,
+            "income": 1
+        }, {
+            "category": 2,
+            "income": 2
+        }]
+    }, {
+        "Institution": 2010,
+        "Emission": 26.2,
+        "url": "#",
+        "description": "click to drill-down",
+        "months": [{
+            "category": 1,
+            "income": 4
+        }, {
+            "category": 2,
+            "income": 3
+        }]
+    }];
+    */
+    ?>
 
-    @endsection
+    var chart = AmCharts.makeChart("institutionChartDiv", {
+        "type": "serial",
+        "creditsPosition": "top-right",
+        "autoMargins": false,
+        "marginLeft": 30,
+        "marginRight": 8,
+        "marginTop": 10,
+        "marginBottom": 26,
+        "titles": [{
+            "text": "Top 2 Institutions on Emissions"
+        }],
+        "dataProvider": institutionChart,
+        "startDuration": 1,
+        "graphs": [{
+            "alphaField": "alpha",
+            "balloonText": "<span style='font-size:13px;'>[[title]] in [[Date]]:<b>[[Emission]]</b>",
+            "dashLengthField": "dashLengthColumn",
+            "fillAlphas": 1,
+            "title": "Institution Emission",
+            "type": "column",
+            "valueField": "Emission",
+            "urlField": "url"
+        }],
+        "categoryField": "Institution",
+        "categoryAxis": {
+            "gridPosition": "start",
+            "axisAlpha": 0,
+            "tickLength": 0
+        }
+    });
+
+    chart.addListener("clickGraphItem", function(event) {
+        if ('object' === typeof event.item.dataContext.months) {
+
+            // set the monthly data for the clicked month
+            event.chart.dataProvider = event.item.dataContext.months;
+
+            // update the chart title
+            event.chart.titles[0].text = event.item.dataContext.Institution + ' Departments\' Emissions';
+
+            // let's add a label to go back to yearly data
+            event.chart.addLabel(
+                35, 20,
+                "< Go back to Intitution Level",
+                undefined,
+                15,
+                undefined,
+                undefined,
+                undefined,
+                true,
+                'javascript:resetChart();');
+
+            // validate the new data and make the chart animate again
+            event.chart.validateData();
+            event.chart.animateAgain();
+        }
+    });
+
+    // function which resets the chart back to yearly data
+    function resetChart() {
+        chart.dataProvider = institutionChart;
+        chart.titles[0].text = 'Top 2 Institutions on Emissions';
+
+        // remove the "Go back" label
+        chart.allLabels = [];
+
+        chart.validateData();
+        chart.animateAgain();
+    }
+</script>
+@endsection

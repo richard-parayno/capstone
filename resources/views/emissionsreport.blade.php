@@ -87,7 +87,7 @@
         ->get();
    
      
-    //get most vehicle type contributions (emission total)
+    //get most car brand type contributions (emission total)
     $carBrandContributions = DB::table('trips')
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
         ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
