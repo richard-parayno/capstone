@@ -9,6 +9,7 @@ use DB;
 use App\Models\Trip;
 use App\Models\Monthlyemissionsperschool;
 use App\Models\Deptsperinstitution;
+use App\Models\Monthlyemissions;
 use DateTime;
 use Debugbar;
 use PHPExcel_Cell;
@@ -316,7 +317,11 @@ class ExcelController extends Controller
         $totalEmission = 0;
         Debugbar::info("[TOTAL EMISSION] Initialized: ".$totalEmission);
         foreach ($load as $key => $row) {
+            //initialize monthlyemissionsperschool and monthlyemissions
             $allEmissions = Monthlyemissionsperschool::all();
+            $currentMonthlyEmissions = Monthlyemissions::all();
+
+            Debugbar::info("ITERATION #".$ctr);
 
             if ($allEmissions->isEmpty()) {
                 $firstrun = true;
@@ -407,6 +412,7 @@ class ExcelController extends Controller
                         $newDate = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);                        
                         $monthlyEmission->monthYear = $newDate;
                         $monthlyEmission->save();
+
                         $firstrun = false;
                     } elseif ($firstrun == false) {
                         Debugbar::info('--- CASE 1 SUCCEEDING RUN ---');
@@ -537,6 +543,30 @@ class ExcelController extends Controller
              * 
              * after each computation (per row), add it to the total (acts as counter) emission variable
              */
+        }
+
+        //for each (similar) month in monthlyemissionsperschool, add it to monthlyemissions. 
+        $allEmissionsPerSchool = Monthlyemissionsperschool::all();
+        $allMonthlyEmissions = Monthlyemissions::all();
+
+        
+        foreach($allEmissionsPerSchool as $key => $value) {
+            //if this month exists in monthlyemissions, increment it
+            //else, create a new entry.
+        }
+        
+
+        //check if this particular monthly emission already exists in the database and updates it.
+        Debugbar::info("Checking if this month already exists in monthlyemissions....");
+        $checkCurrentMonthlyEmissions = Monthlyemissions::where('monthYear', '=', $newDate)->first();
+        if ($checkCurrentMonthlyEmissions != null) {
+            Debugbar::info($checkCurrentMonthlyEmissions->monthYear." exists!");
+            $addCME = $checkCurrentMonthlyEmissions->emission + $totalEmission;
+            Debugbar::info("CME Added: ".$addCME);
+            $updateCurrentMonthlyEmissions = DB::table('monthlyemissions')->where('monthYear', $newDate)->update(['emission' => $addCME]);                        
+        } else {
+            Debugbar::info($checkCurrentMonthlyEmissions->monthYear."DOESN'T exist!");
+            Debugbar::info("Creating new record in monthlyemissions");
         }
 
         $trips = Trip::all();
