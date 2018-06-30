@@ -319,7 +319,7 @@ class ExcelController extends Controller
         foreach ($load as $key => $row) {
             //initialize monthlyemissionsperschool and monthlyemissions
             $allEmissions = Monthlyemissionsperschool::all();
-            $currentMonthlyEmissions = Monthlyemissions::all();
+            //$currentMonthlyEmissions = Monthlyemissions::all();
 
             Debugbar::info("ITERATION #".$ctr);
 
@@ -544,37 +544,9 @@ class ExcelController extends Controller
              * after each computation (per row), add it to the total (acts as counter) emission variable
              */
         }
-
-        //for each (similar) month in monthlyemissionsperschool, add it to monthlyemissions. 
-        $allEmissionsPerSchool = Monthlyemissionsperschool::all();
-        $allMonthlyEmissions = Monthlyemissions::all();
-
         
-        foreach($allEmissionsPerSchool as $key => $value) {
-            //if this month exists in monthlyemissions, increment it
-            //else, create a new entry.
-        }
-        
-
-        //check if this particular monthly emission already exists in the database and updates it.
-        Debugbar::info("Checking if this month already exists in monthlyemissions....");
-        $checkCurrentMonthlyEmissions = Monthlyemissions::where('monthYear', '=', $newDate)->first();
-        if ($checkCurrentMonthlyEmissions != null) {
-            Debugbar::info($checkCurrentMonthlyEmissions->monthYear." exists!");
-            $addCME = $checkCurrentMonthlyEmissions->emission + $totalEmission;
-            Debugbar::info("CME Added: ".$addCME);
-            $updateCurrentMonthlyEmissions = DB::table('monthlyemissions')->where('monthYear', $newDate)->update(['emission' => $addCME]);                        
-        } else {
-            Debugbar::info($checkCurrentMonthlyEmissions->monthYear."DOESN'T exist!");
-            Debugbar::info("Creating new record in monthlyemissions");
-        }
-
         $trips = Trip::all();
-
-        return view('display-table');
-
-        //return redirect('/dashboard/upload-view')->with(compact('trips'))->with('success', true)->with('message', 'Trip Data Batch #'.$lastTripsBatchNumber.' ('.$formattedCurrentAuditDate.') successfully uploaded!');
-
+        //return view('display-table');
+        return redirect('/dashboard/upload-view')->with(compact('trips'))->with('success', true)->with('message', 'Trip Data Batch #'.$lastTripsBatchNumber.' ('.$formattedCurrentAuditDate.') successfully uploaded!');
     }
-
 }
