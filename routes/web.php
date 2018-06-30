@@ -105,7 +105,15 @@ Route::get('/dashboard/vehicle-decommission-process', 'VehicleController@decommi
 Route::get('/dashboard/report-maker', function() {
     return view('report-maker');
 })->name('report-maker')->middleware('auth');
-/*Route::get('/dashboard/vehicle-decommission-process', 'VehicleController@decommission')->name('vehicle-decommission-process')->middleware('auth');*/
+
+Route::get('/dashboard/reports', function() {
+    return view('reports');
+})->name('reports')->middleware('auth');
+
+
+Route::get('/dashboard/emissionsreport', function() {
+    return view('emissionsreport');
+})->name('emissionsreport')->middleware('auth');
 
 Auth::routes();
 
