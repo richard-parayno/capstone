@@ -5,8 +5,6 @@
         $userSchool = Auth::user()->institutionID;
         $schoolSort = true;
     }
-    //logic on usertype
-
     if($schoolSort){
 
 
@@ -112,7 +110,8 @@
         ->limit(2)
         ->get();
         
-    }else{
+    }
+    else{
 
     $columnTable = DB::table('trips')
         ->select(DB::raw('sum(trips.emissions) as emissions'))
@@ -260,48 +259,74 @@
             <!--Div of filtered dashboard-->
             <div class="twelve columns" ng-show="dboard=='Emissions'">
                         <?php
-                            if(!$schoolSort){
-                                
-                            echo '<div class="twelve columns"> <a href=""><div class="four columns offset-by-four">';
-                            echo "Top Institutions on {{dboard}}: <br>";
-                             for($x = 0; $x < count($institutionEmissions); $x++){
-                                 $top = $x + 1;
-                                 echo $top.". ".$institutionEmissions[$x]->institutionName." - ".$institutionEmissions[$x]->percentage."%<br>";
-                             }
-                                echo " </div></div></a>";
+                            if(!$schoolSort){   
+                                echo '<div class="twelve columns"> <a href=""><div class="four columns offset-by-four">';
+                                echo '<table border="1" style="width:100%;">
+                                        <thead>
+                                            <tr><td colspan="2" style="text-align:center;">Top Institutions on {{dboard}}</td></tr>
+                                        </thead>
+                                            <tbody>';
+                                 for($x = 0; $x < count($institutionEmissions); $x++){
+                                     $top = $x + 1;
+                                     echo "<tr>
+                                            <td>".$top.". ".$institutionEmissions[$x]->institutionName."</td><td style=\"text-align:right\">".$institutionEmissions[$x]->percentage."%</td>
+                                            </tr>";
+                                 }
+                                echo "</tbody></table></div>";
                             }
                         ?>
                 <div class="twelve columns">
                     <a href="">
-                    <div class="four columns">
+                    <div class="three columns offset-by-one">
                         <?php
-                            echo   "Top Departments on {{dboard}}: <br>";
+                            echo '<table border="1" style="width:100%;">
+                                    <thead>
+                                        <tr><td colspan="2" style="text-align:center;">Top Departments on {{dboard}}</td></tr>
+                                    </thead>
+                                        <tbody>';
                              for($x = 0; $x < count($deptContributions); $x++){
                                  $top = $x + 1;
-                                 echo $top.". ".$deptContributions[$x]->deptName." - ".$deptContributions[$x]->percentage."%<br>";
+                                 echo "<tr>
+                                        <td>".$top.". ".$deptContributions[$x]->deptName."</td><td style=\"text-align:right\">".$deptContributions[$x]->percentage."%</td>
+                                        </tr>";
                              }
+                                echo "</tbody></table>";
                         ?>
                     </div>
                     </a>
                     <a href="">
-                    <div class="four columns">
+                    <div class="three columns offset-by-one">
                         <?php
-                            echo   "Top Car on {{dboard}}: <br>";
+                             echo '<table border="1" style="width:100%;">
+                                    <thead>
+                                        <tr><td colspan="2" style="text-align:center;">Top Vehicles on {{dboard}}</td></tr>
+                                    </thead>
+                                        <tbody>';
                              for($x = 0; $x < count($carContributions); $x++){
                                  $top = $x + 1;
-                                 echo $top.". ".$carContributions[$x]->modelName." - ".$carContributions[$x]->percentage."%<br>";
+                                 echo "<tr>
+                                        <td>".$top.". ".$carContributions[$x]->modelName."</td><td style=\"text-align:right\">".$carContributions[$x]->percentage."%</td>
+                                        </tr>";
                              }
+                                echo "</tbody></table>";
                         ?>
                     </div>
                     </a>
                     <a href="">  
-                    <div class="four columns">
+                    <div class="three columns offset-by-one">
                         <?php
-                            echo   "Top Car Type on {{dboard}}: <br>";
+                            echo '<table border="1" style="width:100%;">
+                                    <thead>
+                                        <tr><td colspan="2" style="text-align:center;">Top Car Type on {{dboard}}</td></tr>
+                                    </thead>
+                                        <tbody>';
                              for($x = 0; $x < count($vehicleContributions); $x++){
                                  $top = $x + 1;
-                                 echo $top.". ".$vehicleContributions[$x]->carTypeName." - ".$vehicleContributions[$x]->percentage."%<br>";
+                                 echo "<tr>
+                                        <td>".$top.". ".$vehicleContributions[$x]->carTypeName."</td><td style=\"text-align:right\">".$vehicleContributions[$x]->percentage."%</td>
+                                        </tr>";
                              }
+                                echo "</tbody></table>";
                         ?>
                     </div>
                     </a>
@@ -310,60 +335,95 @@
                     <a href="">  
                     <div class="four columns offset-by-four">
                         <?php
-                            echo   "Top Car Brand on {{dboard}}: <br>";
+                            echo '<table border="1" style="width:100%;">
+                                    <thead>
+                                        <tr><td colspan="2" style="text-align:center;">Top Car Brand on {{dboard}}</td></tr>
+                                    </thead>
+                                        <tbody>';
                              for($x = 0; $x < count($carBrandContributions); $x++){
                                  $top = $x + 1;
-                                 echo $top.". ".$carBrandContributions[$x]->carBrandName." - ".$carBrandContributions[$x]->percentage."%<br>";
+                                echo "<tr>
+                                        <td>".$top.". ".$carBrandContributions[$x]->carBrandName."</td><td style=\"text-align:right\">".$carBrandContributions[$x]->percentage."%</td>
+                                        </tr>";
                              }
+                                echo "</tbody></table>";
                         ?>
                     </div>
                     </a>
                 </div>
             </div>
+        </div>
             <div class="twelve columns" ng-show="dboard=='Number of Trips'">
                <?php
                     if(!$schoolSort){
 
-                    echo '<div class="twelve columns"> <a href=""><div class="four columns offset-by-four">';
-                    echo "Top Institutions on {{dboard}}: <br>";
+                     echo '<div class="twelve columns"> <a href=""><div class="four columns offset-by-four">';
+                                echo '<table border="1" style="width:100%;">
+                                        <thead>
+                                            <tr><td colspan="2" style="text-align:center;">Top Institutions on {{dboard}}</td></tr>
+                                        </thead>
+                                            <tbody>';
                      for($x = 0; $x < count($institutionEmissions); $x++){
                          $top = $x + 1;
-                         echo $top.". ".$institutionEmissions[$x]->institutionName." - ".$institutionEmissions[$x]->percentage."%<br>";
-                     }
-                        echo " </div></div></a>";
-                    }
-                ?>
+                         echo "<tr>
+                                            <td>".$top.". ".$institutionEmissions[$x]->institutionName."</td><td style=\"text-align:right\">".$institutionEmissions[$x]->percentage."%</td>
+                                            </tr>";
+                                 }
+                                echo "</tbody></table></div>";
+                            }
+                        ?>
                 <div class="twelve columns">
                 <a href="">
-                    <div class="four columns">
+                    <div class="three columns offset-by-one">
                         <?php
-                            echo   "Top Departments on {{dboard}}: <br>";
+                            echo '<table border="1" style="width:100%;">
+                                    <thead>
+                                        <tr><td colspan="2" style="text-align:center;">Top Departments on {{dboard}}</td></tr>
+                                    </thead>
+                                        <tbody>';
                              for($x = 0; $x < count($deptTripNumber); $x++){
                                  $top = $x + 1;
-                                 echo $top.". ".$deptTripNumber[$x]->deptName." - ".$deptTripNumber[$x]->percentage."%<br>";
+                                 echo "<tr>
+                                        <td>".$top.". ".$deptTripNumber[$x]->deptName."</td><td style=\"text-align:right\">".$deptTripNumber[$x]->percentage."%</td>
+                                        </tr>";
                              }
+                                echo "</tbody></table>";
                         ?>
                     </div>
                 </a>
                 <a href="">
-                    <div class="four columns">
+                <div class="three columns offset-by-one">
                         <?php
-                            echo   "Top Vehicle on {{dboard}}: <br>";
+                            echo '<table border="1" style="width:100%;">
+                                    <thead>
+                                        <tr><td colspan="2" style="text-align:center;">Top Vehicles on {{dboard}}</td></tr>
+                                    </thead>
+                                        <tbody>';
                              for($x = 0; $x < count($carTripNumber); $x++){
                                  $top = $x + 1;
-                                 echo $top.". ".$carTripNumber[$x]->modelName." - ".$carTripNumber[$x]->percentage."%<br>";
+                                 echo "<tr>
+                                        <td>".$top.". ".$carTripNumber[$x]->modelName."</td><td style=\"text-align:right\">".$carTripNumber[$x]->percentage."%</td>
+                                        </tr>";
                              }
+                                echo "</tbody></table>";
                         ?>
                     </div>
                 </a>   
                 <a href="">
-                    <div class="four columns">
+                <div class="three columns offset-by-one">
                         <?php
-                            echo   "Top Car Type on {{dboard}}: <br>";
+                            echo '<table border="1" style="width:100%;">
+                                    <thead>
+                                        <tr><td colspan="2" style="text-align:center;">Top Car Type on {{dboard}}</td></tr>
+                                    </thead>
+                                        <tbody>';
                              for($x = 0; $x < count($vehicleTripNumber); $x++){
                                  $top = $x + 1;
-                                 echo $top.". ".$vehicleTripNumber[$x]->carTypeName." - ".$vehicleTripNumber[$x]->percentage."%<br>";
+                                  echo "<tr>
+                                        <td>".$top.". ".$vehicleTripNumber[$x]->carTypeName."</td><td style=\"text-align:right\">".$vehicleTripNumber[$x]->percentage."%</td>
+                                        </tr>";
                              }
+                                echo "</tbody></table>";
                         ?>
                     </div>
                 </a>
@@ -372,11 +432,18 @@
                 <a href="">
                     <div class="four columns offset-by-four">
                         <?php
-                            echo   "Top Car Brand on {{dboard}}: <br>";
+                            echo '<table border="1" style="width:100%;">
+                                    <thead>
+                                        <tr><td colspan="2" style="text-align:center;">Top Car Brand on {{dboard}}</td></tr>
+                                    </thead>
+                                        <tbody>';
                              for($x = 0; $x < count($carBrandTripNumber); $x++){
                                  $top = $x + 1;
-                                 echo $top.". ".$carBrandTripNumber[$x]->carbrandName." - ".$carBrandTripNumber[$x]->percentage."%<br>";
+                                 echo "<tr>
+                                        <td>".$top.". ".$carBrandTripNumber[$x]->carbrandName."</td><td style=\"text-align:right\">".$carBrandTripNumber[$x]->percentage."%</td>
+                                        </tr>";
                              }
+                                echo "</tbody></table>";
                         ?>
                     </div>
                 </a>
@@ -803,6 +870,4 @@
         }
     </script>
     <!-- general emission chart-->
-
-
-    @endsection
+@endsection
