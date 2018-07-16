@@ -5,7 +5,7 @@ html {
 
 
 body {
-  background: #FBFBFB;
+  background-color: #fff;
   font-family: "Lato";  
 }
 
@@ -81,7 +81,9 @@ img {
 
 #main-content {
   margin-left: 250px;
-  color: white;
+  color: black;
+  background-color: #fff;
+
 }
 
 #main-content input {
@@ -112,9 +114,6 @@ img {
   padding-right: 20px;
 }
 
-#box-form {
-  background-color: #0b5023 !important;
-}
 
 #success-message {
   background-color: #E1E1E1;
