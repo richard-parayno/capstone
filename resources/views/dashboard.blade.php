@@ -1,22 +1,90 @@
 <?php
     $schoolSort = false;
+    $emptySet = false;
     $userType = Auth::user()->userTypeID;  
+    $add = false;
+    $filterMessage = "Showing Data from ";
     if($userType > 2){
         $userSchool = Auth::user()->institutionID;
-        $schoolSort = true;
+        $schoolSort = true; 
+        $rawDB="trips.institutionID=".$userSchool;
+    }
+    if(isset($data)){
+        $rawDB = "";
+        if($data['institutionID'] != null){
+                $userSchool = $data['institutionID'];
+                $schoolSort = true;
+                $add = true;
+                $filterMessage .= $userSchool;
+                $rawDB.="trips.institutionID=".$userSchool;
+        }if(!isset($data['datePreset'])){   
+            if($data['fromDate'] != null && $data['toDate'] != null){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated ";
+                }
+                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
+                $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+            }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated ";
+                }
+                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
+                $filterMessage .= "before ".$data['toDate'];
+            }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated  ";
+                }
+                $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+                $filterMessage .= "after ".$data['fromDate'];
+            }
+        }else{
+            switch($data['datePreset']){
+                case "1": {
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
+                    $filterMessage .= "from 2 weeks ago";
+                    break;
+                }
+                case "2": {
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
+                    $filterMessage .= "from 1 month ago";
+                    break;
+                } 
+                case "3": {
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
+                    $filterMessage .= "from 3 month ago";
+                    break;
+                }
+                case "4": {
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
+                    $filterMessage .= "from 6 month ago";
+                    break;
+                }
+                case "5": {
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
+                    $filterMessage .= "from 1 year ago";
+                    break;
+                }
+                default: $rawDB .= "";
+            }
+        }
     }
     if($schoolSort){
 
-
     //include institution
     //get most department type contributions (emission total)
-        
-    $where="trips.institutionID=".$userSchool;
+    if(isset($data) && !isset($data['ínstitutionID'])){
+        $rawDB .= 'AND trips.institutionID = '.$userSchool;
+    }
     $columnTable = DB::table('trips')
         ->select(DB::raw('sum(trips.emissions) as emissions'))
-        ->whereRaw($where)
+        ->whereRaw($rawDB)
         ->get();
-    $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
+    if(!$columnTable->isEmpty()){
+        $emptySet = false;
+        $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
         
     //get most vehicle type contributions (emission total)
     $vehicleContributions = DB::table('trips')
@@ -62,9 +130,17 @@
 
     $columnTable = DB::table('trips')
         ->select(DB::raw('count(trips.emissions) as tripCount'))
-        ->whereRaw($where)
+        ->whereRaw($rawDB)
         ->get();
-    $column = "round((count(trips.emissions) * 100 / ".$columnTable[0]->tripCount."),2) as percentage";    
+    $column = "count(trips.emissions) as percentage";   
+    
+    $institutionTripNumber = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+        ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        ->limit(2)
+        ->get();
         
     //trip number
     //get most car brand type contributions (trip number)
@@ -109,16 +185,21 @@
         ->orderByRaw('2 DESC')
         ->limit(2)
         ->get();
-        
+    }else {
+        $filterMessage = "Filter returned an empty set.";
+        $emptySet = true;
     }
+}
     else{
-
-    $columnTable = DB::table('trips')
-        ->select(DB::raw('sum(trips.emissions) as emissions'))
-        ->get();
-    $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
-    
-    $institutionEmissions = DB::table('trips')
+        
+    if(!isset($data)){    
+        $columnTable = DB::table('trips')
+            ->select(DB::raw('sum(trips.emissions) as emissions'))
+            ->get();
+        if(!$columnTable->isEmpty()){
+        $emptySet = false;     
+        $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
+        $institutionEmissions = DB::table('trips')
         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
         ->select('institutions.institutionName', DB::raw($column))
         ->orderByRaw('2 DESC')
@@ -138,7 +219,8 @@
         
     $deptContributions = DB::table('trips')
         ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
-        ->select('deptsperinstitution.deptName', DB::raw($column))
+         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
         ->groupBy('deptsperinstitution.deptID')
         ->orderByRaw('2 DESC')
         ->limit(2)
@@ -148,8 +230,8 @@
     $carContributions = DB::table('trips')
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
         ->join('institutions', 'institutions.institutionID','=', 'vehicles_mv.institutionID')
-        ->select('vehicles_mv.modelName', DB::raw($column))
-        ->groupBy('vehicles_mv.modelName')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
+        ->groupBy(DB::raw('1'))
         ->orderByRaw('2 DESC')
         ->limit(2)
         ->get();
@@ -167,7 +249,15 @@
     $columnTable = DB::table('trips')
         ->select(DB::raw('count(trips.emissions) as tripCount'))
         ->get();
-    $column = "round((count(trips.emissions) * 100 / ".$columnTable[0]->tripCount."),2) as percentage";    
+    $column = "count(trips.emissions) as percentage";    
+        
+     $institutionTripNumber = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+        ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        ->limit(2)
+        ->get();
         
     //trip number
     //get most car brand type contributions (trip number)
@@ -180,12 +270,12 @@
         ->limit(2)
         ->get();
         
-        //get most car contributions (trip number)
+    //get most car contributions (trip number)
     $carTripNumber = DB::table('trips')
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
-        ->join('institutions', 'institutions.institutionID','=', 'vehicles_mv.institutionID')
-        ->select('vehicles_mv.modelName', DB::raw($column))  
-        ->groupBy('modelName')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
+        ->groupBy(DB::raw('1'))
         ->orderByRaw('2 desc')
         ->limit(2)
         ->get();
@@ -202,14 +292,148 @@
     
     //get most department type contributions (trip number)
     $deptTripNumber = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
         ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
-        ->select('deptsperinstitution.deptName', DB::raw($column))
-        ->groupBy('deptsperinstitution.deptName')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
+        ->groupBy(DB::raw('1'))
         ->orderByRaw('2 DESC')
         ->limit(2)
         ->get();
         
+    }
+        else {
+        $filterMessage = "Filter returned an empty set.";
+        $emptySet = true;
     }    
+    
+        }
+    else{
+        $columnTable = DB::table('trips')
+            ->select(DB::raw('sum(trips.emissions) as emissions'))
+            ->whereRaw($rawDB)
+            ->get();
+        if(!$columnTable->isEmpty()){
+        $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
+        
+        $institutionEmissions = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+        ->whereRaw($rawDB)
+            ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        ->limit(2)
+        ->get();
+        
+    //get most vehicle type contributions (emission total)
+    $vehicleContributions = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('cartype_ref', 'cartype_ref.carTypeID','=', 'vehicles_mv.carTypeID')
+        ->select('cartype_ref.carTypeName', DB::raw($column))
+        ->whereRaw($rawDB)
+        ->groupBy('carTypeName')
+        ->orderByRaw('2 DESC')
+        ->limit(2)
+        ->get();
+        
+    $deptContributions = DB::table('trips')
+        ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
+         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
+        ->whereRaw($rawDB)
+        ->groupBy('deptsperinstitution.deptID')
+        ->orderByRaw('2 DESC')
+        ->limit(2)
+        ->get();
+
+    //get most car type contributions (emission total)
+    $carContributions = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('institutions', 'institutions.institutionID','=', 'vehicles_mv.institutionID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
+        ->whereRaw($rawDB)
+        ->groupBy(DB::raw('1'))
+        ->orderByRaw('2 DESC')
+        ->limit(2)
+        ->get();
+        
+     //get most car brand type contributions (emission total)
+    $carBrandContributions = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
+        ->select('carbrand_ref.carBrandName', DB::raw($column))
+        ->whereRaw($rawDB)
+        ->groupBy('carbrand_ref.carbrandName')
+        ->orderByRaw('2 DESC')
+        ->limit(2)
+        ->get();
+
+    $columnTable = DB::table('trips')
+        ->select(DB::raw('count(trips.emissions) as tripCount'))
+        ->whereRaw($rawDB)
+        ->get();
+    $column = "count(trips.emissions) as percentage";    
+        
+     $institutionTripNumber = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+        ->whereRaw($rawDB)
+         ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        ->limit(2)
+        ->get();
+        
+    //trip number
+    //get most car brand type contributions (trip number)
+     $carBrandTripNumber = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
+        ->select('carbrand_ref.carbrandName', DB::raw($column))
+        ->whereRaw($rawDB)
+         ->groupBy(DB::raw('1'))
+        ->orderByRaw('2 DESC')
+        ->limit(2)
+        ->get();
+        
+    //get most car contributions (trip number)
+    $carTripNumber = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
+        ->whereRaw($rawDB)
+        ->groupBy(DB::raw('1'))
+        ->orderByRaw('2 desc')
+        ->limit(2)
+        ->get();
+        
+    //get most vehicle type contributions (trip number)
+    $vehicleTripNumber = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('cartype_ref', 'cartype_ref.carTypeID','=', 'vehicles_mv.carTypeID')
+        ->select('cartype_ref.carTypeName', DB::raw($column))
+        ->whereRaw($rawDB)
+        ->groupBy('carTypeName')
+        ->orderByRaw('2 DESC')
+        ->limit(2)
+        ->get();
+    
+    //get most department type contributions (trip number)
+    $deptTripNumber = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
+        ->whereRaw($rawDB)
+        ->groupBy(DB::raw('1'))
+        ->orderByRaw('2 DESC')
+        ->limit(2)
+        ->get();
+        
+    }
+    else{
+        $filterMessage = "Filter returned an empty set.";
+        $emptySet = true;
+    }        
+    }
+    }
 ?>
     @extends('layouts.main') @section('styling')
     <style>
@@ -242,23 +466,108 @@
         }
     </style>
     @endsection @section('content')
+    <!-- analytics sidenav -->
+    <?php 
+        /*
+    <div class="container u-pull-right" id="analytics-sidebar">
+        <form method="post" action="{{ route('dashboard-process') }}">
+            {{ csrf_field() }}
+            <div class="twelve column bar">
+                <p><strong>Campus</strong></p>
+                <br>
+                <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                    <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
+                       <option value="">All Institutions</option>
+                        @foreach($institutions as $institution)
+                          <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="twelve column bar">
+                <p><strong>Date</strong></p>
+                <div style="padding-left: 5px; padding-right: 5px; border: none;">
+                    <p style="text-align: left;">From: </p>
+                    <input class="u-full-width" type="date" name="fromDate" id="fromDate">
+                    <p style="text-align: left;">Until: </p>
+                    <input class="u-full-width" type="date" name="toDate" id="toDate">
+                </div>
+            </div>
+            <div class="twelve column bar">
+                <input class="button-primary" type="submit">
+            </div>
+        </form>
+    </div>
+    */
+?>
+    <!-- analytics sidenav -->
     <div class="ten columns offset-by-one" id="box-form" ng-app="myapp">
         <div ng-controller="MyController">
             <div class="row">
                 <!--General Chart-->
                 <div class="twelve columns" id="allChartDiv" style="width: 100%; height: 400px; background-color: #222222;"></div><br>
             </div>
-            <div class="row">
-               <div class="twelve columns">
-                <h7>Unit of measurement:&nbsp;</h7>
-                <select style="color:black;" ng-model="dboard">
-                    <option ng-repeat="type in dboardType" value="<?php echo '{{type}}'; ?>" style="color:black;"><?php echo "{{type}}";?></option>
-                </select>
-               </div>
+            <div class="twelve columns">
+                <div class="five columns offset-by-one">
+                    <?php 
+                        if(isset($filterMessage)){
+                            echo "<p style=\"color: red;\">".$filterMessage."<p>";
+                        }
+                    ?>
+                    <h7>Unit of measurement:&nbsp;</h7>
+                    <select style="color:black;" ng-model="dboard">
+                        <option ng-repeat="type in dboardType" value="<?php echo '{{type}}'; ?>" style="color:black;"><?php echo "{{type}}";?></option>
+                    </select>
+                </div>
+                <div class="six columns">
+                    <input type="checkbox" ng-model="showFilters">Show Filters
+                    <div ng-show="showFilters">
+                        <input type="checkbox" ng-model="datePreset">Preset Date Ranges
+                    </div>
+                </div>
+            </div>
+            <div class="twelve columns" ng-show="showFilters">
+                <form method="post" action="{{ route('dashboard-process') }}" <?php if($userType <=2 ){ echo "ng-init=\"nonschool=true\""; } ?>> {{ csrf_field() }}
+
+                    <div class="five columns offset-by-one" ng-show="nonschool">
+                        <p><strong>Campus</strong></p>
+                        <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
+                           <option value="">All Institutions</option>
+                            @foreach($institutions as $institution)
+                              <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="six columns">
+                        <p><strong>Date</strong></p>
+                        <div class="three columns" ng-hide="datePreset">
+                            <p style="text-align: left;">From: </p>
+                            <input class="u-full-width" type="date" name="fromDate" id="fromDate">
+                        </div>
+                        <div class="three columns" ng-hide="datePreset">
+                            <p style="text-align: left;">Until: </p>
+                            <input class="u-full-width" type="date" name="toDate" id="toDate">
+                        </div>
+                        <div class="six columns" ng-show="datePreset">
+                            <p style="text-align: left;">Presets: </p>
+                            <select name="datePreset" id="">
+                                <option value="1">2 Weeks</option>
+                                <option value="2">Last Month</option>
+                                <option value="3">Last 3 Months</option>
+                                <option value="4">Last 6 Months</option>
+                                <option value="5">Last 1 Year</option>
+                            </select>
+                        </div>
+                        <div class="three columns">
+                            <input class="button-primary" type="submit">
+                        </div>
+                    </div>
+                </form>
             </div>
             <!--Div of filtered dashboard-->
             <div class="twelve columns" ng-show="dboard=='Emissions'">
-                        <?php
+                <?php       
+                        if(!$emptySet)
                             if(!$schoolSort){   
                                 echo '<div class="twelve columns"> <a href=""><div class="four columns offset-by-four">';
                                 echo '<table border="1" style="width:100%;">
@@ -277,8 +586,10 @@
                         ?>
                 <div class="twelve columns">
                     <a href="">
-                    <div class="three columns offset-by-one">
-                        <?php
+                        <div class="three columns offset-by-one">
+                            <?php
+                                if(!$emptySet){
+                                    
                             echo '<table border="1" style="width:100%;">
                                     <thead>
                                         <tr><td colspan="2" style="text-align:center;">Top Departments on {{dboard}}</td></tr>
@@ -291,12 +602,15 @@
                                         </tr>";
                              }
                                 echo "</tbody></table>";
+                                }
                         ?>
-                    </div>
+                        </div>
                     </a>
                     <a href="">
-                    <div class="three columns offset-by-one">
-                        <?php
+                        <div class="three columns offset-by-one">
+                            <?php
+                                if(!$emptySet){
+                                    
                              echo '<table border="1" style="width:100%;">
                                     <thead>
                                         <tr><td colspan="2" style="text-align:center;">Top Vehicles on {{dboard}}</td></tr>
@@ -309,13 +623,16 @@
                                         </tr>";
                              }
                                 echo "</tbody></table>";
+                                }
                         ?>
-                    </div>
+                        </div>
                     </a>
-                    <a href="">  
-                    <div class="three columns offset-by-one">
-                        <?php
-                            echo '<table border="1" style="width:100%;">
+                    <a href="">
+                        <div class="three columns offset-by-one">
+                            <?php
+                                if(!$emptySet){
+                                    
+                                echo '<table border="1" style="width:100%;">
                                     <thead>
                                         <tr><td colspan="2" style="text-align:center;">Top Car Type on {{dboard}}</td></tr>
                                     </thead>
@@ -327,14 +644,17 @@
                                         </tr>";
                              }
                                 echo "</tbody></table>";
+                                }
                         ?>
-                    </div>
+                        </div>
                     </a>
                 </div>
                 <div class="twelve columns">
-                    <a href="">  
-                    <div class="four columns offset-by-four">
-                        <?php
+                    <a href="">
+                        <div class="four columns offset-by-four">
+                            <?php
+                                if(!$emptySet){
+                                    
                             echo '<table border="1" style="width:100%;">
                                     <thead>
                                         <tr><td colspan="2" style="text-align:center;">Top Car Brand on {{dboard}}</td></tr>
@@ -347,14 +667,16 @@
                                         </tr>";
                              }
                                 echo "</tbody></table>";
+                                }
                         ?>
-                    </div>
+                        </div>
                     </a>
                 </div>
             </div>
         </div>
-            <div class="twelve columns" ng-show="dboard=='Number of Trips'">
-               <?php
+        <div class="twelve columns" ng-show="dboard=='Number of Trips'">
+            <?php   
+                if(!$emptySet)
                     if(!$schoolSort){
 
                      echo '<div class="twelve columns"> <a href=""><div class="four columns offset-by-four">';
@@ -363,19 +685,21 @@
                                             <tr><td colspan="2" style="text-align:center;">Top Institutions on {{dboard}}</td></tr>
                                         </thead>
                                             <tbody>';
-                     for($x = 0; $x < count($institutionEmissions); $x++){
+                     for($x = 0; $x < count($institutionTripNumber); $x++){
                          $top = $x + 1;
                          echo "<tr>
-                                            <td>".$top.". ".$institutionEmissions[$x]->institutionName."</td><td style=\"text-align:right\">".$institutionEmissions[$x]->percentage."%</td>
+                                            <td>".$top.". ".$institutionTripNumber[$x]->institutionName."</td><td style=\"text-align:right\">".$institutionTripNumber[$x]->percentage."</td>
                                             </tr>";
                                  }
                                 echo "</tbody></table></div>";
                             }
                         ?>
-                <div class="twelve columns">
+            <div class="twelve columns">
                 <a href="">
                     <div class="three columns offset-by-one">
                         <?php
+                            if(!$emptySet){
+                                
                             echo '<table border="1" style="width:100%;">
                                     <thead>
                                         <tr><td colspan="2" style="text-align:center;">Top Departments on {{dboard}}</td></tr>
@@ -384,16 +708,19 @@
                              for($x = 0; $x < count($deptTripNumber); $x++){
                                  $top = $x + 1;
                                  echo "<tr>
-                                        <td>".$top.". ".$deptTripNumber[$x]->deptName."</td><td style=\"text-align:right\">".$deptTripNumber[$x]->percentage."%</td>
+                                        <td>".$top.". ".$deptTripNumber[$x]->deptName."</td><td style=\"text-align:right\">".$deptTripNumber[$x]->percentage."</td>
                                         </tr>";
                              }
                                 echo "</tbody></table>";
+                            }
                         ?>
                     </div>
                 </a>
                 <a href="">
-                <div class="three columns offset-by-one">
+                    <div class="three columns offset-by-one">
                         <?php
+                            if(!$emptySet){
+                                
                             echo '<table border="1" style="width:100%;">
                                     <thead>
                                         <tr><td colspan="2" style="text-align:center;">Top Vehicles on {{dboard}}</td></tr>
@@ -402,16 +729,19 @@
                              for($x = 0; $x < count($carTripNumber); $x++){
                                  $top = $x + 1;
                                  echo "<tr>
-                                        <td>".$top.". ".$carTripNumber[$x]->modelName."</td><td style=\"text-align:right\">".$carTripNumber[$x]->percentage."%</td>
+                                        <td>".$top.". ".$carTripNumber[$x]->modelName."</td><td style=\"text-align:right\">".$carTripNumber[$x]->percentage."</td>
                                         </tr>";
                              }
                                 echo "</tbody></table>";
+                            }
                         ?>
                     </div>
-                </a>   
+                </a>
                 <a href="">
-                <div class="three columns offset-by-one">
+                    <div class="three columns offset-by-one">
                         <?php
+                            if(!$emptySet){
+                                
                             echo '<table border="1" style="width:100%;">
                                     <thead>
                                         <tr><td colspan="2" style="text-align:center;">Top Car Type on {{dboard}}</td></tr>
@@ -420,18 +750,21 @@
                              for($x = 0; $x < count($vehicleTripNumber); $x++){
                                  $top = $x + 1;
                                   echo "<tr>
-                                        <td>".$top.". ".$vehicleTripNumber[$x]->carTypeName."</td><td style=\"text-align:right\">".$vehicleTripNumber[$x]->percentage."%</td>
+                                        <td>".$top.". ".$vehicleTripNumber[$x]->carTypeName."</td><td style=\"text-align:right\">".$vehicleTripNumber[$x]->percentage."</td>
                                         </tr>";
                              }
                                 echo "</tbody></table>";
+                            }
                         ?>
                     </div>
                 </a>
-                </div>
-                <div class="twelve columns">
+            </div>
+            <div class="twelve columns">
                 <a href="">
                     <div class="four columns offset-by-four">
                         <?php
+                            if(!$emptySet){
+                                
                             echo '<table border="1" style="width:100%;">
                                     <thead>
                                         <tr><td colspan="2" style="text-align:center;">Top Car Brand on {{dboard}}</td></tr>
@@ -440,16 +773,17 @@
                              for($x = 0; $x < count($carBrandTripNumber); $x++){
                                  $top = $x + 1;
                                  echo "<tr>
-                                        <td>".$top.". ".$carBrandTripNumber[$x]->carbrandName."</td><td style=\"text-align:right\">".$carBrandTripNumber[$x]->percentage."%</td>
+                                        <td>".$top.". ".$carBrandTripNumber[$x]->carbrandName."</td><td style=\"text-align:right\">".$carBrandTripNumber[$x]->percentage."</td>
                                         </tr>";
                              }
                                 echo "</tbody></table>";
+                            }
                         ?>
                     </div>
                 </a>
-                </div>
             </div>
         </div>
+    </div>
     </div>
     @endsection @section('scripts')
     <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
@@ -463,6 +797,7 @@
             .module("myapp", [])
             .controller("MyController", function($scope) {
                 $scope.dboardType = ['Emissions', 'Number of Trips'];
+                $scope.nonschool = false;
 
                 /*
                 $scope.operate = function(input) {
@@ -624,18 +959,18 @@
             else{
             $rawDB = "";
             $add = false;
-            if($data['institutionID'] != null){
+            if(isset($data['institutionID'])){
                 $rawDB .= " vehicles_mv.institutionID = " . $data['institutionID'];
                 $add = true;
             }
-            if($data['carTypeID'] != null){
+            if(isset($data['carTypeID'])){
                 if($add){
                     $rawDB .= " AND ";
                 }
                 $rawDB .= "cartype_ref.carTypeID = " . $data['carTypeID'];
                 $add = true;
             }
-            if($data['fuelTypeID'] != null){
+            if(isset($data['fuelTypeID'])){
                 if($add){
                     $rawDB .= " AND ";
                 }
@@ -675,7 +1010,7 @@
             ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
             ->get();
         }
-        }
+    }
     ?>
         var allChart;
         AmCharts.theme = AmCharts.themes.dark;
@@ -870,4 +1205,4 @@
         }
     </script>
     <!-- general emission chart-->
-@endsection
+    @endsection
