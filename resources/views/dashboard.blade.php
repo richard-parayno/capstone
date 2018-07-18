@@ -443,6 +443,7 @@
     }
     }
     $rawDB = "";
+if(isset($data)){
      if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null){
             $rawDB = "";
             $add = false;
@@ -554,7 +555,7 @@
                 }
             }
             }
-            else{
+}else{
             $chartTitle = 'All Universities';   
             $emissionData = DB::table('trips')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
@@ -574,6 +575,7 @@
                     $emptySet = true;
                 }
         }
+    
 ?>
     @extends('layouts.main') @section('styling')
     <style>
