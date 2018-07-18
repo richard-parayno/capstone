@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Deptsperinstitution;
 use Validator;
+use DB;
 
 class DepartmentController extends Controller
 {
@@ -88,4 +89,52 @@ class DepartmentController extends Controller
         return redirect()->route('department-view')->with('success', true)->with('message', $deptsdata->deptName.' successfully updated to '.$name.' !');
       }
     }
+
+    public function index() {
+      $department = Deptsperinstitution::all();
+      $department->toArray();
+      
+      foreach ($department as $x) {
+        $motherDepartment = DB::table('Deptsperinstitution')->where('deptID', $x->motherDeptID)->first();
+        $institution = DB::table('institutions')->where('institutionID', $x->institutionID)->first();
+        if ($motherDepartment != null) {
+          $x['motherDeptName'] = $motherDepartment->deptName;
+        }
+        if ($institution != null) {
+          $x['institutionName'] = $institution->institutionName;
+        }
+      }
+
+      return response()->json($department);
+  }
+
+  public function show(Deptsperinstitution $department) {
+      $motherDepartment = DB::table('Deptsperinstitution')->where('deptID', $department->motherDeptID)->first();
+      $institution = DB::table('institutions')->where('institutionID', $department->institutionID)->first();
+      $department = $department->toArray();
+      if ($motherDepartment != null) {
+        $department['motherDeptName'] = $motherDepartment->deptName;
+      } else {
+        $department['motherDeptName'] = "N/A";
+      }
+      if ($institution != null) {
+        $department['institutionName'] = $institution->institutionName;
+      }
+      
+
+      return response()->json($department);
+
+  }
+
+  public function store(Request $request) {
+
+  }
+
+  public function update(Request $request) {
+
+  }
+
+  public function delete(Deptsperinstitution $department) {
+
+  }
 }
