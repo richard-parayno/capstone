@@ -15,3 +15,9 @@ require('./bootstrap');
 
 require('./components/CampusMain');
 require('./components/Campus');
+require('./components/UserMain');
+require('./components/User');
+require('./components/DepartmentMain');
+require('./components/Department');
+require('./components/VehicleMain');
+require('./components/Vehicle');
