@@ -4,7 +4,6 @@
 <style>
   /** TODO: Push margin more to the right. Make the box centered to the user. **/
   #box-form {
-    background-color: #363635;
     margin-top: 20px;
     padding: 40px;
     box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
@@ -12,10 +11,10 @@
   }
   #box-form h1 {
     text-align: center;
-    color: white;
+    color: black;
   }
   #box-form label {
-    color: white;
+    color: black;
   }
 </style>
 @endsection

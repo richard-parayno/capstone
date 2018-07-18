@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\VehiclesMv;
 use Validator;
+use DB;
 
 class VehicleController extends Controller
 {
@@ -104,4 +105,92 @@ class VehicleController extends Controller
 
       
     }
+
+    public function index() {
+      $vehicle = VehiclesMv::all();
+      $vehicle->toArray();
+      
+      foreach ($vehicle as $x) {
+        $cartypes = DB::table('cartype_ref')->where('carTypeID', $x->carTypeID)->first();
+        $carbrands = DB::table('carbrand_ref')->where('carBrandID', $x->carBrandID)->first();
+        $fueltypes = DB::table('fueltype_ref')->where('fuelTypeID', $x->fuelTypeID)->first();
+        $institution = DB::table('institutions')->where('institutionID', $x->institutionID)->first();
+        
+        if ($cartypes != null){
+          $x['carTypeName'] = $cartypes->carTypeName; 
+        } else {
+          $x['carTypeName'] = "N/A";
+        }
+        if ($carbrands != null) {
+          $x['carBrandName'] = $carbrands->carBrandName;
+        } else {
+          $x['carBrandName'] = "N/A";
+        }
+        if ($fueltypes != null) {
+          $x['fuelTypeName'] = $fueltypes->fuelTypeName;
+        } else {
+          $x['fuelTypeName'] = "N/A";
+        }
+        if ($institution != null) {
+          $x['institutionName'] = $institution->institutionName;
+        } else {
+          $x['institutionName'] = "N/A";
+        }
+        if ($x->active = 1) {
+          $x['status'] = 'Active';
+        } else {
+          $x['status'] = 'Inactive';
+        }
+      }
+
+      return response()->json($vehicle);
+  }
+
+  public function show(VehiclesMv $vehicle) {
+      $cartypes = DB::table('cartype_ref')->where('carTypeID', $vehicle->carTypeID)->first();
+      $carbrands = DB::table('carbrand_ref')->where('carBrandID', $vehicle->carBrandID)->first();
+      $fueltypes = DB::table('fueltype_ref')->where('fuelTypeID', $vehicle->fuelTypeID)->first();
+      $institution = DB::table('institutions')->where('institutionID', $vehicle->institutionID)->first();
+      $vehicle->toArray();
+      if ($cartypes != null){
+        $vehicle['carTypeName'] = $cartypes->carTypeName;
+      } else {
+        $vehicle['carTypeName'] = "N/A";
+      }
+      if ($carbrands != null) {
+        $vehicle['carBrandName'] = $carbrands->carBrandName;
+      } else {
+        $vehicle['carBrandName'] = "N/A";
+      }
+      if ($fueltypes != null) {
+        $vehicle['fuelTypeName'] = $fueltypes->fuelTypeName;
+      } else {
+        $vehicle['fuelTypeName'] = "N/A";
+      }
+      if ($institution != null) {
+        $vehicle['institutionName'] = $institution->institutionName;
+      } else {
+        $vehicle['institutionName'] = "N/A";
+      }
+      if ($vehicle->active = 1) {
+        $vehicle['status'] = 'Active';
+      } else {
+        $vehicle['status'] = 'Inactive';
+      }
+
+      return response()->json($vehicle);
+
+  }
+
+  public function store(Request $request) {
+
+  }
+
+  public function update(Request $request) {
+
+  }
+
+  public function delete(User $user) {
+
+  }
 }

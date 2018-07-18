@@ -56,6 +56,9 @@
       <a href="{{ route('manual-upload') }}">
         <button class="button-primary">Upload Trip Data (Manual)</button>
       </a>
+      <a href="{{ route('download-template') }}">
+        <button class="button button-primary">Download Trip Data Template</button>
+      </a> 
       <!-- action shortcuts -->   
     </table>
 </div>

@@ -9,6 +9,7 @@ use DB;
 use App\Models\Trip;
 use App\Models\Monthlyemissionsperschool;
 use App\Models\Deptsperinstitution;
+use App\Models\Monthlyemissions;
 use DateTime;
 use Debugbar;
 use PHPExcel_Cell;
@@ -16,6 +17,7 @@ use PHPExcel_Cell_DataType;
 use PHPExcel_Cell_IValueBinder;
 use PHPExcel_Cell_DefaultValueBinder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class ExcelController extends Controller
 {
@@ -23,6 +25,10 @@ class ExcelController extends Controller
         $trips = Trip::all();
 
         return view('upload-files', compact('trips'));
+    }
+
+    public function downloadTemplate() {
+        return Storage::disk('public')->download('report-template.xlsx');
     }
 
     public function showManual() {
@@ -225,6 +231,7 @@ class ExcelController extends Controller
 
         })->get()->toArray();
         // run the conditional if $load has stuff in it
+        Debugbar::info($load);
         if($load){
             // initialize the counters
             $ctr = 0;
@@ -308,8 +315,13 @@ class ExcelController extends Controller
         // initialize the counters
         $ctr = 0;
         $totalEmission = 0;
+        Debugbar::info("[TOTAL EMISSION] Initialized: ".$totalEmission);
         foreach ($load as $key => $row) {
+            //initialize monthlyemissionsperschool and monthlyemissions
             $allEmissions = Monthlyemissionsperschool::all();
+            //$currentMonthlyEmissions = Monthlyemissions::all();
+
+            Debugbar::info("ITERATION #".$ctr);
 
             if ($allEmissions->isEmpty()) {
                 $firstrun = true;
@@ -363,9 +375,12 @@ class ExcelController extends Controller
                 switch ($selectedFuelType) {
                     //if it's diesel
                     case 1:
-                    $dieselEmissionInTonnes = ((($currentKMReading * 0.621371) * 19.36) / $selectedCarTypeMPG) / 2204.6;                    
+                    Debugbar::info('--- CASE 1: DIESEL ---');
+                    $dieselEmissionInTonnes = ((($currentKMReading * 0.621371) * 19.36) / $selectedCarTypeMPG) / 2204.6;
+                    Debugbar::info('[DIESEL EMISSION IN TONNES] Initialized: '.$dieselEmissionInTonnes);  
+                    Debugbar::info('[TOTAL EMISSION] Pre-Update Value: '.$totalEmission);
                     $totalEmission += $dieselEmissionInTonnes;
-                    
+                    Debugbar::info('[TOTAL EMISSION] Post-Update Value: '.$totalEmission);
                     //create a new trip object (to be placed in the db)
                     $trips = new Trip;
                     $trips->deptID = $currentDeptID;
@@ -390,14 +405,17 @@ class ExcelController extends Controller
                     
 
                     if ($firstrun == true) {
+                        Debugbar::info('--- CASE 1 FIRST RUN ---');
                         $monthlyEmission = new Monthlyemissionsperschool;
                         $monthlyEmission->institutionID = $currentInstitution;
                         $monthlyEmission->emission = $totalEmission;
                         $newDate = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);                        
                         $monthlyEmission->monthYear = $newDate;
                         $monthlyEmission->save();
+
                         $firstrun = false;
                     } elseif ($firstrun == false) {
+                        Debugbar::info('--- CASE 1 SUCCEEDING RUN ---');
                         foreach($allEmissions as $all) {
                             $carbonMonthYearDB = Carbon::parse($all->monthYear);
                             $newDateExcel = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);
@@ -406,24 +424,43 @@ class ExcelController extends Controller
                             
 
                             if (Monthlyemissionsperschool::where('monthYear', $newDateExcel)->exists()) {
-                                $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);
+                                Debugbar::info('--- Current Month Exists in monthlyemissionsperschool ---');
+                                $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);;
+                                Debugbar::info($updateMonthlyEmissions);
+                                Debugbar::info('--- monthlyemissionperschool updated ---');
                             } else {
+                                Debugbar::info('--- Current Month does not exist in monthlyemissionsperschool ---');
+                                Debugbar::info('Creating new entry in monthlyemissionsperschool...');
+                                Debugbar::info('VALUES:');
+                                Debugbar::info('Current Institution: '.$currentInstitution);
+                                Debugbar::info('Current total emission: '.$totalEmission);
+                                Debugbar::info('Current month year: '.$newDateExcel);
+
                                 $newMonthlyEmissions = new Monthlyemissionsperschool;
                                 $newMonthlyEmissions->institutionID = $currentInstitution;
                                 $newMonthlyEmissions->emission = $totalEmission;                        
                                 $newMonthlyEmissions->monthYear = $newDateExcel;
                                 $newMonthlyEmissions->save();
+                                Debugbar::info('--- monthlyemissionperschool added ---');
+                                Debugbar::info($newMonthlyEmissions);
+
                             }
                         }
                     }
                    
-
+                    Debugbar::info('--- CASE 1 END! ---');
+                    
                     
                     break;
                     //if it's gas
                     case 2:
+                    Debugbar::info('--- CASE 2: GAS ---');
                     $gasEmissionInTonnes = ((6760 / $selectedCarTypeMPG) * $currentKMReading) * 0.000001;
+                    Debugbar::info('[GAS EMISSION IN TONNES] Initialized: '.$gasEmissionInTonnes);
+                    Debugbar::info('[TOTAL EMISSION] Pre-Update Value: '.$totalEmission);
                     $totalEmission += $gasEmissionInTonnes;
+                    Debugbar::info('[TOTAL EMISSION] Post-Update Value: '.$totalEmission);
+
                     
                     //create a new trip object (to be placed in the db)                        
                     $trips = new Trip;
@@ -450,6 +487,7 @@ class ExcelController extends Controller
                     
 
                     if ($firstrun == true) {
+                        Debugbar::info('--- CASE 2 FIRST RUN ---');
                         $monthlyEmission = new Monthlyemissionsperschool;
                         $monthlyEmission->institutionID = $currentInstitution;
                         $monthlyEmission->emission = $totalEmission;
@@ -458,6 +496,7 @@ class ExcelController extends Controller
                         $monthlyEmission->save();
                         $firstrun = false;
                     } elseif ($firstrun == false) {
+                        Debugbar::info('--- CASE 2 SUCCEEDING RUN ---');
                         foreach($allEmissions as $all) {
                             $carbonMonthYearDB = Carbon::parse($all->monthYear);
                             $newDateExcel = Carbon::create($carbonMonthYearExcel->year, $carbonMonthYearExcel->month, 1, 0);
@@ -466,16 +505,30 @@ class ExcelController extends Controller
                             
 
                             if (Monthlyemissionsperschool::where('monthYear', $newDateExcel)->exists()) {
+                                Debugbar::info('--- Current Month Exists in monthlyemissionsperschool ---');
                                 $updateMonthlyEmissions = DB::table('monthlyemissionsperschool')->where('monthYear', $newDateExcel)->update(['emission' => $totalEmission]);
+                                Debugbar::info('--- monthlyemissionperschool updated ---');                            
                             } else {
+                                Debugbar::info('--- Current Month does not exist in monthlyemissionsperschool ---');
+                                Debugbar::info('Creating new entry in monthlyemissionsperschool...');
+                                Debugbar::info('VALUES:');
+                                Debugbar::info('Current Institution: '.$currentInstitution);
+                                Debugbar::info('Current total emission: '.$totalEmission);
+                                Debugbar::info('Current month year: '.$newDateExcel);
+
                                 $newMonthlyEmissions = new Monthlyemissionsperschool;
                                 $newMonthlyEmissions->institutionID = $currentInstitution;
                                 $newMonthlyEmissions->emission = $totalEmission;                        
                                 $newMonthlyEmissions->monthYear = $newDateExcel;
                                 $newMonthlyEmissions->save();
+
+                                Debugbar::info('--- monthlyemissionperschool added ---');
+                                Debugbar::info($newMonthlyEmissions);
                             }
                         }
                     }
+
+                    Debugbar::info('--- CASE 2 END! ---');
 
                     
                     break;
@@ -491,10 +544,9 @@ class ExcelController extends Controller
              * after each computation (per row), add it to the total (acts as counter) emission variable
              */
         }
-
+        
         $trips = Trip::all();
-
+        //return view('display-table');
         return redirect('/dashboard/upload-view')->with(compact('trips'))->with('success', true)->with('message', 'Trip Data Batch #'.$lastTripsBatchNumber.' ('.$formattedCurrentAuditDate.') successfully uploaded!');
-
     }
 }
