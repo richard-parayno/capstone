@@ -16,3 +16,25 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+/** Campus/Institution Management APIs */
+Route::get('/institution', 'InstitutionController@index');
+Route::get('/institution/{institution}', 'InstitutionController@show');
+Route::post('/institution/{institution}', 'InstitutionController@store');
+Route::put('/institution/{institution}', 'InstitutionController@update');
+Route::delete('/institution/{institution}', 'InstitutionController@delete');
+
+/** User Management APIs */
+Route::get('/users', 'UserController@index');
+Route::get('/users/{user}', 'UserController@show');
+Route::post('/users/{user}', 'UserController@store');
+
+
+/** Department Management APIs */
+Route::get('/department', 'DepartmentController@index');
+Route::get('/department/{department}', 'DepartmentController@show');
+
+
+/** Vehicle Management APIs */
+Route::get('/vehicle', 'VehicleController@index');
+Route::get('/vehicle/{vehicle}', 'VehicleController@show');
