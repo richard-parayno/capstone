@@ -10,6 +10,7 @@
         $rawDB="trips.institutionID=".$userSchool;
     }
     if(isset($data)){
+        if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null){
         $rawDB = "";
         if($data['institutionID'] != null){
                 $userSchool = $data['institutionID'];
@@ -17,7 +18,7 @@
                 $add = true;
                 $filterMessage .= $userSchool;
                 $rawDB.="trips.institutionID=".$userSchool;
-        }if(!isset($data['datePreset'])){   
+        }if($data['datePreset']==0){   
             if($data['fromDate'] != null && $data['toDate'] != null){
                 if($add){
                     $rawDB .= " AND ";
@@ -41,28 +42,49 @@
                 $filterMessage .= "after ".$data['fromDate'];
             }
         }else{
+            
             switch($data['datePreset']){
                 case "1": {
+                        if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
                     $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
                     $filterMessage .= "from 2 weeks ago";
                     break;
                 }
                 case "2": {
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
                     $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
                     $filterMessage .= "from 1 month ago";
                     break;
                 } 
                 case "3": {
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
                     $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
                     $filterMessage .= "from 3 month ago";
                     break;
                 }
                 case "4": {
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
                     $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
                     $filterMessage .= "from 6 month ago";
                     break;
                 }
                 case "5": {
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
                     $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
                     $filterMessage .= "from 1 year ago";
                     break;
@@ -70,19 +92,16 @@
                 default: $rawDB .= "";
             }
         }
+        }
     }
     if($schoolSort){
-
     //include institution
     //get most department type contributions (emission total)
-    if(isset($data) && !isset($data['ínstitutionID'])){
-        $rawDB .= 'AND trips.institutionID = '.$userSchool;
-    }
     $columnTable = DB::table('trips')
         ->select(DB::raw('sum(trips.emissions) as emissions'))
         ->whereRaw($rawDB)
         ->get();
-    if(!$columnTable->isEmpty()){
+    if($columnTable[0]->emissions!=null){
         $emptySet = false;
         $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
         
@@ -190,13 +209,13 @@
         $emptySet = true;
     }
 }
-    else{
-        
-    if(!isset($data)){    
+    else{  
+    if(isset($data)){
+        if($data['institutionID'] == null || $data['datePreset']==0 || $data['fromDate'] == null || $data['toDate'] == null){
         $columnTable = DB::table('trips')
             ->select(DB::raw('sum(trips.emissions) as emissions'))
             ->get();
-        if(!$columnTable->isEmpty()){
+        if($columnTable[0]->emissions!=null){
         $emptySet = false;     
         $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
         $institutionEmissions = DB::table('trips')
@@ -305,20 +324,18 @@
         $filterMessage = "Filter returned an empty set.";
         $emptySet = true;
     }    
-    
+        }
         }
     else{
         $columnTable = DB::table('trips')
             ->select(DB::raw('sum(trips.emissions) as emissions'))
-            ->whereRaw($rawDB)
             ->get();
-        if(!$columnTable->isEmpty()){
+        if($columnTable[0]->emissions!=null){
         $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
         
         $institutionEmissions = DB::table('trips')
         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
         ->select('institutions.institutionName', DB::raw($column))
-        ->whereRaw($rawDB)
             ->orderByRaw('2 DESC')
         ->groupBy(DB::raw('1'))
         ->limit(2)
@@ -329,7 +346,6 @@
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
         ->join('cartype_ref', 'cartype_ref.carTypeID','=', 'vehicles_mv.carTypeID')
         ->select('cartype_ref.carTypeName', DB::raw($column))
-        ->whereRaw($rawDB)
         ->groupBy('carTypeName')
         ->orderByRaw('2 DESC')
         ->limit(2)
@@ -339,7 +355,6 @@
         ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
          ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
         ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
-        ->whereRaw($rawDB)
         ->groupBy('deptsperinstitution.deptID')
         ->orderByRaw('2 DESC')
         ->limit(2)
@@ -350,7 +365,6 @@
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
         ->join('institutions', 'institutions.institutionID','=', 'vehicles_mv.institutionID')
         ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
-        ->whereRaw($rawDB)
         ->groupBy(DB::raw('1'))
         ->orderByRaw('2 DESC')
         ->limit(2)
@@ -361,7 +375,6 @@
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
         ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
         ->select('carbrand_ref.carBrandName', DB::raw($column))
-        ->whereRaw($rawDB)
         ->groupBy('carbrand_ref.carbrandName')
         ->orderByRaw('2 DESC')
         ->limit(2)
@@ -369,15 +382,13 @@
 
     $columnTable = DB::table('trips')
         ->select(DB::raw('count(trips.emissions) as tripCount'))
-        ->whereRaw($rawDB)
         ->get();
     $column = "count(trips.emissions) as percentage";    
         
      $institutionTripNumber = DB::table('trips')
         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
         ->select('institutions.institutionName', DB::raw($column))
-        ->whereRaw($rawDB)
-         ->orderByRaw('2 DESC')
+        ->orderByRaw('2 DESC')
         ->groupBy(DB::raw('1'))
         ->limit(2)
         ->get();
@@ -388,8 +399,7 @@
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
         ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
         ->select('carbrand_ref.carbrandName', DB::raw($column))
-        ->whereRaw($rawDB)
-         ->groupBy(DB::raw('1'))
+        ->groupBy(DB::raw('1'))
         ->orderByRaw('2 DESC')
         ->limit(2)
         ->get();
@@ -399,7 +409,6 @@
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
         ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
-        ->whereRaw($rawDB)
         ->groupBy(DB::raw('1'))
         ->orderByRaw('2 desc')
         ->limit(2)
@@ -410,7 +419,6 @@
         ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
         ->join('cartype_ref', 'cartype_ref.carTypeID','=', 'vehicles_mv.carTypeID')
         ->select('cartype_ref.carTypeName', DB::raw($column))
-        ->whereRaw($rawDB)
         ->groupBy('carTypeName')
         ->orderByRaw('2 DESC')
         ->limit(2)
@@ -421,7 +429,6 @@
         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
         ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
         ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
-        ->whereRaw($rawDB)
         ->groupBy(DB::raw('1'))
         ->orderByRaw('2 DESC')
         ->limit(2)
@@ -431,9 +438,142 @@
     else{
         $filterMessage = "Filter returned an empty set.";
         $emptySet = true;
+        
     }        
     }
     }
+    $rawDB = "";
+     if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null){
+            $rawDB = "";
+            $add = false;
+            if(isset($data['institutionID'])){
+                $rawDB .= " vehicles_mv.institutionID = " . $data['institutionID'];
+                $add = true;
+            }
+            if(isset($data['carTypeID'])){
+                if($add){
+                    $rawDB .= " AND ";
+                }
+                $rawDB .= "cartype_ref.carTypeID = " . $data['carTypeID'];
+                $add = true;
+            }
+            if(isset($data['fuelTypeID'])){
+                if($add){
+                    $rawDB .= " AND ";
+                }
+                $add = true;
+                $rawDB .= "fueltype_ref.fueltypeID = " . $data['fuelTypeID'];
+            }
+            if($data['datePreset']==0){   
+            if($data['fromDate'] != null && $data['toDate'] != null){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated ";
+                }
+                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
+                $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+            }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated ";
+                }
+                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
+                $filterMessage .= "before ".$data['toDate'];
+            }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated  ";
+                }
+                $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+                $filterMessage .= "after ".$data['fromDate'];
+            }
+        }else{
+            switch($data['datePreset']){
+                case "1": {
+                     if($add){
+                    $rawDB .= " AND ";
+                }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
+                    $filterMessage .= "from 2 weeks ago";
+                    break;
+                }
+                case "2": {
+                     if($add){
+                    $rawDB .= " AND ";
+                }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
+                    $filterMessage .= "from 1 month ago";
+                    break;
+                } 
+                case "3": {
+                     if($add){
+                    $rawDB .= " AND ";
+                }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
+                    $filterMessage .= "from 3 month ago";
+                    break;
+                }
+                case "4": {
+                     if($add){
+                    $rawDB .= " AND ";
+                }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
+                    $filterMessage .= "from 6 month ago";
+                    break;
+                }
+                case "5": {
+                     if($add){
+                    $rawDB .= " AND ";
+                }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
+                    $filterMessage .= "from 1 year ago";
+                    break;
+                }
+                default: $rawDB .= "";
+            }
+        }
+            if(!$emptySet){
+            $emissionData = DB::table('trips')
+            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
+                    'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
+            ->whereRaw($rawDB)
+            ->orderBy('trips.tripDate', 'asc')
+            ->get();
+             $emissionCount = DB::table('trips')
+            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
+            ->select(DB::raw('count(CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))) as monthYearCount'))
+            ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
+            ->get();
+                if($emissionData->isEmpty()){
+                    $emptySet = true;
+                }
+            }
+            }
+            else{
+            $chartTitle = 'All Universities';   
+            $emissionData = DB::table('trips')
+            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 'trips.kilometerReading',             'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'),'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active')
+            ->orderBy('trips.tripDate', 'asc')
+            ->get();
+            $emissionCount = DB::table('trips')
+            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
+            ->select(DB::raw('count(CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))) as monthYearCount'))
+            ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
+            ->get();    
+                if($emissionData->isEmpty()){
+                    $emptySet = true;
+                }
+        }
 ?>
     @extends('layouts.main') @section('styling')
     <style>
@@ -466,46 +606,11 @@
         }
     </style>
     @endsection @section('content')
-    <!-- analytics sidenav -->
-    <?php 
-        /*
-    <div class="container u-pull-right" id="analytics-sidebar">
-        <form method="post" action="{{ route('dashboard-process') }}">
-            {{ csrf_field() }}
-            <div class="twelve column bar">
-                <p><strong>Campus</strong></p>
-                <br>
-                <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
-                       <option value="">All Institutions</option>
-                        @foreach($institutions as $institution)
-                          <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="twelve column bar">
-                <p><strong>Date</strong></p>
-                <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <p style="text-align: left;">From: </p>
-                    <input class="u-full-width" type="date" name="fromDate" id="fromDate">
-                    <p style="text-align: left;">Until: </p>
-                    <input class="u-full-width" type="date" name="toDate" id="toDate">
-                </div>
-            </div>
-            <div class="twelve column bar">
-                <input class="button-primary" type="submit">
-            </div>
-        </form>
-    </div>
-    */
-?>
-    <!-- analytics sidenav -->
     <div class="ten columns offset-by-one" id="box-form" ng-app="myapp">
         <div ng-controller="MyController">
-            <div class="row">
+            <div class="row" ng-init="<?php echo " showGenChartDiv=".!$emptySet;?>">
                 <!--General Chart-->
-                <div class="twelve columns" id="allChartDiv" style="width: 100%; height: 400px; background-color: #222222;"></div><br>
+                <div class="twelve columns" id="allChartDiv" style="width: 100%; height: 400px; background-color: #222222;" ng-show="showGenChartDiv"></div><br>
             </div>
             <div class="twelve columns">
                 <div class="five columns offset-by-one">
@@ -551,6 +656,7 @@
                         <div class="six columns" ng-show="datePreset">
                             <p style="text-align: left;">Presets: </p>
                             <select name="datePreset" id="">
+                                <option value="0" selected>Select Date Preset</option>
                                 <option value="1">2 Weeks</option>
                                 <option value="2">Last Month</option>
                                 <option value="3">Last 3 Months</option>
@@ -798,81 +904,6 @@
             .controller("MyController", function($scope) {
                 $scope.dboardType = ['Emissions', 'Number of Trips'];
                 $scope.nonschool = false;
-
-                /*
-                $scope.operate = function(input) {
-                    $scope.holder = $scope.answer;
-                    $scope.operation = input;
-                    $scope.reset();
-                };
-
-                $scope.equals = function() {
-                    switch ($scope.operation) {
-                        case '+':
-                            {
-                                $scope.answer = $scope.holder + $scope.answer;
-                                break;
-                            }
-                        case '-':
-                            {
-                                $scope.answer = $scope.holder - $scope.answer;
-                                break;
-                            }
-                        case '*':
-                            {
-                                $scope.answer = $scope.holder * $scope.answer;
-                                break;
-                            }
-                        case '/':
-                            {
-                                $scope.answer = $scope.holder / $scope.answer;
-                                break;
-                            }
-                        default:
-                            {
-                                $scope.reset();
-                            }
-                    }
-                };
-
-                //cart functions
-                $scope.itemList = [];
-                $scope.cart = [];
-                $scope.name = "";
-                $scope.price = "";
-
-                //adds item x quantity to inventory
-                $scope.addItem = function(name, priceEach) {
-                    $scope.itemList.push({
-                        itemName: name,
-                        priceEach: priceEach
-                    });
-                    $scope.name = "";
-                    $scope.price = "";
-                };
-
-                //adds item and quantity to cart
-                $scope.addToCart = function(name, priceeach, quantity) {
-                    $scope.cart.push({
-                        itemName: name,
-                        priceEach: priceeach,
-                        itemQuantity: quantity
-                    });
-                };
-
-                //totals all in cart
-                $scope.totalCart = 0;
-                $scope.checkout = function() {
-                    for (var x = 0; x < $scope.cart.length; x++) {
-                        $scope.totalCart += $scope.cart[x].priceEach * $scope.cart[x].itemQuantity;
-                    }
-                };
-
-                //resets all in cart
-                $scope.resetCart = function() {
-                    $scope.cart = [];
-                };
-                */
             });
     </script>
     <!--angular js script-->
@@ -938,79 +969,7 @@
 
                     return $regressionLine;
                 }
-
-        if(!isset($data)){
-            $chartTitle = 'All Universities';   
-            $emissionData = DB::table('trips')
-            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
-            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 'trips.kilometerReading',             'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'),'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active')
-            ->orderBy('trips.tripDate', 'asc')
-            ->get();
-            $emissionCount = DB::table('trips')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->select(DB::raw('count(CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))) as monthYearCount'))
-            ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->get();
-        } 
-            else{
-            $rawDB = "";
-            $add = false;
-            if(isset($data['institutionID'])){
-                $rawDB .= " vehicles_mv.institutionID = " . $data['institutionID'];
-                $add = true;
-            }
-            if(isset($data['carTypeID'])){
-                if($add){
-                    $rawDB .= " AND ";
-                }
-                $rawDB .= "cartype_ref.carTypeID = " . $data['carTypeID'];
-                $add = true;
-            }
-            if(isset($data['fuelTypeID'])){
-                if($add){
-                    $rawDB .= " AND ";
-                }
-                $add = true;
-                $rawDB .= "fueltype_ref.fueltypeID = " . $data['fuelTypeID'];
-            }
-            if($data['fromDate'] != null && $data['toDate'] != null){
-                if($add){
-                    $rawDB .= " AND ";
-                }
-                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
-            }elseif($data['fromDate'] != null && $data['toDate'] != null){
-                if($add){
-                    $rawDB .= " AND ";
-                }
-                $rawDB .= "trips.tripDate <= '" . $toDate . "'";
-            }elseif($data['fromDate'] != null && $data['toDate'] != null){
-                if($add){
-                    $rawDB .= " AND ";
-                }
-                $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
-            } 
-            $emissionData = DB::table('trips')
-            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
-            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
-                    'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
-            ->whereRaw($rawDB)
-            ->orderBy('trips.tripDate', 'asc')
-            ->get();
-             $emissionCount = DB::table('trips')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->select(DB::raw('count(CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))) as monthYearCount'))
-            ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->get();
         }
-    }
     ?>
         var allChart;
         AmCharts.theme = AmCharts.themes.dark;
@@ -1023,6 +982,7 @@
             $prev;
             $monthlyEmissions = [];
             $monthCtr = 0;
+            if(!$emptySet){
               foreach($emissionData as $emission) {
                     if($x == 1){
                         $monthSum = 0;
@@ -1044,7 +1004,6 @@
                             $monthCtr++;
                         };
               }
-
             $regressionLine = getRegressionLine($monthlyEmissions);
             $saveIndex = 0;
             for($x = 0 ; $x < count($monthlyEmissions); $x++) {
@@ -1089,9 +1048,12 @@
                     }
                 }
             }
+            }
         }
         ?> {
                 "date": <?php
+                if(!$emptySet){
+                    
                 $yrmonth = end($monthlyEmissions);
                 $month = (int) substr($yrmonth[0], 5, 2);
                 $yr = (int) substr($yrmonth[0], 0, 4);
@@ -1105,8 +1067,10 @@
                 }
                 echo '"'.$yr . "-" . $month.'",
                 ';
-                 ?>
-                "regression": <?php echo $regressionLine[0] + ($regressionLine[0] * count($monthlyEmissions) + 1); ?>
+                echo "\"regression\":  ";
+                echo $regressionLine[0] + ($regressionLine[0] * count($monthlyEmissions) + 1);
+                }
+            ?>
             }
         ];
         allChart = AmCharts.makeChart("allChartDiv", {
