@@ -42,11 +42,9 @@ export default class Campus extends Component {
     
         return (
             <ReactTable
-                minRows='5'
                 filterable
                 defaultFilterMethod={(filter, row) =>
                     String(row[filter.id]) === filter.value}
-                showPageSizeOptions={false}
                 data={institutions}
                 columns={columns}
                 className="-striped -highlight"

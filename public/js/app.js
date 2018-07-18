@@ -3028,12 +3028,10 @@ var Campus = function (_Component) {
             }];
 
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_table__["a" /* default */], {
-                minRows: '5',
                 filterable: true,
                 defaultFilterMethod: function defaultFilterMethod(filter, row) {
                     return String(row[filter.id]) === filter.value;
                 },
-                showPageSizeOptions: false,
                 data: institutions,
                 columns: columns,
                 className: '-striped -highlight'
@@ -3147,12 +3145,10 @@ var User = function (_Component) {
             }];
 
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_table__["a" /* default */], {
-                minRows: '5',
                 filterable: true,
                 defaultFilterMethod: function defaultFilterMethod(filter, row) {
                     return String(row[filter.id]) === filter.value;
                 },
-                showPageSizeOptions: false,
                 data: users,
                 columns: columns,
                 className: '-striped -highlight'
@@ -3243,12 +3239,10 @@ var Department = function (_Component) {
             }];
 
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_table__["a" /* default */], {
-                minRows: '5',
                 filterable: true,
                 defaultFilterMethod: function defaultFilterMethod(filter, row) {
                     return String(row[filter.id]) === filter.value;
                 },
-                showPageSizeOptions: false,
                 data: department,
                 columns: columns,
                 className: '-striped -highlight'
@@ -3370,12 +3364,10 @@ var Vehicle = function (_Component) {
             }];
 
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_table__["a" /* default */], {
-                minRows: '5',
                 filterable: true,
                 defaultFilterMethod: function defaultFilterMethod(filter, row) {
                     return String(row[filter.id]) === filter.value;
                 },
-                showPageSizeOptions: false,
                 data: vehicle,
                 columns: columns,
                 className: '-striped -highlight'
@@ -3415,14 +3407,27 @@ __webpack_require__(27);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+// Campus Management
 __webpack_require__(52);
 __webpack_require__(21);
+
+// User Management
 __webpack_require__(72);
 __webpack_require__(22);
+
+// Department Management
 __webpack_require__(73);
 __webpack_require__(23);
+
+// Vehicle Management
 __webpack_require__(74);
 __webpack_require__(24);
+__webpack_require__(89);
+__webpack_require__(88);
+
+// Uploaded Trips
+__webpack_require__(87);
+__webpack_require__(86);
 
 /***/ }),
 /* 27 */
@@ -56362,6 +56367,389 @@ if (document.getElementById('vehicle-table')) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */,
+/* 84 */,
+/* 85 */,
+/* 86 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_table__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_match_sorter__ = __webpack_require__(6);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+var UploadedTrip = function (_Component) {
+    _inherits(UploadedTrip, _Component);
+
+    function UploadedTrip() {
+        _classCallCheck(this, UploadedTrip);
+
+        return _possibleConstructorReturn(this, (UploadedTrip.__proto__ || Object.getPrototypeOf(UploadedTrip)).apply(this, arguments));
+    }
+
+    _createClass(UploadedTrip, [{
+        key: 'render',
+        value: function render() {
+            var trip = this.props.trip;
+
+            var columns = [{
+                Header: 'Date',
+                id: 'tripDate',
+                accessor: 'tripDate', // String-based value accessors!
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['tripDate'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Departure Time',
+                id: 'tripTime',
+                accessor: 'tripTime',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['tripTime'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Requesting Department',
+                id: 'departmentName',
+                accessor: 'departmentName',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['departmentName'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Plate Number',
+                id: 'plateNumber',
+                accessor: 'plateNumber',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['plateNumber'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Kilometer Reading',
+                id: 'kilometerReading',
+                accessor: 'kilometerReading',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['kilometerReading'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Destinations',
+                id: 'remarks',
+                accessor: 'remarks',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['remarks'] });
+                },
+                filterAll: true
+            }];
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_table__["a" /* default */], {
+                filterable: true,
+                defaultFilterMethod: function defaultFilterMethod(filter, row) {
+                    return String(row[filter.id]) === filter.value;
+                },
+                data: trip,
+                columns: columns,
+                className: '-striped -highlight',
+                defaultSorted: [{
+                    id: 'date',
+                    desc: true
+                }]
+            });
+        }
+    }]);
+
+    return UploadedTrip;
+}(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (UploadedTrip);
+
+/***/ }),
+/* 87 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__UploadedTrip__ = __webpack_require__(86);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+var UploadedTripMain = function (_Component) {
+    _inherits(UploadedTripMain, _Component);
+
+    function UploadedTripMain() {
+        _classCallCheck(this, UploadedTripMain);
+
+        var _this = _possibleConstructorReturn(this, (UploadedTripMain.__proto__ || Object.getPrototypeOf(UploadedTripMain)).call(this));
+
+        _this.state = {
+            trip: []
+        };
+        return _this;
+    }
+
+    _createClass(UploadedTripMain, [{
+        key: 'getTrips',
+        value: function getTrips() {
+            var _this2 = this;
+
+            __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/trip').then(function (trip) {
+                trip = trip.data;
+                _this2.setState({ trip: trip });
+            });
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.getTrips();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__UploadedTrip__["default"], { trip: this.state.trip })
+            );
+        }
+    }]);
+
+    return UploadedTripMain;
+}(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (UploadedTripMain);
+
+
+if (document.getElementById('uploaded-trip-table')) {
+    __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(UploadedTripMain, null), document.getElementById('uploaded-trip-table'));
+}
+
+/***/ }),
+/* 88 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_table__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_match_sorter__ = __webpack_require__(6);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+var Vehicle = function (_Component) {
+    _inherits(Vehicle, _Component);
+
+    function Vehicle() {
+        _classCallCheck(this, Vehicle);
+
+        return _possibleConstructorReturn(this, (Vehicle.__proto__ || Object.getPrototypeOf(Vehicle)).apply(this, arguments));
+    }
+
+    _createClass(Vehicle, [{
+        key: 'render',
+        value: function render() {
+            var vehicle = this.props.vehicle;
+
+            var onRowClick = function onRowClick(state, rowInfo, column, instance) {
+                return {
+                    onClick: function onClick(e) {
+                        console.log('A Td Element was clicked!');
+                        console.log('it produced this event:', e);
+                        console.log('It was in this column:', column);
+                        console.log('It was in this row:', rowInfo);
+                        console.log('It was in this table instance:', instance);
+                        document.getElementById('plateNumber').value = rowInfo.row.plateNumber;
+                    }
+                };
+            };
+
+            var columns = [{
+                Header: 'Car Type',
+                id: 'carTypeName',
+                accessor: 'carTypeName', // String-based value accessors!
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['carTypeName'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Car Model',
+                id: 'modelName',
+                accessor: 'modelName',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['modelName'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Plate Number',
+                id: 'plateNumber',
+                accessor: 'plateNumber',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['plateNumber'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Home Campus',
+                id: 'institutionName',
+                accessor: 'institutionName',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['institutionName'] });
+                },
+                filterAll: true
+            }, {
+                Header: 'Fuel Type',
+                id: 'fuelTypeName',
+                accessor: 'fuelTypeName',
+                filterMethod: function filterMethod(filter, rows) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_match_sorter__["a" /* default */])(rows, filter.value, { keys: ['fuelTypeName'] });
+                },
+                filterAll: true
+            }];
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_table__["a" /* default */], {
+                filterable: true,
+                defaultFilterMethod: function defaultFilterMethod(filter, row) {
+                    return String(row[filter.id]) === filter.value;
+                },
+                data: vehicle,
+                columns: columns,
+                className: '-striped -highlight',
+                getTdProps: onRowClick
+            });
+        }
+    }]);
+
+    return Vehicle;
+}(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (Vehicle);
+
+/***/ }),
+/* 89 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__VehicleActive__ = __webpack_require__(88);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+var VehicleActiveMain = function (_Component) {
+    _inherits(VehicleActiveMain, _Component);
+
+    function VehicleActiveMain() {
+        _classCallCheck(this, VehicleActiveMain);
+
+        var _this = _possibleConstructorReturn(this, (VehicleActiveMain.__proto__ || Object.getPrototypeOf(VehicleActiveMain)).call(this));
+
+        _this.state = {
+            vehicle: []
+        };
+        return _this;
+    }
+
+    _createClass(VehicleActiveMain, [{
+        key: 'getActiveVehicles',
+        value: function getActiveVehicles() {
+            var _this2 = this;
+
+            __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/vehicle/active').then(function (vehicle) {
+                vehicle = vehicle.data;
+                _this2.setState({ vehicle: vehicle });
+            });
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.getActiveVehicles();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'h1',
+                    null,
+                    'Active Vehicles'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__VehicleActive__["default"], { vehicle: this.state.vehicle })
+            );
+        }
+    }]);
+
+    return VehicleActiveMain;
+}(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (VehicleActiveMain);
+
+
+if (document.getElementById('vehicle-active-table')) {
+    __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(VehicleActiveMain, null), document.getElementById('vehicle-active-table'));
+}
 
 /***/ })
 /******/ ]);

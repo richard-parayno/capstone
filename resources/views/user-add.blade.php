@@ -3,17 +3,16 @@
 <style>
   /** TODO: Push margin more to the right. Make the box centered to the user. **/
   #box-form {
-    background-color: #363635;
     margin-top: 20px;
     padding: 40px;
     border-radius: 10px;
   }
   #box-form h1 {
     text-align: center;
-    color: white;
+    color: black;
   }
   #box-form label {
-    color: white;
+    color: black;
   }
 </style>
 @endsection

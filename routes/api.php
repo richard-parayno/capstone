@@ -37,4 +37,9 @@ Route::get('/department/{department}', 'DepartmentController@show');
 
 /** Vehicle Management APIs */
 Route::get('/vehicle', 'VehicleController@index');
+Route::get('/vehicle/active', 'VehicleController@showActive');
 Route::get('/vehicle/{vehicle}', 'VehicleController@show');
+
+/** Upload Excel File APIs */
+Route::get('/trip', 'UploadedTripController@index');
+Route::get('/trip/{trip}', 'UploadedTripController@show');

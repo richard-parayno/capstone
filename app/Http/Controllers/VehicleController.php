@@ -182,6 +182,46 @@ class VehicleController extends Controller
 
   }
 
+  public function showActive() {
+    $vehicle = VehiclesMV::where('active', 1)->get();
+    $vehicle->toArray();
+    
+    foreach ($vehicle as $x) {
+      $cartypes = DB::table('cartype_ref')->where('carTypeID', $x->carTypeID)->first();
+      $carbrands = DB::table('carbrand_ref')->where('carBrandID', $x->carBrandID)->first();
+      $fueltypes = DB::table('fueltype_ref')->where('fuelTypeID', $x->fuelTypeID)->first();
+      $institution = DB::table('institutions')->where('institutionID', $x->institutionID)->first();
+      
+      if ($cartypes != null){
+        $x['carTypeName'] = $cartypes->carTypeName; 
+      } else {
+        $x['carTypeName'] = "N/A";
+      }
+      if ($carbrands != null) {
+        $x['carBrandName'] = $carbrands->carBrandName;
+      } else {
+        $x['carBrandName'] = "N/A";
+      }
+      if ($fueltypes != null) {
+        $x['fuelTypeName'] = $fueltypes->fuelTypeName;
+      } else {
+        $x['fuelTypeName'] = "N/A";
+      }
+      if ($institution != null) {
+        $x['institutionName'] = $institution->institutionName;
+      } else {
+        $x['institutionName'] = "N/A";
+      }
+      if ($x->active = 1) {
+        $x['status'] = 'Active';
+      } else {
+        $x['status'] = 'Inactive';
+      }
+    }
+
+    return response()->json($vehicle);
+  }
+
   public function store(Request $request) {
 
   }

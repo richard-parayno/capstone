@@ -3,7 +3,6 @@
 @section('styling')
 <style>
   #box-form {
-    background-color: #363635;
     margin-top: 20px;
     padding: 40px;
     box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
@@ -11,10 +10,10 @@
   }
   #box-form h1 {
     text-align: center;
-    color: white;
+    color: black;
   }
   #box-form label {
-    color: white;
+    color: black;
   }
 
   #box-form select {
@@ -72,54 +71,7 @@
 
 
 <div class="eight columns offset-by-two" id="box-form">
-  <h1>Active Vehicles</h1>
-  <table class="u-max-full-width">
-    <thead>
-      <tr>
-        <th>Car Type</th>
-        <th>Car Model</th>
-        <th>Plate Number</th>
-        <th>Home Campus</th>
-        <th>Fuel Type</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach($vehicles as $vehicle)
-      <tr>
-        @foreach($cartypes as $cartype)
-          @if($vehicle->carTypeID == $cartype->carTypeID)
-            <td>{{ $cartype->carTypeName }}</td>
-          @endif
-        @endforeach
-
-
-        <td>{{ $vehicle->modelName }}</td>
-        <td>{{ $vehicle->plateNumber }}</td>
-
-        @foreach($institutions as $institution)
-          @if($vehicle->institutionID == $institution->institutionID)
-            <td>{{ $institution->institutionName }}</td>
-          @endif
-        @endforeach
-
-        @foreach($fueltype as $fuel)
-          @if($vehicle->fuelTypeID == $fuel->fuelTypeID)
-            <td>{{ $fuel->fuelTypeName }}</td>
-          @endif
-        @endforeach
-
-        @if($vehicle->active >= 1)
-          <td>Active</td>
-        @else
-          <td>Inactive</td>
-        @endif
-      </tr>
-      @endforeach
-    </tbody>
-    <!-- action shortcuts -->
-    <!-- action shortcuts -->              
-  </table>
+  <div id="vehicle-active-table"></div>
   
 </div>
 
