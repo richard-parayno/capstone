@@ -15,6 +15,8 @@ export default class UserMain extends Component {
         axios.get('api/users')
             .then(users => {
                 users=users.data;
+                console.log(users)
+
                 this.setState({ users });
             })
     }
