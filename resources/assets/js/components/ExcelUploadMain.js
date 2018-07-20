@@ -5,6 +5,8 @@ import XLSX from 'xlsx';
 import ExcelUploadInput from './ExcelUploadInput';
 import ExcelUploadConfirmTable from './ExcelUploadConfirmTable';
 import ExcelUploadContinue from './ExcelUploadContinue';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class ExcelUploadMain extends Component {
     constructor() {
@@ -53,6 +55,10 @@ export default class ExcelUploadMain extends Component {
 
             this.setState({ excelFile: excelFile });
 
+            toast.info("Trip Data Excel File loaded.", {
+                position: toast.POSITION.TOP_RIGHT
+            })
+
             // make another post request to separate errors
             return axios.post('api/trip/process/errors', this.state.excelFile) 
                 .then(excelFileErrors => {
@@ -92,7 +98,11 @@ export default class ExcelUploadMain extends Component {
 		const wb = XLSX.utils.book_new();
 		XLSX.utils.book_append_sheet(wb, ws, "Trip Upload Errors");
 		/* generate XLSX file and send to client */
-		XLSX.writeFile(wb, "trip-upload-errors.xlsx")
+        XLSX.writeFile(wb, "trip-upload-errors.xlsx")
+        
+        toast.success("🎉 Trip Data Errors Export Complete!", {
+            position: toast.POSITION.TOP_RIGHT
+        })
     }
 
     s2ab(s) {
@@ -123,6 +133,7 @@ export default class ExcelUploadMain extends Component {
                         <button className={"button-primary u-pull-right"} onClick={this.exportFile}>Export Trip Data Errors</button>
                         <ExcelUploadContinue data={this.state.excelFileClean} />
                     </div>
+                    <ToastContainer />
                 </div>
             );
         } else {

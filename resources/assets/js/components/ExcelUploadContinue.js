@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class ExcelUploadInput extends Component {
-    constructor() {
-        super()
-        this.state = {
-            successMessage: []
-        }
-    }
-
     uploadToDatabase() {
         console.log("Upload props:")
         console.log(this.props.data)
@@ -19,8 +13,8 @@ export default class ExcelUploadInput extends Component {
                 response = response.data
                 console.log(response)
 
-                this.setState({ 
-                    successMessage: "" 
+                toast.success("🎉 Trip Data Upload Complete!", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
             })
             .catch(error => console.log(error))

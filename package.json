@@ -26,6 +26,7 @@
         "match-sorter": "^2.2.3",
         "node-pre-gyp": "^0.10.3",
         "react-table": "^6.8.6",
+        "react-toastify": "^4.1.0",
         "xlsx": "^0.13.2"
     }
 }
