@@ -30,6 +30,7 @@ Route::get('/dashboard', function () {
 Route::get('/dashboard', 'AddController@filterDashboard')->name('dashboard')->middleware('auth');
 Route::post('/dashboard-process', 'FilterController@filter')->name('dashboard-process')->middleware('auth');
 
+Route::get('/export', 'excelExportController@Export');
 
 /* Excel Upload Route */
 Route::get('/dashboard/upload-files', 'ExcelController@show')->name('upload-files')->middleware('auth');

@@ -108,7 +108,7 @@
     }
     if($schoolSort){
     //include institution
-    //get most department type contributions (emission total)
+    //get most departmeant type contributions (emission total)
     $columnTable = DB::table('trips')
         ->select(DB::raw('sum(trips.emissions) as emissions'))
         ->whereRaw($rawDB)
@@ -265,6 +265,7 @@
         else {
         $filterMessage = "Filter returned an empty set.";
         $emptySet = true;
+            dd('dito pumasok 1');
     }
 }
     else{  
@@ -410,6 +411,8 @@
         else {
         $filterMessage = "Filter returned an empty set.";
         $emptySet = true;
+        dd('dito pumasok 2');
+
     }    
         }
         }
@@ -552,12 +555,14 @@
     else{
         $filterMessage = "Filter returned an empty set.";
         $emptySet = true;
+                    dd('dito pumasok 3');
+
         
     }        
     }
     }
     $rawDB = "";
-if(isset($data) && !$emptySet){
+if(isset($data)){
      if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null){
             $rawDB = "";
             $add = false;
@@ -650,32 +655,27 @@ if(isset($data) && !$emptySet){
             if(!$emptySet){
             $emissionData = DB::table('trips')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
             ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
             ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
             ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
             ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
-                    'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
+                    'trips.kilometerReading', 'trips.remarks', 'trips.emissions', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
             ->whereRaw($rawDB)
             ->orderBy('trips.tripDate', 'asc')
             ->get();
-             $emissionCount = DB::table('trips')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->select(DB::raw('count(CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))) as monthYearCount'))
-            ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->get();
                 if($emissionData->isEmpty()){
                     $emptySet = true;
+
                 }
+                //$rawDB
             }
          $emissionData = DB::table('trips')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
             ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
             ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
             ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
             ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
-                    'trips.kilometerReading', 'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'), 'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
+                    'trips.kilometerReading', 'trips.remarks', 'trips.emissions', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
             ->whereRaw($rawDB)
             ->orderBy('trips.tripDate', 'asc')
             ->get();
@@ -686,16 +686,11 @@ if(isset($data) && !$emptySet){
             ->get();
                 if($emissionData->isEmpty()){
                     $emptySet = true;
+                                dd('dito pumasok 5');
+
                 }
-         $emissionCount = DB::table('trips')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->select(DB::raw('count(CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))) as monthYearCount'))
-            ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->get();    
-                if($emissionData->isEmpty()){
-                    $emptySet = true;
-                }
-            $totalTreesPlanted = DB::table('institutionbatchplant')
+    
+    $totalTreesPlanted = DB::table('institutionbatchplant')
         ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
         ->groupBy(DB::raw('1'))
         ->get();
@@ -728,22 +723,19 @@ if(isset($data) && !$emptySet){
             $chartTitle = 'All Universities';   
             $emissionData = DB::table('trips')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
             ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
             ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
             ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 'trips.kilometerReading',             'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'),'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active')
+            ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
+                    'trips.kilometerReading', 'trips.remarks', 'trips.emissions', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
             ->orderBy('trips.tripDate', 'asc')
             ->get();
-            $emissionCount = DB::table('trips')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->select(DB::raw('count(CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))) as monthYearCount'))
-            ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->get();    
                 if($emissionData->isEmpty()){
                     $emptySet = true;
+                                dd('dito pumasok 7');
+
                 }
-            $totalTreesPlanted = DB::table('institutionbatchplant')
+    $totalTreesPlanted = DB::table('institutionbatchplant')
         ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
         ->groupBy(DB::raw('1'))
         ->get();
@@ -821,7 +813,6 @@ else{
     $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
     $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
         }
-    
 ?>
     @extends('layouts.main') @section('styling')
     <style>
@@ -857,7 +848,7 @@ else{
         
     <div ng-app="myapp">
         <div ng-controller="MyController">
-           <div ng-hide="<?php echo $emptySet?>">
+           <div ng-hide="<?php echo $emptySet; ?>">
             <div class="row">
                 <table>
                         <tr>
@@ -928,7 +919,7 @@ else{
                 <div class="three columns"><h5>Total Trips</h5></div>
                 <div class="four columns"><h5>Total Sequestration</h5></div>
             </div>
-            <div class="row" ng-init="<?php echo "showGenChartDiv=".!$emptySet;?>">
+            <div class="row" ng-init="<?php echo "showGenChartDiv=".$emptySet;?>">
                 <div class="six columns" style="text-align: center;" ng-show="showGenChartDiv">
                     <div id="institutionPieChart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
                 </div>
@@ -1287,267 +1278,6 @@ else{
     </script>
     <!--angular js script-->
 
-    <!-- general emission chart-->
-    <script>
-        <?php
-        {
-        function getRegressionLine($emissionData){
-                    //step 1
-                    //calculate pearson's correlation coefficient - r
-                    //step 2
-                    //compute for the standard deviation of months (x) and emisisons (y) - Sx and Sy
-                    //step 3
-                    //compute for slope - b
-                    //step 4
-                    //compute for y-intercept - a
-                    //Linear Regression
-                    //y = a + bx
-
-                    //Pearson's Correlation Coefficient calculation
-                    //numerator calculation
-                    $r = 0;
-                    $summationOfNumerator = 0;
-                    $xAve = 0;
-                    $yAve = 0;
-                    for($x = 1; $x <= count($emissionData); $x++) {
-                        $xAve += $x;
-                    }
-                    for($x = 0; $x < count($emissionData); $x++) {
-                        $yAve += $emissionData[$x][1];
-                    }
-                    $xAve = $xAve/count($emissionData);
-                    $yAve = $yAve/count($emissionData);
-                    for($x = 1; $x <= count($emissionData); $x++) {
-                        $summationOfNumerator+=($x - $xAve)*($emissionData[$x - 1][1] - $yAve);
-                    }
-
-                    //denominator 
-                    $denominator = 0;
-                    $summationTerm1 = 0;
-                    $summationTerm2 = 0;
-                    for($x = 1; $x <= count($emissionData); $x++) {
-                        $summationTerm1+=($x - $xAve)*($x - $xAve);
-                        $summationTerm2+=($emissionData[$x - 1][1] - $yAve)*($emissionData[$x - 1][1] - $yAve);
-                    }
-
-                    $denominator = sqrt($summationTerm1 * $summationTerm2);
-                    $r = $summationOfNumerator/$denominator;
-
-                    //standard deviation calculation
-                    $Sy = sqrt($summationTerm2/(count($emissionData)-1));
-                    $Sx = sqrt($summationTerm1/(count($emissionData)-1));
-
-                    //slope calculation
-                    $b = $r * ($Sy/$Sx);
-
-                    //y-intercept calculation
-                    $a;
-                    $a = $yAve - ($b * $xAve);
-
-                    $regressionLine = array($a, $b);
-
-                    return $regressionLine;
-                }
-        }
-    ?>
-        var allChart;
-        AmCharts.theme = AmCharts.themes.dark;
-        var allChartTitle = "Carbon Emission Chart"
-        var allChartDataIndexes = [];
-        var allChartData = [
-            <?php
-            {
-            $x = 1;
-            $prev;
-            $monthlyEmissions = [];
-            $monthCtr = 0;
-            if(!$emptySet){
-              foreach($emissionData as $emission) {
-                    if($x == 1){
-                        $monthSum = 0;
-                        $prev = substr($emission->tripDate, 0, 7);
-                    }
-                    if($prev == substr($emission->tripDate, 0, 7)){
-                        $monthSum += $emission->emission; 
-                        $x++;
-                        if($x == count($emissionData) - 1){
-                            $monthlyEmissions[$monthCtr] = [$prev, $monthSum];
-                            $prev = substr($emission->tripDate, 0, 7);
-                            $monthSum = 0;
-                            $monthCtr++;
-                        }
-                    }else{
-                            $monthlyEmissions[$monthCtr] = [$prev, $monthSum];
-                            $prev = substr($emission->tripDate, 0, 7);
-                            $monthSum = 0;
-                            $monthCtr++;
-                        };
-              }
-            $regressionLine = getRegressionLine($monthlyEmissions);
-            $saveIndex = 0;
-            for($x = 0 ; $x < count($monthlyEmissions); $x++) {
-                echo '{
-                "date": "' . $monthlyEmissions[$x][0].'",';
-                echo '
-                "value": ' . $monthlyEmissions[$x][1].',';
-                echo ' 
-                "regression": ' . ($regressionLine[0] + ($regressionLine[0] * $x)) . ', ';
-                echo '
-                "sequestration": 30,';
-                echo ' 
-                "bullet": "round",';
-                echo '
-                "subSetTitle": "Monthly Emissions",';
-                echo  '
-                "subSet": [';
-                for($y = $saveIndex; $y < count($emissionData); $y++){
-                    if($y==$saveIndex){
-                        $prev = substr($emissionData[$y]->tripDate, 0 , 7);
-                    }
-                    if(substr($emissionData[$y]->tripDate, 0 , 7) == $prev){
-                        echo '
-                        {
-                        "date": "' . $emissionData[$y]->tripDate . '",';
-                        echo '
-                        "value": "' . $emissionData[$y]->emission . '",';
-                        echo '
-                        "regression": ' . ($regressionLine[0] + ($regressionLine[0] * $x)) . ', ';
-                        echo '
-                        "sequestration": "' . 30 . '",';
-                        echo '
-                        "bullet": "round"  ';
-                        $test = $y + 1;
-                        if(substr($emissionData[$test]->tripDate, 0 , 7) != $prev){
-                            $saveIndex = $y;
-                            echo '}]},';
-                        }else {
-                            echo '},';
-                        }
-
-                    }
-                }
-            }
-            }
-        }
-        ?> {
-                "date": <?php
-                if(!$emptySet){
-                    
-                $yrmonth = end($monthlyEmissions);
-                $month = (int) substr($yrmonth[0], 5, 2);
-                $yr = (int) substr($yrmonth[0], 0, 4);
-                if($month==12){
-                    $month = (string) "01";
-                    $yr++;
-                }elseif($month>=9){
-                    $month = (string) $month++;
-                }else{
-                    $month = (string) "0" . ($month + 1);
-                }
-                echo '"'.$yr . "-" . $month.'",
-                ';
-                echo "\"regression\":  ";
-                echo $regressionLine[0] + ($regressionLine[0] * count($monthlyEmissions) + 1);
-                }
-            ?>
-            }
-        ];
-        allChart = AmCharts.makeChart("allChartDiv", {
-            "backgroundAlpha": 1,
-            "export": {
-                "enabled": true
-            },
-            "type": "serial",
-            "titles": [{
-                "text": allChartTitle
-            }],
-            "colors": [
-                "#de4c4f",
-                "#d8854f",
-                "#77ee38",
-                "#a7a737"
-            ],
-            "allLabels": [{
-                "text": "",
-                "x": 10,
-                "y": 15,
-                "url": "javascript: goBackChart();void(0);"
-            }],
-            "dataProvider": allChartData,
-            "valueAxes": [{
-                "axisAlpha": 0,
-                "dashLength": 4,
-                "position": "left"
-            }],
-            "graphs": [{
-                "valueField": "value",
-                "fillAlphas": 0,
-                "bulletField": "bullet"
-            }, {
-                "valueField": "regression",
-                "fillAlphas": 0,
-                "bulletField": "bullet"
-            }, {
-                "valueField": "sequestration",
-                "fillAlphas": 0,
-                "bulletField": "bullet"
-            }],
-            "chartCursor": {
-                "zoomable": false,
-                "fullWidth": true,
-                "cursorAlpha": 0.1,
-                "categoryBalloonEnabled": false
-            },
-            "dataDateFormat": "YYYY-MM-DD HH:NN:SS",
-            "categoryField": "date",
-            "categoryAxis": {
-                "parseDates": true,
-                "minPeriod": "mm",
-                "axisAlpha": 0,
-                "minHorizontalGap": 50,
-                "gridAlpha": 0,
-                "tickLength": 0
-            },
-        });
-
-        allChart.addListener('clickGraphItem', function(evt) {
-            if (evt.item.dataContext.subSet) {
-                chartDataIndexes.push({
-                    index: evt.index,
-                    title: evt.item.dataContext.subSetTitle,
-                    prev: evt.chart.titles[0].text
-                });
-                evt.chart.dataProvider = evt.item.dataContext.subSet;
-                evt.chart.allLabels[0].text = "Go Back " + evt.chart.titles[0].text;
-                evt.chart.titles[0].text = evt.item.dataContext.subSetTitle;
-                evt.chart.validateData();
-
-            }
-        });
-
-        function goBackChart() {
-            var previousData = allChartData;
-            var tmp = {
-                prev: ""
-            }
-
-            // Remove latest
-            chartDataIndexes.pop();
-
-            // Get previous cached object
-            for (var i = 0; i < chartDataIndexes.length; i++) {
-                tmp = chartDataIndexes[i];
-                previousData = previousData[tmp.index].subSet;
-            }
-
-            // Apply titles and stuff
-            allChart.allLabels[0].text = tmp.prev ? "Go Back " + tmp.prev : "";
-            allChart.titles[0].text = tmp.title || allChartTitle;
-            allChart.dataProvider = previousData;
-            allChart.validateData();
-        }
-    </script>
-    <!-- general emission chart-->
     <?php
     
     if(!$schoolSort){
