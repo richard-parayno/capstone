@@ -30,6 +30,7 @@ Route::get('/dashboard', function () {
 Route::get('/dashboard', 'AddController@filterDashboard')->name('dashboard')->middleware('auth');
 Route::post('/dashboard-process', 'FilterController@filter')->name('dashboard-process')->middleware('auth');
 
+
 /* Excel Upload Route */
 Route::get('/dashboard/upload-files', 'ExcelController@show')->name('upload-files')->middleware('auth');
 Route::get('/dashboard/upload-view', 'ExcelController@showUploaded')->name('upload-view')->middleware('auth');
@@ -110,6 +111,7 @@ Route::get('/dashboard/reports', function() {
     return view('reports');
 })->name('reports')->middleware('auth');
 
+Route::post('/dashboard/reports-process', 'DashboardController@generate')->name('reports-process')->middleware('auth');
 
 Route::get('/dashboard/emissionsreport', function() {
     return view('emissionsreport');

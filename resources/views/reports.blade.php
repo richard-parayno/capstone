@@ -20,16 +20,25 @@
 @endsection
 
 @section('content')
+<?php
+    if(isset($data)){
+        dd($data);
+    }
+?>
 <div class="ten columns offset-by-one" id="box-form">
-   <ul>
-       <li>
-           <a href="{{ route('emissionsreport') }}">Emissions Report</a>
-       </li>
-       <li>
-           <a href="">Car Report</a>
-       </li>
-   </ul>
-    
+   <form method="post" action="{{ route('reports-process') }}">
+            {{ csrf_field() }}
+            <div class="twelve columns">
+                <select name="reportType" id="">
+                    <option value="0" selected>Select Report</option>
+                    <option value="1">Emissions Report</option>
+                    <option value="2">Vehicle Report</option>
+                </select>
+            </div>
+            <div class="twelve column bar">
+                <input class="button-primary" type="submit">
+            </div>
+        </form>
 </div>
 
 @endsection
