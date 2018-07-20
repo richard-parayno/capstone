@@ -13,11 +13,26 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+// Campus Management
 require('./components/CampusMain');
 require('./components/Campus');
+
+// User Management
 require('./components/UserMain');
 require('./components/User');
+
+// Department Management
 require('./components/DepartmentMain');
 require('./components/Department');
+
+// Vehicle Management
 require('./components/VehicleMain');
 require('./components/Vehicle');
+require('./components/VehicleActiveMain');
+require('./components/VehicleActive');
+
+// Uploaded Trips
+require('./components/ExcelUploadMain');
+require('./components/ExcelUploadInput');
+require('./components/UploadedTripMain');
+require('./components/UploadedTrip');

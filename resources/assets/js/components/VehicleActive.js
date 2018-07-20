@@ -8,6 +8,19 @@ export default class Vehicle extends Component {
     render() {
         const vehicle = this.props.vehicle;
 
+        const onRowClick = (state, rowInfo, column, instance) => {
+            return {
+                onClick: e => {
+                    console.log('A Td Element was clicked!')
+                    console.log('it produced this event:', e)
+                    console.log('It was in this column:', column)
+                    console.log('It was in this row:', rowInfo)
+                    console.log('It was in this table instance:', instance)
+                    document.getElementById('plateNumber').value = rowInfo.row.plateNumber
+                }
+            }
+        }
+
         const columns = [{
             Header: 'Car Type',
             id: 'carTypeName',
@@ -43,26 +56,7 @@ export default class Vehicle extends Component {
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['fuelTypeName'] }),
             filterAll: true
-          }, {
-            Header: 'Status',
-            id: 'status',
-            accessor: 'status',
-            filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ['status'] }),
-            filterAll: true
-          }, {
-            Header: 'Actions', // Custom header components!
-            accessor: 'plateNumber',
-            Cell: row => (
-                <div style={{textAlign: "center"}}>
-                    <a href={"vehicle-editinfo?vehicle=" + row.value}>Update Vehicle Info</a> <br/>
-                    <a href={"vehicle-decommission?user=" + row.value}>Decommission Vehicle</a>
-                </div>
-            ),
-            filterable: false
           }]; 
-          
-        
     
         return (
             <ReactTable
@@ -72,6 +66,7 @@ export default class Vehicle extends Component {
                 data={vehicle}
                 columns={columns}
                 className="-striped -highlight"
+                getTdProps={onRowClick}
                 />
         );
     }

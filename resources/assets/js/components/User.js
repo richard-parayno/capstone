@@ -59,11 +59,9 @@ export default class User extends Component {
     
         return (
             <ReactTable
-                minRows='5'
                 filterable
                 defaultFilterMethod={(filter, row) =>
                     String(row[filter.id]) === filter.value}
-                showPageSizeOptions={false}
                 data={users}
                 columns={columns}
                 className="-striped -highlight"

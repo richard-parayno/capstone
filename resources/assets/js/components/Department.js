@@ -44,11 +44,9 @@ export default class Department extends Component {
     
         return (
             <ReactTable
-                minRows='5'
                 filterable
                 defaultFilterMethod={(filter, row) =>
                     String(row[filter.id]) === filter.value}
-                showPageSizeOptions={false}
                 data={department}
                 columns={columns}
                 className="-striped -highlight"
