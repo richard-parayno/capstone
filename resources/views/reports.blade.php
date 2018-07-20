@@ -2,15 +2,16 @@
     if(isset($data)){  
         $filterMessage = "";
         if($data['reportName']=="trip"){
+        $rawDB = "";
             if($data['isFiltered']=="true"){
                 if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null){
-        $rawDB = "";
         if($data['institutionID'] != null){
                 $userSchool = $data['institutionID'];
                 $schoolSort = true;
                 $add = true;
                 $filterMessage .= $userSchool;
                 $rawDB.="trips.institutionID=".$userSchool;
+        }
         if($data['carTypeID']!=null){
             if($add){
                     $rawDB .= " AND ";
@@ -32,7 +33,7 @@
                 }
                 $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
         }
-        }if($data['datePreset']==0){   
+        if($data['datePreset']==0){   
             if($data['fromDate'] != null && $data['toDate'] != null){
                 if($add){
                     $rawDB .= " AND ";
@@ -105,7 +106,6 @@
                 default: $rawDB .= "";
             }
         }
-        }
                 $tripData=DB::table('trips')
                     ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
                     ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
@@ -116,6 +116,10 @@
                     ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', 'trips.emissions')
                     ->whereRaw($rawDB)
                     ->orderByRaw('1 ASC, 3 ASC')
+                    ->get();
+                $tripEmissionTotal = DB::table('trips')
+                    ->select(DB::raw('sum(emissions) as totalEmissions'))
+                    ->whereRaw($rawDB)
                     ->get();
             }else{
                 $tripData=DB::table('trips')
@@ -128,7 +132,11 @@
                     ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', 'trips.emissions')
                     ->orderByRaw('1 ASC, 3 ASC')
                     ->get();
+                $tripEmissionTotal = DB::table('trips')
+                    ->select(DB::raw('sum(emissions) as totalEmissions'))
+                    ->get();
             }
+        }
         }
     }
 
@@ -162,41 +170,6 @@
     @endsection @section('content')
     <div ng-app="myapp">
         <div ng-controller="MyController">
-            <?php
-    if(isset($tripData)){
-        echo "<div ng-hide=\"true\">
-    <table id=\"".$data['reportName']."report-".(new \DateTime())->format('Y-m-d H:i:s')."\">
-      <thead>
-          <tr>
-              <th>
-                <td>Preared By: ".$userType = Auth::user()->accountName."</td>
-                <td>Prepared On: ".(new \DateTime())->format('Y-m-d H:i:s')."</td>
-              </th>
-          </tr>
-      </thead>";
-         foreach($tripData as $trip){
-             echo "<tr>";
-                 echo "<td>".$trip->tripDate."</td>";
-                 echo "</td>".$trip->tripTime."</td>";
-                 echo "<td>".$trip->institutionName."</td>";
-                 echo "<td>".$trip->deptName."</td>";
-                 echo "<td>".$trip->plateNumber."</td>";
-                 echo "<td>".$trip->kilometerReading."</td>";
-                 echo "<td>".$trip->fuelTypeName."</td>";
-                 echo "<td>".$trip->carTypeName."</td>";
-                 echo "<td>".$trip->modelName."</td>";
-                 echo "<td>".$trip->active."</td>";
-                 echo "<td>".$trip->remarks."</td>";
-                 echo "<td>".$trip->emissions."</td>";
-             echo "</tr>";
-            }
-            echo "<tr>
-                <td>Showing ".count($tripData)." Rows</td>
-            </tr>
-    </table>
-</div>";
-    }
-?>
                 <h5>&nbsp; Dashboard > Reports</h5>
                 <form method="post" action="{{ route('reports-process') }}"> {{ csrf_field() }}
                     <input type="hidden" name="isFiltered" value="<?php echo " {{showFilter}} "?>">
@@ -324,6 +297,46 @@
                     </div>
 
                 </form>
+                <?php
+    if(isset($tripData)){
+        echo "<div ng-hide=\"true\">
+    <table id=\"".$data['reportName']."report-".(new \DateTime())->format('Y-m-d H:i:s')."\">
+      <thead>
+          <tr>
+              <th>
+                <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
+                <td>Prepared On: ".(new \DateTime())->format('Y-m-d H:i:s')."</td>
+              </th>
+          </tr>
+      </thead>";
+        echo "<tr></tr>";
+        echo "<tr>
+            <td>Total Trips: </td><td>".count($tripData)."</td>";
+        echo "<td>Total Emissions: </td><td>".$tripEmissionTotal[0]->totalEmissions." MT</td></tr><tr></tr>";
+        echo "<tr><td>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><td>Car Type</td><td>Vehicle Model Name</td><td>Active</td><td>Remarks/Itenerary</td><td>Trip Emission</td></trs>";
+         foreach($tripData as $trip){
+             echo "<tr>";
+                 echo "<td>".$trip->tripDate."</td>";
+                 echo "<td>".$trip->tripTime."</td>";
+                 echo "<td>".$trip->institutionName."</td>";
+                 echo "<td>".$trip->deptName."</td>";
+                 echo "<td>".$trip->plateNumber."</td>";
+                 echo "<td>".$trip->kilometerReading."</td>";
+                 echo "<td>".$trip->fuelTypeName."</td>";
+                 echo "<td>".$trip->carTypeName."</td>";
+                 echo "<td>".$trip->modelName."</td>";
+                 echo "<td>".$trip->active."</td>";
+                 echo "<td>".$trip->remarks."</td>";
+                 echo "<td>".$trip->emissions."</td>";
+             echo "</tr>";
+            }
+            echo "<tr><td></td>
+                <td>Showing ".count($tripData)." Rows</td>
+            </tr>
+    </table>
+</div>";
+    }
+?>
         </div>
     </div>
 
