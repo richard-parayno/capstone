@@ -4,25 +4,26 @@
 <style>
   /** TODO: Push margin more to the right. Make the box centered to the user. **/
   #box-form {
-    background-color: #363635;
     margin-top: 20px;
     padding: 40px;
     border-radius: 10px;
   }
   #box-form h1 {
     text-align: center;
-    color: white;
+    color: black;
   }
   #box-form input {
-    color: white;
+    color: black;
   }
 </style>
 @endsection
 
 @section('content')
 
+<!--
 <div class="eight columns offset-by-two" id="box-form">
   <h1>Upload Trip Data</h1>
+  
   <form action="{{ route('pre-process-files') }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
     <input type="file" name="excelFile">
@@ -32,6 +33,10 @@
     
   </form>
 </div>
-
+-->
+<div id="box-form">
+  <h1>Upload Trip Data</h1>
+  <div id="excel-upload"></div>
+</div>
 @endsection
 

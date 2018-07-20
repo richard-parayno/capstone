@@ -43,3 +43,8 @@ Route::get('/vehicle/{vehicle}', 'VehicleController@show');
 /** Upload Excel File APIs */
 Route::get('/trip', 'UploadedTripController@index');
 Route::get('/trip/{trip}', 'UploadedTripController@show');
+Route::post('/trip/process', 'UploadedTripController@preProcess');
+Route::post('/trip/process/upload', 'UploadedTripController@uploadToDb');
+Route::post('/trip/process/errors', 'UploadedTripController@preProcessErrors');
+Route::post('/trip/process/cleaned', 'UploadedTripController@preProcessClean');
+Route::post('/trip/process/prepexport', 'UploadedTripController@prepareForExport');

@@ -32,5 +32,7 @@ require('./components/VehicleActiveMain');
 require('./components/VehicleActive');
 
 // Uploaded Trips
+require('./components/ExcelUploadMain');
+require('./components/ExcelUploadInput');
 require('./components/UploadedTripMain');
 require('./components/UploadedTrip');
