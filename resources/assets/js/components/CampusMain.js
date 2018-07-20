@@ -26,7 +26,6 @@ export default class CampusMain extends Component {
     render() {
         return (
             <div>
-                <h1>Manage Campuses</h1>
                 <Campus institutions={this.state.institution}/>
             </div>   
         );

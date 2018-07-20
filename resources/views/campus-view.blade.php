@@ -23,7 +23,11 @@
 
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">
-  <div id="campus-table-dom"></div>
+  <h1>Manage Campuses</h1>
+  <a href="{{ route('campus-add') }}">
+    <button class="button-primary u-pull-right">New Campus</button>
+  </a> <br/>
+  <div class="twelve columns" id="campus-table-dom"></div>
   <br>
   <a href="{{ route('campus-add') }}">
     <button class="button-primary u-pull-right">New Campus</button>
