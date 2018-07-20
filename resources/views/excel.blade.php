@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>export</title>
+    </head>
+    <body>
+        <table><thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Kurt</td>
+                <td>Manila</td>
+            </tr>
+            <tr>
+                <td>Chuchi</td>
+                <td>PQue</td>
+            </tr>
+        </tbody></table>
+    </body>
+</html>
