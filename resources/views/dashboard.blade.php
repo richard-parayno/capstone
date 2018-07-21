@@ -665,9 +665,19 @@ if(isset($data)){
             ->get();
                 if($emissionData->isEmpty()){
                     $emptySet = true;
-
+                    dd("dito talaga eh");
                 }
-                //$rawDB
+                $tripEmissionTotal = DB::table('trips')
+                    ->select(DB::raw('sum(emissions) as totalEmissions'))
+                    ->whereRaw($rawDB)
+                    ->get();
+                $tripCountTotal = DB::table('trips')
+                    ->select(DB::raw('count(emissions) as totalCount'))
+                    ->whereRaw($rawDB)
+                    ->get();
+                $seqTotal = DB::table('institutionbatchplant')
+                    ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                    ->get();
             }
          $emissionData = DB::table('trips')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
@@ -689,6 +699,17 @@ if(isset($data)){
                                 dd('dito pumasok 5');
 
                 }
+         $tripEmissionTotal = DB::table('trips')
+                    ->select(DB::raw('sum(emissions) as totalEmissions'))
+                    ->whereRaw($rawDB)
+                    ->get();
+         $tripCountTotal = DB::table('trips')
+                    ->select(DB::raw('count(emissions) as totalCount'))
+                    ->whereRaw($rawDB)
+                    ->get();
+            $seqTotal = DB::table('institutionbatchplant')
+                    ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                    ->get();
     
     $totalTreesPlanted = DB::table('institutionbatchplant')
         ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
@@ -719,8 +740,7 @@ if(isset($data)){
     $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
     $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
             }
-    else{
-            $chartTitle = 'All Universities';   
+    else{  
             $emissionData = DB::table('trips')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
             ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
@@ -733,8 +753,18 @@ if(isset($data)){
                 if($emissionData->isEmpty()){
                     $emptySet = true;
                                 dd('dito pumasok 7');
-
                 }
+                    
+            $tripEmissionTotal = DB::table('trips')
+                    ->select(DB::raw('sum(emissions) as totalEmissions'))
+                    ->get();
+            $tripCountTotal = DB::table('trips')
+                    ->select(DB::raw('count(emissions) as totalCount'))
+                    ->get();
+        
+            $seqTotal = DB::table('institutionbatchplant')
+                    ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                    ->get();
     $totalTreesPlanted = DB::table('institutionbatchplant')
         ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
         ->groupBy(DB::raw('1'))
@@ -765,25 +795,31 @@ if(isset($data)){
     $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
         }
 }
-else{
-            $chartTitle = 'All Universities';   
+else{   
             $emissionData = DB::table('trips')
-            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
-            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 'trips.kilometerReading',             'trips.remarks', 'trips.emissions', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate)) as monthYear'),'monthlyemissionsperschool.emission', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active')
-            ->orderBy('trips.tripDate', 'asc')
-            ->get();
-            $emissionCount = DB::table('trips')
-            ->join('monthlyemissionsperschool', DB::raw('CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))'), '=',  DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->select(DB::raw('count(CONCAT(YEAR(trips.tripDate), "-",MONTH(trips.tripDate))) as monthYearCount'))
-            ->groupBy(DB::raw('CONCAT(YEAR(monthlyemissionsperschool.monthYear), "-",MONTH(monthlyemissionsperschool.monthYear))'))
-            ->get();    
+                    ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', 'trips.emissions')
+                    ->orderByRaw('1 ASC, 3 ASC')
+                    ->get();    
                 if($emissionData->isEmpty()){
                     $emptySet = true;
+                    dd("dito???");
                 }
+                $tripEmissionTotal = DB::table('trips')
+                    ->select(DB::raw('sum(emissions) as totalEmissions'))
+                    ->get();
+                $tripCountTotal = DB::table('trips')
+                    ->select(DB::raw('count(emissions) as totalCount'))
+                    ->get();
+    
+                $seqTotal = DB::table('institutionbatchplant')
+                    ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                    ->get();
             $totalTreesPlanted = DB::table('institutionbatchplant')
         ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
         ->groupBy(DB::raw('1'))
@@ -915,11 +951,11 @@ else{
                 </table>
             </div>
             <div class="row">
-                <div class="four columns offset-by-one"><h5>Total Emissions</h5></div>
-                <div class="three columns"><h5>Total Trips</h5></div>
-                <div class="four columns"><h5>Total Sequestration</h5></div>
+                <div class="four columns offset-by-one"><h5>Total Emissions: &nbsp;<strong><?php echo round($tripEmissionTotal[0]->totalEmissions, 4);?> MT</strong></h5></div>
+                <div class="three columns"><h5>Total Trips: &nbsp;<strong><?php echo $tripCountTotal[0]->totalCount;?></strong></h5></div>
+                <div class="four columns"><h5>Total Sequestration: <strong><?php echo ($seqTotal[0]->totalSeq)*22*0.001;?> MT</strong></h5></div>
             </div>
-            <div class="row" ng-init="<?php echo "showGenChartDiv=".$emptySet;?>">
+            <div class="row" ng-init="showGenChartDiv=<?php echo !$emptySet;?>">
                 <div class="six columns" style="text-align: center;" ng-show="showGenChartDiv">
                     <div id="institutionPieChart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
                 </div>

@@ -277,8 +277,7 @@
                                </div>
                                 <div class="twelve columns">
                                     <select name="recurrPreset" id="irecurrPreset" style="color: black; width: 100%">
-                                        <option value="0" selected>Select Date Preset</option>
-                                        <option value="1">Monthly</option>
+                                        <option value="1" selected>Monthly</option>
                                         <option value="2">Quarterly</option>
                                         <option value="3">Semi-Annual</option>
                                         <option value="4">Annual</option>
@@ -290,7 +289,7 @@
                                     <input type="submit" class="button-primary" ng-click='addReport("trip");' value="Emission Report" style="width: 100%">
                                 </div>
                                 <div class="twelve columns">
-                                    <input type="submit" class="button-primary" ng-click="addReport('forecast')" value="Mitigation Report" style="width: 100%">
+                                    <input type="submit" class="button-primary" ng-click="addReport('forecast')" value="Tree Sequestration Report" style="width: 100%">
                                 </div>
                             </div>
                         </div>
