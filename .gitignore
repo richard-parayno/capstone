@@ -11,4 +11,4 @@ npm-debug.log
 yarn-error.log
 .env
 /.vscode
-public/js/app.js
+/public/js/app.js

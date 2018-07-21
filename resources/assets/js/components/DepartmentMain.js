@@ -26,7 +26,6 @@ export default class DepartmentMain extends Component {
     render() {
         return (
             <div>
-                <h1>Manage Departments</h1>
                 <Department department={this.state.department}/>
             </div>   
         );

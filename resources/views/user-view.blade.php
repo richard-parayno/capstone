@@ -23,7 +23,11 @@
 
 @section('content')
 <div class="twelve columns" id="box-form">
-  <div id="user-table"></div>
+  <h1>Manage Users</h1>
+  <a href="{{ route('user-add') }}">
+    <button class="button-primary u-pull-right">Create User Account</button>
+  </a> <br/>
+  <div class="twelve columns" id="user-table"></div>
   <br>
   <a href="{{ route('user-add') }}">
     <button class="button-primary u-pull-right">Create User Account</button>

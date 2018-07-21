@@ -26,7 +26,6 @@ export default class VehicleMain extends Component {
     render() {
         return (
             <div>
-                <h1>Manage Vehicles</h1>
                 <Vehicle vehicle={this.state.vehicle}/>
             </div>   
         );

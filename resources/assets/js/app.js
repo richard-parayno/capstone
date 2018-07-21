@@ -13,6 +13,10 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+// We Planted Trees
+require('./components/TreeMain');
+require('./components/Tree');
+
 // Campus Management
 require('./components/CampusMain');
 require('./components/Campus');

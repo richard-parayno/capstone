@@ -23,12 +23,11 @@
 
 @section('content')
 <div class="ten columns offset-by-one" id="box-form">  
-  @if(Session::has('success'))
-      <div class="twelve columns" id="success-message" style="color: green; margin-bottom: 20px;">
-          <strong>Success! </strong> {{ Session::get('message', '') }}
-      </div>
-  @endif
-  <div id="department-table"></div><br>
+  <h1>Manage Departments</h1>
+  <a href="{{ route('department-add') }}">
+    <button class="button-primary u-pull-right">New Department</button>
+  </a> <br/>
+  <div class="twelve columns" id="department-table"></div><br>
   <a href="{{ route('department-add') }}">
     <button class="button-primary u-pull-right">New Department</button>
   </a>

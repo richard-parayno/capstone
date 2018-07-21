@@ -29,78 +29,14 @@
       </div>
   @endif    
   <br>
-  <div id="vehicle-table"></div> <br>
+  <h1>Manage Vehicles</h1>
+  <a href="{{ route('vehicle-add') }}">
+    <button class="button-primary u-pull-right">New Vehicle</button>
+  </a> <br/>
+  <div class="twelve columns" id="vehicle-table"></div> <br>
   <a href="{{ route('vehicle-add') }}">
     <button class="button-primary u-pull-right">New Vehicle</button>
   </a>
 </div>
 
-@php
-$inactive = DB::table('vehicles_mv')->where('active', 0)->get();
-@endphp
-
-@if ($inactive->isNotEmpty())
-<div class="ten columns offset-by-one" id="box-form">
-  <h1>Manage Inactive Vehicles</h1>    
-  <table class="u-max-full-width">
-    <thead>
-      <tr>
-        <th>Car Type</th>
-        <th>Car Model</th>
-        <th>Plate Number</th>
-        <th>Home Campus</th>
-        <th>Fuel Type</th>
-        <th>Status</th>
-        <th>Vehicle Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach($inactive as $inactiveVehicle)
-      <tr>
-        @foreach($cartypes as $cartype)
-          @if($vehicle->carTypeID == $cartype->carTypeID)
-            <td>{{ $cartype->carTypeName }}</td>
-          @endif
-        @endforeach
-
-
-        <td>{{ $inactiveVehicle->modelName }}</td>
-        <td>{{ $inactiveVehicle->plateNumber }}</td>
-
-        @foreach($institutions as $institution)
-          @if($inactiveVehicle->institutionID == $institution->institutionID)
-            <td>{{ $institution->institutionName }}</td>
-          @endif
-        @endforeach
-
-        @foreach($fueltype as $fuel)
-          @if($inactiveVehicle->fuelTypeID == $fuel->fuelTypeID)
-            <td>{{ $fuel->fuelTypeName }}</td>
-          @endif
-        @endforeach
-
-        @if($inactiveVehicle->active >= 1)
-          <td>Active</td>
-        @else
-          <td>Inactive</td>
-        @endif
-
-        <td style="text-align: center;">
-          <a href="{{ route('vehicle-editinfo', array('vehicle' => $inactiveVehicle->plateNumber)) }}">Update Vehicle Info</a> <br> <br>
-          <a href="{{ route('vehicle-decommission', array('vehicle' => $inactiveVehicle->plateNumber)) }}">Update Vehicle Status</a>
-        </td>
-      </tr>
-      @endforeach
-    </tbody>
-    <!-- action shortcuts -->
-    <!--
-    <div class="u-pull-right">
-      <span>Search Vehicle: </span>
-      <input type="text" placeholder="Accord" id="searchBox">
-    </div>
-    -->
-    <!-- action shortcuts -->              
-  </table>
-</div>
-@endif
 @endsection
