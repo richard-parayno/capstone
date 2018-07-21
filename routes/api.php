@@ -48,3 +48,7 @@ Route::post('/trip/process/upload', 'UploadedTripController@uploadToDb');
 Route::post('/trip/process/errors', 'UploadedTripController@preProcessErrors');
 Route::post('/trip/process/cleaned', 'UploadedTripController@preProcessClean');
 Route::post('/trip/process/prepexport', 'UploadedTripController@prepareForExport');
+
+/** We Planted Trees APIs */
+Route::get('/tree', 'TreeController@index');
+Route::get('/tree/{tree}', 'TreeController@show');
