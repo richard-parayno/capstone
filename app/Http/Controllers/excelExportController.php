@@ -3,15 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Excel;
+use DB;
 
 class excelExportController extends Controller
 {
-    public function Export () {
-        Excel::create('clients', function($excel) {
-            $excel->sheet('clients', function($sheet) {
-                $sheet->loadView('excel');
-            });
-        })->export('xlsx');
+    public function index() {
+        $trips = DB::table('trips')->get();
+        return view('reports')->with('trips', $trips);
     }
 }
