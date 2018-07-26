@@ -115,6 +115,7 @@ use Illuminate\Support\Facades\Route;
         <p><strong>Home</strong></p>
         <ul>
             <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ route('reports') }}">Reports</a></li>                        
             <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
             <li><a href="{{ route('tree-view') }}">We Planted Trees</a></li>
         </ul>
@@ -158,6 +159,7 @@ use Illuminate\Support\Facades\Route;
         <p><strong>Home</strong></p>
         <ul>
             <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ route('reports') }}">Reports</a></li>                                    
             <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
             <li><a href="{{ route('tree-view') }}">We Planted Trees</a></li>
         </ul>
@@ -192,6 +194,7 @@ use Illuminate\Support\Facades\Route;
         <p><strong>Home</strong></p>
         <ul>
             <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ route('reports') }}">Reports</a></li>                                    
             <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
             <li><a href="{{ route('tree-view') }}">We Planted Trees</a></li>
         </ul>
@@ -226,6 +229,7 @@ use Illuminate\Support\Facades\Route;
       <div class="twelve column bar">
         <p><strong>Home</strong></p>
         <ul>
+            <li><a href="{{ route('reports') }}">Reports</a></li>                                            
             <li><a href="{{ route('upload-view') }}">Trip Data</a></li>
         </ul>
       </div>
