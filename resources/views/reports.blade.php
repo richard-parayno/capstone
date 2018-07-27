@@ -1,10 +1,39 @@
 <?php
-    if(isset($data)){  
+    $tripYears = DB::table('trips')
+        ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear'))
+        ->groupBy(DB::raw('1'))
+        ->orderByRaw('1')
+        ->get();
+    /*
+    if(!empty($tripYears)){
+        $totalConsecutive = 0;
+        $maxCon = 0;
+        $to
+        for($x=0;$x < count($tripYears); $x++){
+            $currRow = $tripYears[$x]->monthYear;
+            if($x == 0){
+                $previous = $currRow;
+            }else{
+                if((int) substr($previous, 4, 2) == ((int) substr($currRow, 4,2)) -1){
+                    $totalConsecutive++;
+                }elseif((int) substr($previous, 4, 2) == 12 && (int) substr($currRow, 4, 2) == 1){
+                    $totalConsecutive++;
+                }else{
+                    $maxCon = $totalConsecutive;
+                    $totalConsecutive = 0;
+                    $to = $currRow;
+                }
+            }
+        }
+    }
+    */
+    if(isset($data)){
         $filterMessage = "";
         if($data['reportName']=="trip"){
         $rawDB = "";
             if($data['isFiltered']=="true"){
-                if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null){
+                if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null || $data['carTypeID']!=null || $data['fuelTypeID']!=null || $data['carBrandID']!=null){
+        $add = false;
         if($data['institutionID'] != null){
                 $userSchool = $data['institutionID'];
                 $schoolSort = true;
@@ -18,6 +47,7 @@
                     $filterMessage .= " by " . $data['carTypeID'];
                 }
                 $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
+                $add = true;
         }
         if($data['fuelTypeID']!=null){
             if($add){
@@ -25,6 +55,7 @@
                     $filterMessage .= " by " . $data['fuelTypeID'];
                 }
                 $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
+                $add = true;
         }
         if($data['carBrandID']!=null){
             if($add){
@@ -32,6 +63,7 @@
                     $filterMessage .= " by " . $data['carBrandID'];
                 }
                 $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
+                $add = true;
         }
         if($data['datePreset']==0){   
             if($data['fromDate'] != null && $data['toDate'] != null){
@@ -107,8 +139,8 @@
             }
         }
                 $tripData=DB::table('trips')
-                    ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
                     ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
                     ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
@@ -118,9 +150,16 @@
                     ->orderByRaw('1 ASC, 3 ASC')
                     ->get();
                 $tripEmissionTotal = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
                     ->select(DB::raw('sum(emissions) as totalEmissions'))
                     ->whereRaw($rawDB)
                     ->get();
+                }
             }else{
                 $tripData=DB::table('trips')
                     ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
@@ -138,7 +177,6 @@
             }
         }
         }
-    }
 
     $institutions = DB::table('institutions')->get();
     $departments = DB::table('deptsperinstitution')->get();   
@@ -275,9 +313,24 @@
                                     @endforeach
                                 </select>
                                </div>
+                            </div>
+                            <div class="row" ng-show="showRecurrFilter">
                                 <div class="twelve columns">
-                                    <select name="recurrPreset" id="irecurrPreset" style="color: black; width: 100%">
+                                    <select name="recurrPreset" id="irecurrPreset" style="color: black; width: 100%" ng-model="recurrPreset">
                                         <option value="1" selected>Monthly</option>
+                                        <option value="2">Quarterly</option>
+                                        <option value="3">Semi-Annual</option>
+                                        <option value="4">Annual</option>
+                                    </select>
+                               </div>
+                            </div>
+                            <div class="row" ng-show="showRecurrFilter">
+                               <div class="four columns">
+                                   
+                               </div>
+                                <div class="twelve columns" ng-show="recurrPreset==1">
+                                    <select name="recurrMonthly" id="recurrMonthly" style="color: black; width: 100%">
+                                        <option value="1" selected>January to April</option>
                                         <option value="2">Quarterly</option>
                                         <option value="3">Semi-Annual</option>
                                         <option value="4">Annual</option>
@@ -294,12 +347,11 @@
                             </div>
                         </div>
                     </div>
-
                 </form>
                 <?php
     if(isset($tripData)){
         echo "<div ng-hide=\"true\">
-    <table id=\"".$data['reportName']."report-".(new \DateTime())->format('Y-m-d H:i:s')."\">
+    <table id=\"".$data['reportName']."report-".(new DateTime())->format('Y-m-d H:i:s')."\">
       <thead>
           <tr>
               <th>
@@ -487,7 +539,7 @@
         <?php
             if(isset($data)){
                 echo "window.onload = function(){
-                  javascript:xport.toCSV('".$data['reportName']."report-".(new \DateTime())->format('Y-m-d H:i:s')."');
+                  javascript:xport.toCSV('".$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s')."');
                 };";   
             }
            ?>
