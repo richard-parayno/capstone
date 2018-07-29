@@ -265,7 +265,6 @@
         else {
         $filterMessage = "Filter returned an empty set.";
         $emptySet = true;
-            dd('dito pumasok 1');
     }
 }
     else{  
@@ -276,7 +275,6 @@
             ->get();
         if($columnTable[0]->emissions!=null){
         $emptySet = false;     
-        //$column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
         $column = "SUM(trips.emissions) as percentage";
         $institutionEmissions = DB::table('trips')
         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')

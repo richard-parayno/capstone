@@ -1,4 +1,14 @@
 <?php
+    $userType = Auth::user()->userTypeID;
+    $schoolSort = false;
+    $rawDB = "";
+    if($userType > 2){
+        $userSchool = Auth::user()->institutionID;
+        $schoolSort = true; 
+        $rawDB.="trips.institutionID=".$userSchool;
+        $add = true;
+    }
+
     $tripYears = DB::table('trips')
         ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear'))
         ->groupBy(DB::raw('1'))
@@ -30,16 +40,16 @@
     if(isset($data)){
         $filterMessage = "";
         if($data['reportName']=="trip"){
-        $rawDB = "";
             if($data['isFiltered']=="true"){
                 if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null || $data['carTypeID']!=null || $data['fuelTypeID']!=null || $data['carBrandID']!=null){
-        $add = false;
-        if($data['institutionID'] != null){
-                $userSchool = $data['institutionID'];
-                $schoolSort = true;
-                $add = true;
-                $filterMessage .= $userSchool;
-                $rawDB.="trips.institutionID=".$userSchool;
+        if(!$schoolSort){
+            if($data['institutionID'] != null){
+                    $userSchool = $data['institutionID'];
+                    $schoolSort = true;
+                    $add = true;
+                    $filterMessage .= $userSchool;
+                    $rawDB.="trips.institutionID=".$userSchool;
+            }
         }
         if($data['carTypeID']!=null){
             if($add){
@@ -143,9 +153,9 @@
                     ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
                     ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-                    ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', 'trips.emissions')
+                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', DB::raw('round(trips.emissions,4)'))
                     ->whereRaw($rawDB)
                     ->orderByRaw('1 ASC, 3 ASC')
                     ->get();
@@ -154,9 +164,9 @@
                     ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
                     ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-                    ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select(DB::raw('sum(emissions) as totalEmissions'))
+                    ->select(DB::raw('round(sum(emissions), 4) as totalEmissions'))
                     ->whereRaw($rawDB)
                     ->get();
                 }
@@ -166,18 +176,186 @@
                     ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
                     ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-                    ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', 'trips.emissions')
+                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', DB::raw('round(trips.emissions,4)'))
                     ->orderByRaw('1 ASC, 3 ASC')
                     ->get();
                 $tripEmissionTotal = DB::table('trips')
-                    ->select(DB::raw('sum(emissions) as totalEmissions'))
+                    ->select(DB::raw('round(sum(emissions),4) as totalEmissions'))
                     ->get();
             }
         }
+        elseif($data['reportName']=="vehicleUsage"){
+            if($data['isFiltered']=="true"){
+                if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null || $data['carTypeID']!=null || $data['fuelTypeID']!=null || $data['carBrandID']!=null){
+                    if(!$schoolSort){
+                        if($data['institutionID'] != null){
+                                $userSchool = $data['institutionID'];
+                                $schoolSort = true;
+                                $add = true;
+                                $filterMessage .= $userSchool;
+                                $rawDB.="trips.institutionID=".$userSchool;
+                        }
+                    }
+                    if($data['carTypeID']!=null){
+                        if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " by " . $data['carTypeID'];
+                            }
+                            $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
+                            $add = true;
+                    }
+                    if($data['fuelTypeID']!=null){
+                        if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " by " . $data['fuelTypeID'];
+                            }
+                            $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
+                            $add = true;
+                    }
+                    if($data['carBrandID']!=null){
+                        if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " by " . $data['carBrandID'];
+                            }
+                            $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
+                            $add = true;
+                    }
+                    if($data['datePreset']==0){   
+                        if($data['fromDate'] != null && $data['toDate'] != null){
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
+                            $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+                        }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
+                            $filterMessage .= "before ".$data['toDate'];
+                        }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated  ";
+                            }
+                            $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+                            $filterMessage .= "after ".$data['fromDate'];
+                        }
+                    }else{
+                        switch($data['datePreset']){
+                            case "1": {
+                                    if($add){
+                                    $rawDB .= " AND ";
+                                    $filterMessage .= " dated ";
+                                }
+                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
+                                $filterMessage .= "from 2 weeks ago";
+                                break;
+                            }
+                            case "2": {
+                                if($add){
+                                    $rawDB .= " AND ";
+                                    $filterMessage .= " dated ";
+                                }
+                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
+                                $filterMessage .= "from 1 month ago";
+                                break;
+                            } 
+                            case "3": {
+                                if($add){
+                                    $rawDB .= " AND ";
+                                    $filterMessage .= " dated ";
+                                }
+                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
+                                $filterMessage .= "from 3 month ago";
+                                break;
+                            }
+                            case "4": {
+                                if($add){
+                                    $rawDB .= " AND ";
+                                    $filterMessage .= " dated ";
+                                }
+                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
+                                $filterMessage .= "from 6 month ago";
+                                break;
+                            }
+                            case "5": {
+                                if($add){
+                                    $rawDB .= " AND ";
+                                    $filterMessage .= " dated ";
+                                }
+                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
+                                $filterMessage .= "from 1 year ago";
+                                break;
+                            }
+                            default: $rawDB .= "";
+                        }
+                    }
+                }
+                 $vehicleData=DB::table('vehicles_mv')
+                    ->join('trips', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select('trips.plateNumber', 'institutions.institutionName','fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', DB::raw('COUNT(trips.tripID) as tripCount, SUM(trips.kilometerReading) as totalKM, round(SUM(trips.emissions), 4) as totalEmissions'))
+                    ->whereRaw($rawDB)
+                    ->groupBy('vehicles_mv.plateNumber')
+                    ->orderByRaw('9 DESC')
+                    ->get();
+                
+                $vehicleDataEmissionTotal=DB::table('vehicles_mv')
+                    ->join('trips', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select(DB::raw('round(sum(trips.emissions), 4)'))
+                    ->whereRaw($rawDB)
+                    ->get();
+                
+                $vehicleDataKMTotal=DB::table('vehicles_mv')
+                    ->join('trips', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select(DB::raw('sum(trips.kilometerReading)'))
+                    ->whereRaw($rawDB)
+                    ->get();
+                
+            }else{
+                $vehicleData=DB::table('vehicles_mv')
+                    ->join('trips', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select('trips.plateNumber', 'institutions.institutionName','fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', DB::raw('COUNT(trips.tripID) as tripCount, SUM(trips.kilometerReading) as totalKM, SUM(trips.emissions) as totalEmissions'))
+                    ->groupBy('vehicles_mv.plateNumber')
+                    ->orderByRaw('9 DESC')
+                    ->get();
+                
+                $vehicleDataEmissionTotal=DB::table('trips')
+                    ->select(DB::raw('round(sum(trips.emissions), 4) as totalEmissions'))
+                    ->get();
+                
+                $vehicleDataKMTotal=DB::table('trips')
+                    ->select(DB::raw('sum(trips.kilometerReading) as totalKM'))
+                    ->get();
+                
+                
+            }
         }
-
+    }
     $institutions = DB::table('institutions')->get();
     $departments = DB::table('deptsperinstitution')->get();   
     $fuelTypes = DB::table('fueltype_ref')->get();
@@ -204,12 +382,53 @@
         #box-form input {
             color: white;
         }
+        
+        /* Tooltip container */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            bottom: 100%;
+            left: 50%; 
+            margin-left: -60px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
+
+            /* Position the tooltip text - see examples below! */
+            position: absolute;
+            z-index: 1;
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: " ";
+            position: absolute;
+            top: 100%; /* At the bottom of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: black transparent transparent transparent;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
     </style>
     @endsection @section('content')
     <div ng-app="myapp">
         <div ng-controller="MyController">
                 <h5>&nbsp; Dashboard > Reports</h5>
-                <form method="post" action="{{ route('reports-process') }}"> {{ csrf_field() }}
+                <form method="post" action="{{ route('reports-process') }}" ng-init="showSchoolFilter = <?php echo $schoolSort; ?>"> {{ csrf_field() }}
                     <input type="hidden" name="isFiltered" value="<?php echo " {{showFilter}} "?>">
                     <input type="hidden" name="isRecurrFiltered" value="<?php echo " {{showRecurrFilter}} "?>">
                     <input type="hidden" name="reportName" value='<?php echo "{{reportName}}"?>'>
@@ -223,7 +442,7 @@
                                 <div class="seven columns">
                                     <div class="row">
                                         <div class="six columns">
-                                            <a class="button" ng-click="toggleFilter();" style="width: 100%">Filters</a>
+                                            <a class="button" ng-click="toggleFilter();" style="width: 100%"><?php echo "{{plusMinus}}"; ?> Filters</a>
                                         </div>
                                         <div class="six columns">
                                             <a class="button" ng-click="togglePreset(); valueNull(); " style="width: 100%; text-align: left;">Date Filter</a>
@@ -232,7 +451,7 @@
                                 </div>
                             </div>
                             <div ng-show="showFilter">
-                                <div class="row">
+                                <div class="row" ng-hide="showSchoolFilter">
                                     <div class="twelve columns">
                                         <select name="institutionID" id="institutionID" style="color: black; width: 100%">
                        <option value="">All Institutions</option>
@@ -289,10 +508,16 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="twelve columns">
+                                <div class="twelve columns tooltip">
+                                   <span class="tooltiptext">What are my emissions?</span>
                                     <input type="submit" class="button-primary" ng-click='addReport("trip");' value="Trip Report" style="width: 100%">
                                 </div>
-                                <div class="twelve columns">
+                                <div class="twelve columns tooltip">
+                                    <span class="tooltiptext">How are vehicles utilized?</span>
+                                    <input type="submit" class="button-primary" ng-click="addReport('vehicleUsage')" value="Vehicle Usage Report" style="width: 100%">
+                                </div>
+                                <div class="twelve columns tooltip">
+                                    <span class="tooltiptext">What are my emission expected to be?</span>
                                     <input type="submit" class="button-primary" ng-click="addReport('forecast')" value="Forecast Report" style="width: 100%">
                                 </div>
                             </div>
@@ -351,12 +576,12 @@
                 <?php
     if(isset($tripData)){
         echo "<div ng-hide=\"true\">
-    <table id=\"".$data['reportName']."report-".(new DateTime())->format('Y-m-d H:i:s')."\">
+    <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\">
       <thead>
           <tr>
               <th>
                 <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
-                <td>Prepared On: ".(new \DateTime())->format('Y-m-d H:i:s')."</td>
+                <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
               </th>
           </tr>
       </thead>";
@@ -364,7 +589,7 @@
         echo "<tr>
             <td>Total Trips: </td><td>".count($tripData)."</td>";
         echo "<td>Total Emissions: </td><td>".$tripEmissionTotal[0]->totalEmissions." MT</td></tr><tr></tr>";
-        echo "<tr><td>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><td>Car Type</td><td>Vehicle Model Name</td><td>Active</td><td>Remarks/Itenerary</td><td>Trip Emission</td></trs>";
+        echo "<tr><td>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><td>Car Type</td><td>Vehicle Model Name</td><td>Active</td><td>Remarks/Itenerary</td><td>Trip Emission</td></tr>";
          foreach($tripData as $trip){
              echo "<tr>";
                  echo "<td>".$trip->tripDate."</td>";
@@ -376,13 +601,48 @@
                  echo "<td>".$trip->fuelTypeName."</td>";
                  echo "<td>".$trip->carTypeName."</td>";
                  echo "<td>".$trip->modelName."</td>";
-                 echo "<td>".$trip->active."</td>";
                  echo "<td>".$trip->remarks."</td>";
                  echo "<td>".$trip->emissions."</td>";
              echo "</tr>";
             }
             echo "<tr><td></td>
                 <td>Showing ".count($tripData)." Rows</td>
+            </tr>
+    </table>
+</div>";
+    }
+    elseif(isset($vehicleData)){
+        
+        echo "<div ng-hide=\"true\">
+    <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\">
+      <thead>
+          <tr>
+              <th>
+                <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
+                <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
+              </th>
+          </tr>
+      </thead>";
+        echo "<tr></tr>";
+        echo "<tr>";
+        echo "<td>Total Distance Traveled: </td><td>".$vehicleDataKMTotal[0]->totalKM." KM </td>";
+        echo "<td>Total Emissions: </td><td>".$vehicleDataEmissionTotal[0]->totalEmissions." MT</td></tr><tr></tr>";
+        echo "<tr><td>Institution Name</td><td>Car Type</td><td>Car Brand</td><td>Car Model</td><td>Plate Number</td><td>Fuel Type</td><td>Number of Trips</td><td>Distance Traveled</td><td>Total Emissions</td></tr>";
+         foreach($vehicleData as $car){
+             echo "<tr>";
+                 echo "<td>".$car->institutionName."</td>";
+                 echo "<td>".$car->carTypeName."</td>";
+                 echo "<td>".$car->carBrandName."</td>";
+                 echo "<td>".$car->modelName."</td>";
+                 echo "<td>".$car->plateNumber."</td>";
+                 echo "<td>".$car->fuelTypeName."</td>";
+                 echo "<td>".$car->tripCount."</td>";
+                 echo "<td>".$car->totalKM."</td>";
+                 echo "<td>".$car->totalEmissions."</td>";
+             echo "</tr>";
+            }
+            echo "<tr><td></td>
+                <td>Showing ".count($vehicleData)." Rows</td>
             </tr>
     </table>
 </div>";
@@ -407,9 +667,13 @@
                 $scope.toRange = "";
                 $scope.fromRange = "";
                 $scope.preset = "";
+                $scope.plusMinus = "+";
 
                 $scope.toggleFilter = function() {
                     $scope.showFilter = !$scope.showFilter
+                    if($scope.showFilter){
+                        $scope.plusMinus = "-";
+                    }else $scope.plusMinus = "+";
                 };
 
                 $scope.toggleRecurrFilter = function() {
