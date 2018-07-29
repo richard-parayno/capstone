@@ -38,7 +38,11 @@ Route::get('/department/{department}', 'DepartmentController@show');
 /** Vehicle Management APIs */
 Route::get('/vehicle', 'VehicleController@index');
 Route::get('/vehicle/active', 'VehicleController@showActive');
+Route::get('/vehicle/cartypes', 'VehicleController@returnCarTypes');
+Route::get('/vehicle/fueltypes', 'VehicleController@returnFuelTypes');
+Route::get('/vehicle/carbrands', 'VehicleController@returnCarBrands');
 Route::get('/vehicle/{vehicle}', 'VehicleController@show');
+Route::post('/vehicle/update/{vehicle}', 'VehicleController@update');
 
 /** Upload Excel File APIs */
 Route::get('/trip', 'UploadedTripController@index');

@@ -8,6 +8,7 @@ export default class VehicleMain extends Component {
         super();
         this.state = {
             vehicle: [],
+            
         };
     }
 
@@ -23,6 +24,7 @@ export default class VehicleMain extends Component {
         this.getVehicles();
     }
 
+    
     render() {
         return (
             <div>

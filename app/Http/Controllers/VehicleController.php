@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\VehiclesMv;
+use App\Models\CartypeRef;
+use App\Models\CarbrandRef;
+use App\Models\FueltypeRef;
 use Validator;
 use DB;
 
@@ -136,9 +139,9 @@ class VehicleController extends Controller
         } else {
           $x['institutionName'] = "N/A";
         }
-        if ($x->active = 1) {
+        if ($x->active == 1) {
           $x['status'] = 'Active';
-        } else {
+        } else if ($x->active == 0) {
           $x['status'] = 'Inactive';
         }
       }
@@ -172,9 +175,9 @@ class VehicleController extends Controller
       } else {
         $vehicle['institutionName'] = "N/A";
       }
-      if ($vehicle->active = 1) {
+      if ($vehicle->active == 1) {
         $vehicle['status'] = 'Active';
-      } else {
+      } else if ($vehicle->active == 0) {
         $vehicle['status'] = 'Inactive';
       }
 
@@ -212,9 +215,9 @@ class VehicleController extends Controller
       } else {
         $x['institutionName'] = "N/A";
       }
-      if ($x->active = 1) {
+      if ($x->active == 1) {
         $x['status'] = 'Active';
-      } else {
+      } else if ($x->active == 0) {
         $x['status'] = 'Inactive';
       }
     }
@@ -222,12 +225,62 @@ class VehicleController extends Controller
     return response()->json($vehicle);
   }
 
+  public function returnCarTypes() {
+    $cartypes = CartypeRef::all();
+    $cartypes->toArray();
+
+    return response()->json($cartypes);
+  }
+
+  public function returnFuelTypes() {
+    $fueltypes = FueltypeRef::all();
+    $fueltypes->toArray();
+
+    return response()->json($fueltypes);
+  }
+
+  public function returnCarBrands() {
+    $carbrands = CarbrandRef::all();
+    $carbrands->toArray();
+
+    return response()->json($carbrands);
+  }
+
   public function store(Request $request) {
 
   }
 
   public function update(Request $request) {
+    $data = $request->all();
+    $originalPlateNumber = $data['originalPlateNumber'];
+    $vehicle = VehiclesMv::find($originalPlateNumber);
 
+    if (isset($data['vehicleCampus']))
+     $vehicle->institutionID = $data['vehicleCampus'];
+    if (isset($data['vehicleType']))    
+      $vehicle->carTypeID = $data['vehicleType'];
+    if (isset($data['vehicleBrand']))
+      $vehicle->carBrandID = $data['vehicleBrand'];
+    if (isset($data['vehicleFuel']))
+      $vehicle->fuelTypeID = $data['vehicleFuel'];
+    if (isset($data['vehicleModel']))
+      $vehicle->modelName = $data['vehicleModel'];
+    if (isset($data['vehiclePlate']))
+      $vehicle->plateNumber = $data['vehiclePlate'];
+    if (isset($data['vehicleChoice'])) {
+      if ($vehicle->active == 1) {
+        $vehicle->active = 0;
+        
+      }
+      else if ($vehicle->active == 0) {
+        $vehicle->active = 1;
+        
+      }
+    }
+
+    $vehicle->save();
+
+    return response()->json($vehicle);
   }
 
   public function delete(User $user) {

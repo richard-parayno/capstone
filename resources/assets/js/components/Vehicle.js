@@ -1,9 +1,49 @@
 import React, { Component } from 'react';
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
+import Modal from 'react-responsive-modal';
+import VehicleModal from './VehicleModal';
 
 
 export default class Vehicle extends Component {
+    constructor() {
+        super();
+        this.state = {
+            open: false,
+            update: false,
+            decommission: false,
+            rowValue: []
+
+        }
+        this.onOpenModal = this.onOpenModal.bind(this);
+        this.onCloseModal = this.onCloseModal.bind(this);
+    }
+
+    onOpenModal(row, param) {
+        if (param === "a") {
+            this.setState({ 
+                open: true,
+                rowValue: row,
+                update: true,
+                decommission: false
+            });
+        }
+        if (param === "b") {
+            this.setState({ 
+                open: true,
+                rowValue: row,
+                update: false,
+                decommission: true
+            });
+        }
+        
+    };
+    
+    onCloseModal() {
+        this.setState({
+           open: false 
+        });
+    };
 
     render() {
         const vehicle = this.props.vehicle;
@@ -55,8 +95,8 @@ export default class Vehicle extends Component {
             accessor: 'plateNumber',
             Cell: row => (
                 <div style={{textAlign: "center"}}>
-                    <a href={"vehicle-editinfo?vehicle=" + row.value}>Update Vehicle Info</a> <br/>
-                    <a href={"vehicle-decommission?user=" + row.value}>Decommission Vehicle</a>
+                    <a onClick={() => this.onOpenModal(row.value, "a")} href="#update">Update Vehicle Info</a> <br/>
+                    <a onClick={() => this.onOpenModal(row.value, "b")} href="#decommission">Update Vehicle Status</a>
                 </div>
             ),
             filterable: false
@@ -65,6 +105,7 @@ export default class Vehicle extends Component {
         
     
         return (
+            <div>
             <ReactTable
                 filterable
                 defaultFilterMethod={(filter, row) =>
@@ -73,6 +114,12 @@ export default class Vehicle extends Component {
                 columns={columns}
                 className="-striped -highlight"
                 />
+           
+                <Modal open={this.state.open} onClose={this.onCloseModal} center>
+                    <VehicleModal plateNumber={this.state.rowValue} decom={this.state.decommission} update={this.state.update} open={this.state.open} />
+                </Modal>
+            </div>
+
         );
     }
 }
