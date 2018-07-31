@@ -1,9 +1,33 @@
 import React, { Component } from 'react';
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
-
+import Modal from 'react-responsive-modal';
+import DepartmentModal from './DepartmentModal';
 
 export default class Department extends Component {
+    constructor() {
+        super();
+        this.state = {
+            open: false,
+            rowValue: []
+        }
+        this.onOpenModal = this.onOpenModal.bind(this);
+        this.onCloseModal = this.onCloseModal.bind(this);
+    }
+
+    onOpenModal(row) {   
+        this.setState({ 
+            open: true,
+            rowValue: row,
+        });
+    };
+    
+    onCloseModal() {
+        this.setState({
+           open: false 
+        });
+    };
+
 
     render() {
         const department = this.props.department;
@@ -34,7 +58,7 @@ export default class Department extends Component {
             accessor: 'deptID',
             Cell: row => (
                 <div style={{textAlign: "center"}}>
-                    <a href={"department-editinfo?department=" + row.value}>Update Department Info</a>
+                    <a onClick={() => this.onOpenModal(row.value)} href="#update">Update Department Info</a>
                 </div>
             ),
             filterable: false
@@ -43,14 +67,20 @@ export default class Department extends Component {
         
     
         return (
-            <ReactTable
-                filterable
-                defaultFilterMethod={(filter, row) =>
-                    String(row[filter.id]) === filter.value}
-                data={department}
-                columns={columns}
-                className="-striped -highlight"
-                />
+            <div>
+                <ReactTable
+                    filterable
+                    defaultFilterMethod={(filter, row) =>
+                        String(row[filter.id]) === filter.value}
+                    data={department}
+                    columns={columns}
+                    className="-striped -highlight"
+                    />
+
+                <Modal open={this.state.open} onClose={this.onCloseModal} center>
+                    <DepartmentModal originalDept={this.state.rowValue} open={this.state.open} />
+                </Modal>
+            </div>
         );
     }
 }

@@ -33,6 +33,8 @@ Route::post('/users/{user}', 'UserController@store');
 /** Department Management APIs */
 Route::get('/department', 'DepartmentController@index');
 Route::get('/department/{department}', 'DepartmentController@show');
+Route::post('/department/update/{department}', 'DepartmentController@update');
+
 
 
 /** Vehicle Management APIs */

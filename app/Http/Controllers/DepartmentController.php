@@ -131,7 +131,21 @@ class DepartmentController extends Controller
   }
 
   public function update(Request $request) {
+    $data = $request->all();
+    $originalDept = $data['originalDept'];
 
+    $dept = Deptsperinstitution::find($originalDept);
+
+    if (isset($data['institution']))
+      $dept->institutionID = $data['institution'];
+    if (isset($data['deptName']))    
+      $dept->deptName = $data['deptName'];
+    if (isset($data['motherDept']))
+      $dept->motherDeptID = $data['motherDept'];
+    
+    $dept->save();
+
+    return response()->json($dept);
   }
 
   public function delete(Deptsperinstitution $department) {
