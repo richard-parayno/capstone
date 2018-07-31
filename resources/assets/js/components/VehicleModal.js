@@ -58,10 +58,13 @@ export default class Vehicle extends Component {
         axios.post('api/vehicle/update/' + this.props.plateNumber, data)
             .then((response) => {
                 let updated = response.data;
-                toast.success("🎉 Vehicle Info Updated!", {
+                toast.success("🎉 Vehicle Updated!", {
                     position: toast.POSITION.TOP_RIGHT
                 })
                 console.log(updated);
+                setTimeout(function() {
+                    window.location.reload()
+                }, 1500);
             })
             .catch((error) => {
                 // Error
@@ -83,12 +86,6 @@ export default class Vehicle extends Component {
                 console.log(error.config);
             });
         
-    }
-
-    handleDecommission(event) {
-        event.preventDefault();
-        const data = new FormData(event.target);
-        data.append("originalPlateNumber", this.props.plateNumber);
     }
 
     componentDidMount() {
@@ -152,8 +149,9 @@ export default class Vehicle extends Component {
                         <input type="radio" name="vehicleChoice" value="no" />
                         <span className="label-body">No</span>
                         <br/>
-                        <input type="submit" className="button-primary u-pull-right"/>
+                        <input type="submit" className="button-primary u-pull-right" />
                     </form>
+                    <ToastContainer autoClose={1000} />                
                 </div>
             );
         } else if (update) {
@@ -166,6 +164,12 @@ export default class Vehicle extends Component {
                     <p><strong>Car Type:</strong> {vehicles.carTypeName}</p>
                     <p><strong>Campus:</strong> {vehicles.institutionName}</p>
                     <p><strong>Fuel Type:</strong> {vehicles.fuelTypeName}</p>
+                    {vehicles.active === 1 && 
+                        <p><strong>Status: {vehicles.status}</strong></p>
+                    } 
+                    {vehicles.active === 0 &&
+                        <p><strong>Status: {vehicles.status}</strong></p>
+                    }
                     <br/>
     
                     <form onSubmit={this.handleSubmit}>
@@ -201,9 +205,9 @@ export default class Vehicle extends Component {
                             <label htmlFor="vehiclePlate">Update Plate Number</label>
                             <input className="u-full-width" type="text" name="vehiclePlate" id="vehiclePlate" placeholder={this.props.plateNumber} maxLength="6"/>
                         </div>
-                        <input type="submit" className="button-primary u-pull-right"/>
+                        <input type="submit" className="button-primary u-pull-right" />
                     </form>
-                    <ToastContainer />                
+                    <ToastContainer autoClose={1000} />                
                 </div>
             );
         }
