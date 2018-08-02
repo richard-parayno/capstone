@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/normalize.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/skeleton.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/style-dash.css') }}">
-  <link rel="shortcut icon" href="{{ URL::asset('/images/favicon.ico') }}">
+  <link rel="shortcut icon" href="{{ URL::asset('favicon.ico') }}">
   <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css">
 
   <script>
