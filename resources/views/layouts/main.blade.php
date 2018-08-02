@@ -127,6 +127,7 @@ use Illuminate\Support\Facades\Route;
   window.currentUserID = "<?php echo Auth::user()->id ?>"
 </script>
 <script>
+  window.logOut = "{{ route('logout') }}";
   window.dashboard = "{{ route('dashboard') }}";
   window.reports = "{{ route('reports') }}";
   window.tripData = "{{ route('upload-view') }}";

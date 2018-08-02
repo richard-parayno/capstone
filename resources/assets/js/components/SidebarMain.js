@@ -190,7 +190,10 @@ export default class SidebarMain extends Component {
             <Menu styles={styles} pageWrapId={ "page-wrap" } outerContainerId={ "outer-container" }>
             <div className="twelve columns">
                 <strong>Welcome, {this.state.currentUser.accountName}!</strong> <br/>
-                <p style={{textTransform:"none"}}>{this.state.currentUser.userTypeName}</p> <br/>
+                <p style={{textTransform:"none"}}>{this.state.currentUser.userTypeName}</p> 
+                <a href={window.logOut}>Log Out</a>
+                <br/>
+                <br/>
 
             </div>
             
