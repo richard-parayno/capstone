@@ -26,17 +26,6 @@ img {
 
 }
 
-#sidebar {
-  background-color: #0b5023;
-  width: 250px;
-  height: auto !important;
-  min-height: 100%;
-  position: fixed;
-  overflow-y: scroll;
-  color: white;
-  top: 0;
-  bottom: 0;
-}
 
 #sidebar::-webkit-scrollbar {
   width: 0px;  /* remove scrollbar space */
@@ -45,33 +34,23 @@ img {
 
 #sidebar ul {
   list-style: none;
-  text-align: justify;
-  margin: 0px;
 }
 
-#sidebar div {
-  border-top-style: solid;
-  border-width: 2px;
-}
-
-#sidebar ul {
-  padding-left: 20px;
-  padding-right: 20px;
-  
-}
-
-#sidebar div p {
-  text-align: center;
-  padding-top:10px;
-  padding-bottom:10px;
-  border-bottom-style: solid;
-  border-width: 2px;
-}
 
 #sidebar a {
   color: white;
   text-decoration: none;
   list-style: none;
+}
+
+#sidebar p {
+  text-transform: uppercase;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#sidebar li {
+  padding-left: 30px;
 }
 
 #sidebar li:hover {
@@ -80,7 +59,6 @@ img {
 
 
 #main-content {
-  margin-left: 250px;
   color: black;
   background-color: #fff;
 
@@ -95,7 +73,6 @@ img {
 }
 
 #topbar { 
-  margin-left: 250px; 
   height: 84px;
   color: white;
 }
