@@ -1,4 +1,5 @@
 <?php
+    $showChartDiv = false;
     $userType = Auth::user()->userTypeID;
     $schoolSort = false;
     $rawDB = "";
@@ -38,7 +39,9 @@
     }
     */
     if(isset($data)){
+        $showChartDiv = true;
         $filterMessage = "";
+        $add = false;
         if($data['reportName']=="trip"){
             if($data['isFiltered']=="true"){
                 if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null || $data['carTypeID']!=null || $data['fuelTypeID']!=null || $data['carBrandID']!=null){
@@ -81,8 +84,8 @@
                     $rawDB .= " AND ";
                     $filterMessage .= " dated ";
                 }
-                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
-                $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+                $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
+                $filterMessage .= $data['fromDate']. " to ". $data['toDate'];
             }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
                 if($add){
                     $rawDB .= " AND ";
@@ -155,7 +158,7 @@
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', DB::raw('round(trips.emissions,4)'))
+                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', DB::raw('round(trips.emissions,4) as emission'))
                     ->whereRaw($rawDB)
                     ->orderByRaw('1 ASC, 3 ASC')
                     ->get();
@@ -169,6 +172,18 @@
                     ->select(DB::raw('round(sum(emissions), 4) as totalEmissions'))
                     ->whereRaw($rawDB)
                     ->get();
+                    
+                $monthlyTrip = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select(DB::raw('EXTRACT(YEAR_MONTH FROM tripDate) as tripDate, count(emissions) as emission'))
+                    ->groupBy(DB::raw('1'))
+                    ->whereRaw($rawDB)
+                    ->get();
                 }
             }else{
                 $tripData=DB::table('trips')
@@ -178,11 +193,21 @@
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', DB::raw('round(trips.emissions,4)'))
+                    ->select('trips.tripDate', 'trips.tripTime','institutions.institutionName', 'deptsperinstitution.deptName', 'trips.plateNumber', 'trips.kilometerReading', 'trips.remarks', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', 'vehicles_mv.active', DB::raw('round(trips.emissions,4) as emission'))
                     ->orderByRaw('1 ASC, 3 ASC')
                     ->get();
                 $tripEmissionTotal = DB::table('trips')
                     ->select(DB::raw('round(sum(emissions),4) as totalEmissions'))
+                    ->get();
+                $monthlyTrip = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select(DB::raw('EXTRACT(YEAR_MONTH FROM tripDate) as tripDate, count(emissions) as emission'))
+                    ->groupBy(DB::raw('1'))
                     ->get();
             }
         }
@@ -228,7 +253,7 @@
                                 $rawDB .= " AND ";
                                 $filterMessage .= " dated ";
                             }
-                            $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
+                            $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
                             $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
                         }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
                             if($add){
@@ -425,7 +450,129 @@
         }
     </style>
     @endsection @section('content')
+    <script type="text/javascript" src="jspdf.debug.js"></script>
     <div ng-app="myapp">
+       <?php
+            if($showChartDiv){
+                echo '<div class="row">
+                <div class="eight columns">
+                        <div id="chartdiv2" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div></div>
+                <div class="four columns">
+                        <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div></div>
+                    </div>
+                    <div class="row">';
+                if(isset($tripData)){
+                   //table for excel print 
+                    {
+                    echo "<div ng-hide=\"true\">
+                    <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\" class='display'>
+                      <thead>
+                          <tr>
+                              <th>
+                                <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
+                                <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
+                              </th>
+                          </tr>
+                      </thead>";
+                        echo "<tr></tr>";
+                        echo "<tr>
+                            <td>Total Trips: </td><td>".count($tripData)."</td>";
+                        echo "<td>Total Emissions: </td><td>".$tripEmissionTotal[0]->totalEmissions." MT</td></tr><tr></tr>";
+                        echo "<tr><td>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><td>Car Type</td><td>Vehicle Model Name</td><td>Remarks/Itenerary</td><td>Trip Emission</td></tr>";
+                         foreach($tripData as $trip){
+                             echo "<tr>";
+                                 echo "<td>".$trip->tripDate."</td>";
+                                 echo "<td>".$trip->tripTime."</td>";
+                                 echo "<td>".$trip->institutionName."</td>";
+                                 echo "<td>".$trip->deptName."</td>";
+                                 echo "<td>".$trip->plateNumber."</td>";
+                                 echo "<td>".$trip->kilometerReading."</td>";
+                                 echo "<td>".$trip->fuelTypeName."</td>";
+                                 echo "<td>".$trip->carTypeName."</td>";
+                                 echo "<td>".$trip->modelName."</td>";
+                                 echo "<td>".$trip->remarks."</td>";
+                                 echo "<td>".$trip->emission."</td>";
+                             echo "</tr>";
+                            }
+                            echo "<tr><td></td>
+                                <td>Showing ".count($tripData)." Rows</td>
+                            </tr>
+                    </table>
+                </div>";
+                }
+                  //table for html print 
+                { 
+                echo "<div class=\"row\" ng-hide=\"false\"><div class=\"ten columns offset-by-one\">
+                    <table id=\"table_id\" class='display'>
+                      <thead>
+                          <tr>
+                            <th>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><th>Car Type</td><td>Remarks/Itenerary</td><td>Trip Emission</td>
+                          </tr>
+                      </thead>
+                      </tbody>";
+                         foreach($tripData as $trip){
+                             echo "<tr>";
+                                 echo "<td>".$trip->tripDate."</td>";
+                                 echo "<td>".$trip->tripTime."</td>";
+                                 echo "<td>".$trip->institutionName."</td>";
+                                 echo "<td>".$trip->deptName."</td>";
+                                 echo "<td>".$trip->plateNumber."</td>";
+                                 echo "<td>".$trip->kilometerReading."</td>";
+                                 echo "<td>".$trip->fuelTypeName."</td>";
+                                 echo "<td>".$trip->carTypeName."</td>";
+                                 //echo "<td>".$trip->modelName."</td>";
+                                 echo "<td>".$trip->remarks."</td>";
+                                 echo "<td>".$trip->emission."</td>";
+                             echo "</tr>";
+                            }
+                            echo "</tbody>
+                    </table>
+                </div></div>";
+                }
+                }
+                elseif(isset($vehicleData)){
+                    //table for excel print
+                    {
+                     echo "<div class=\"row\"><div class=\"eleven columns offset-by-one\"><div ng-hide=\"true\" id=\'report\'>
+                <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\" class='display'>
+                  <thead>
+                      <tr>
+                          <th>
+                            <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
+                            <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
+                          </th>
+                      </tr>
+                  </thead>";
+                    echo "<tr></tr>";
+                    echo "<tr>";
+                    echo "<td>Total Distance Traveled: </td><td>".$vehicleDataKMTotal[0]->totalKM." KM </td>";
+                    echo "<td>Total Emissions: </td><td>".$vehicleDataEmissionTotal[0]->totalEmissions." MT</td></tr><tr></tr>";
+                    echo "<tr><td>Institution Name</td><td>Car Type</td><td>Car Brand</td><td>Car Model</td><td>Plate Number</td><td>Fuel Type</td><td>Number of Trips</td><td>Distance Traveled</td><td>Total Emissions</td></tr>";
+                     foreach($vehicleData as $car){
+                         echo "<tr>";
+                             echo "<td>".$car->institutionName."</td>";
+                             echo "<td>".$car->carTypeName."</td>";
+                             echo "<td>".$car->carBrandName."</td>";
+                             echo "<td>".$car->modelName."</td>";
+                             echo "<td>".$car->plateNumber."</td>";
+                             echo "<td>".$car->fuelTypeName."</td>";
+                             echo "<td>".$car->tripCount."</td>";
+                             echo "<td>".$car->totalKM."</td>";
+                             echo "<td>".$car->totalEmissions."</td>";
+                         echo "</tr>";
+                        }
+                        echo "<tr><td></td>
+                            <td>Showing ".count($vehicleData)." Rows</td>
+                        </tr>
+                </table>
+            </div></div></div>";
+                                    echo '</div>
+                                    <button onclick="demoFromHTML();">Print to PDF</button>
+                                    <button onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Print to CSV</button>';}
+                }
+            }
+        
+        ?>
         <div ng-controller="MyController">
                 <h5>&nbsp; Dashboard > Reports</h5>
                 <form method="post" action="{{ route('reports-process') }}" ng-init="showSchoolFilter = <?php echo $schoolSort; ?>"> {{ csrf_field() }}
@@ -573,81 +720,6 @@
                         </div>
                     </div>
                 </form>
-                <?php
-    if(isset($tripData)){
-        echo "<div ng-hide=\"true\">
-    <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\">
-      <thead>
-          <tr>
-              <th>
-                <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
-                <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
-              </th>
-          </tr>
-      </thead>";
-        echo "<tr></tr>";
-        echo "<tr>
-            <td>Total Trips: </td><td>".count($tripData)."</td>";
-        echo "<td>Total Emissions: </td><td>".$tripEmissionTotal[0]->totalEmissions." MT</td></tr><tr></tr>";
-        echo "<tr><td>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><td>Car Type</td><td>Vehicle Model Name</td><td>Active</td><td>Remarks/Itenerary</td><td>Trip Emission</td></tr>";
-         foreach($tripData as $trip){
-             echo "<tr>";
-                 echo "<td>".$trip->tripDate."</td>";
-                 echo "<td>".$trip->tripTime."</td>";
-                 echo "<td>".$trip->institutionName."</td>";
-                 echo "<td>".$trip->deptName."</td>";
-                 echo "<td>".$trip->plateNumber."</td>";
-                 echo "<td>".$trip->kilometerReading."</td>";
-                 echo "<td>".$trip->fuelTypeName."</td>";
-                 echo "<td>".$trip->carTypeName."</td>";
-                 echo "<td>".$trip->modelName."</td>";
-                 echo "<td>".$trip->remarks."</td>";
-                 echo "<td>".$trip->emissions."</td>";
-             echo "</tr>";
-            }
-            echo "<tr><td></td>
-                <td>Showing ".count($tripData)." Rows</td>
-            </tr>
-    </table>
-</div>";
-    }
-    elseif(isset($vehicleData)){
-        
-        echo "<div ng-hide=\"true\">
-    <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\">
-      <thead>
-          <tr>
-              <th>
-                <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
-                <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
-              </th>
-          </tr>
-      </thead>";
-        echo "<tr></tr>";
-        echo "<tr>";
-        echo "<td>Total Distance Traveled: </td><td>".$vehicleDataKMTotal[0]->totalKM." KM </td>";
-        echo "<td>Total Emissions: </td><td>".$vehicleDataEmissionTotal[0]->totalEmissions." MT</td></tr><tr></tr>";
-        echo "<tr><td>Institution Name</td><td>Car Type</td><td>Car Brand</td><td>Car Model</td><td>Plate Number</td><td>Fuel Type</td><td>Number of Trips</td><td>Distance Traveled</td><td>Total Emissions</td></tr>";
-         foreach($vehicleData as $car){
-             echo "<tr>";
-                 echo "<td>".$car->institutionName."</td>";
-                 echo "<td>".$car->carTypeName."</td>";
-                 echo "<td>".$car->carBrandName."</td>";
-                 echo "<td>".$car->modelName."</td>";
-                 echo "<td>".$car->plateNumber."</td>";
-                 echo "<td>".$car->fuelTypeName."</td>";
-                 echo "<td>".$car->tripCount."</td>";
-                 echo "<td>".$car->totalKM."</td>";
-                 echo "<td>".$car->totalEmissions."</td>";
-             echo "</tr>";
-            }
-            echo "<tr><td></td>
-                <td>Showing ".count($vehicleData)." Rows</td>
-            </tr>
-    </table>
-</div>";
-    }
-?>
         </div>
     </div>
 
@@ -698,6 +770,13 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <!--angular js script-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#table_id').DataTable();
+    });
+    </script>
     <script>
         var xport = {
             _fallbacktoCSV: true,
@@ -799,13 +878,240 @@
                     .join("\r\n");
             }
         };
-
-        <?php
-            if(isset($data)){
-                echo "window.onload = function(){
-                  javascript:xport.toCSV('".$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s')."');
-                };";   
-            }
-           ?>
     </script>
+    <script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script type="text/javascript" src="https://www.amcharts.com/lib/3/serial.js"></script>
+    <script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <script>
+    function demoFromHTML() {
+        var pdf = new jsPDF('p', 'pt', 'letter');
+        source = $('#report')[0];
+
+        specialElementHandlers = {
+            // element with id of "bypass" - jQuery style selector
+            '#bypassme': function(element, renderer) {
+                // true = "handled elsewhere, bypass text extraction"
+                return true
+            }
+        };
+        margins = {
+            top: 80,
+            bottom: 60,
+            left: 40,
+            width: 522
+        };
+        // all coords and widths are in jsPDF instance's declared units
+        // 'inches' in this case
+        pdf.fromHTML(
+            source, // HTML string or DOM elem ref.
+            margins.left, // x coord
+            margins.top, { // y coord
+                'width': margins.width, // max width of content on PDF
+                'elementHandlers': specialElementHandlers
+            },
+
+            function(dispose) {
+                // dispose: object with X, Y of the last line add to the PDF 
+                //          this allow the insertion of new lines after html
+                pdf.save('<?php 
+                         if(isset($data)){
+                             echo $data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s');
+                         }
+                         ?>');
+            }, margins);
+    }
+    </script>
+    <?php 
+        if(isset($tripData)){
+            echo '<script type="text/javascript">
+			AmCharts.makeChart("chartdiv",
+				{
+					"type": "serial",
+					"categoryField": "tripDate",
+					"startDuration": 1,
+					"theme": "light",
+					"categoryAxis": {
+						"gridPosition": "start"
+					},
+					"chartCursor": {
+						"enabled": true
+					},
+					"chartScrollbar": {
+						"enabled": true
+					},
+					"trendLines": [],
+					"graphs": [
+						{
+							"fillAlphas": 1,
+							"id": "AmGraph-1",
+							"title": "Trips",
+							"type": "column",
+							"valueField": "emission"
+						}
+					],
+					"guides": [],
+					"valueAxes": [
+						{
+							"id": "ValueAxis-1",
+							"title": "Number of Trips"
+						}
+					],
+					"allLabels": [],
+					"balloon": {},
+					"titles": [
+						{
+							"id": "Title-1",
+							"size": 15,
+							"text": "Trip Count per Month"
+						}
+					],
+					"dataProvider":'.json_encode($monthlyTrip);
+            echo '
+				}
+			);
+		</script>';
+        
+        echo '<script type="text/javascript">
+			AmCharts.makeChart("chartdiv2",
+				{
+					"type": "serial",
+					"categoryField": "tripDate",
+					"dataDateFormat": "YYYY-MM-DD",
+					"startDuration": 1,
+					"categoryAxis": {
+						"gridPosition": "start",
+						"parseDates": true
+					},
+					"chartCursor": {
+						"enabled": true
+					},
+					"chartScrollbar": {
+						"enabled": true
+					},
+					"trendLines": [],
+					"graphs": [
+						{
+							"fillAlphas": 1,
+							"id": "AmGraph-1",
+							"title": "Trips",
+							"type": "column",
+							"valueField": "emission"
+						}
+					],
+					"guides": [],
+					"valueAxes": [
+						{
+							"id": "ValueAxis-1",
+							"title": "C02 Emissions in MT"
+						}
+					],
+					"allLabels": [],
+					"balloon": {},
+					"titles": [
+						{
+							"id": "Title-1",
+							"size": 15,
+							"text": "Trip Emissions"
+						}
+					],
+					"dataProvider":'.json_encode($tripData);
+            echo '
+				}
+			);
+		</script>';
+        }
+        elseif(isset($vehicleData)){ 
+            $carTypeEmissions = DB::table('trips')
+                ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+                ->join('carType_ref', 'vehicles_mv.carTypeID', '=', 'carType_ref.carTypeID')
+                ->select('carType_ref.carTypeName', 'carType_ref.carTypeID', DB::raw('round(sum(trips.emissions), 4) as emission'))
+                ->groupBy(DB::raw('1'))
+                ->orderByRaw('2')
+                ->get();
+                    $ctr = 0;
+                    foreach($carTypeEmissions as $carType){
+                        $carTypeEmissions[$ctr]->tripRows = DB::table('trips')->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')->select(DB::raw('vehicles_mv.modelName as carTypeName, round(sum(trips.emissions), 4) as emission'))->whereRaw('vehicles_mv.carTypeID='.($ctr+1))->groupBy(DB::raw('1'))->get();
+                        $ctr++;
+                    }
+            echo '<script>
+                var chartData = '.json_encode($carTypeEmissions).'
+
+var chart = AmCharts.makeChart("chartdiv2", {
+  "type": "serial",
+  "creditsPosition": "top-right",
+  "autoMargins": false,
+  "marginLeft": 30,
+  "marginRight": 8,
+  "marginTop": 10,
+  "marginBottom": 26,
+  "titles": [{
+    "text": "Car Type Data"
+  }],
+  "dataProvider": chartData,
+  "startDuration": 1,
+  "graphs": [{
+    "alphaField": "alpha",
+    "balloonText": "<span style=\'font-size:13px;\'>[[title]] of [[carTypeName]] car type:<b>[[value]] MT CO2</b>",
+    "dashLengthField": "dashLengthColumn",
+    "fillAlphas": 1,
+    "title": "Emissions",
+    "type": "column",
+    "valueField": "emission",
+    "urlField": "url"
+  }],
+  "valueAxes": [
+        {
+            "id": "ValueAxis-1",
+            "title": "C02 Emissions in MT"
+        }
+    ],
+  "categoryField": "carTypeName",
+  "categoryAxis": {
+    "gridPosition": "start",
+    "axisAlpha": 0,
+    "tickLength": 0
+  }
+});
+
+chart.addListener("clickGraphItem", function(event) {
+  if (\'object\' === typeof event.item.dataContext.tripRows) {
+
+    // set the monthly data for the clicked month
+    event.chart.dataProvider = event.item.dataContext.tripRows;
+
+    // update the chart title
+    event.chart.titles[0].text = event.item.dataContext.category + \' Trip Rows\';
+
+    // let\'s add a label to go back to yearly data
+    event.chart.addLabel(
+      35, 20,
+      "< Go back to all car type data",
+      undefined,
+      15,
+      undefined,
+      undefined,
+      undefined,
+      true,
+      \'javascript:resetChart();\');
+
+    // validate the new data and make the chart animate again
+    event.chart.validateData();
+    event.chart.animateAgain();
+  }
+});
+
+// function which resets the chart back to yearly data
+function resetChart() {
+  chart.dataProvider = chartData;
+  chart.titles[0].text = \'All car type data\';
+
+  // remove the "Go back" label
+  chart.allLabels = [];
+
+  chart.validateData();
+  chart.animateAgain();
+}
+                            </script>';
+        }
+    ?>
     @endsection

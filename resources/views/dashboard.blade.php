@@ -36,7 +36,7 @@
                     $rawDB .= " AND ";
                     $filterMessage .= " dated ";
                 }
-                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
+                $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
                 $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
             }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
                 if($add){
@@ -588,7 +588,7 @@ if(isset($data)){
                     $rawDB .= " AND ";
                     $filterMessage .= " dated ";
                 }
-                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "' AND trips.tripDate >= '" . $data['fromDate'] . "'";
+                $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
                 $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
             }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
                 if($add){
