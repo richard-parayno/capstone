@@ -33,88 +33,88 @@ Route::post('/dashboard-process', 'FilterController@filter')->name('dashboard-pr
 Route::get('/export', 'excelExportController@Export');
 
 /* Excel Upload Route */
-Route::get('/dashboard/upload-files', 'ExcelController@show')->name('upload-files')->middleware('auth');
-Route::get('/dashboard/upload-view', 'ExcelController@showUploaded')->name('upload-view')->middleware('auth');
-Route::post('/dashboard/pre-process-files', 'ExcelController@process')->name('pre-process-files')->middleware('auth');
-Route::post('/dashboard/process-file', 'ExcelController@saveToDb')->name('process-file')->middleware('auth');
-Route::get('/dashboard/tree-plant', 'AddController@loadToBatchPlant')->name('tree-plant')->middleware('auth');
-Route::get('/dashboard/tree-view', 'AddController@viewPlanted')->name('tree-view')->middleware('auth');
-Route::post('/dashboard/process-trees', 'InstitutionBatchPlantController@add')->name('process-trees')->middleware('auth');
-Route::get('/dashboard/manual-upload', 'ExcelController@showManual')->name('manual-upload')->middleware('auth');
-Route::post('/dashboard/manual-upload-process', 'ExcelController@showManualProcess')->name('manual-upload-process')->middleware('auth');
+Route::get('/upload-files', 'ExcelController@show')->name('upload-files')->middleware('auth');
+Route::get('/upload-view', 'ExcelController@showUploaded')->name('upload-view')->middleware('auth');
+Route::post('/pre-process-files', 'ExcelController@process')->name('pre-process-files')->middleware('auth');
+Route::post('/process-file', 'ExcelController@saveToDb')->name('process-file')->middleware('auth');
+Route::get('/tree-plant', 'AddController@loadToBatchPlant')->name('tree-plant')->middleware('auth');
+Route::get('/tree-view', 'AddController@viewPlanted')->name('tree-view')->middleware('auth');
+Route::post('/process-trees', 'InstitutionBatchPlantController@add')->name('process-trees')->middleware('auth');
+Route::get('/manual-upload', 'ExcelController@showManual')->name('manual-upload')->middleware('auth');
+Route::post('/manual-upload-process', 'ExcelController@showManualProcess')->name('manual-upload-process')->middleware('auth');
 /* Download Excel Template */
-Route::get('/dashboard/download-template', 'ExcelController@downloadTemplate')->name('download-template')->middleware('auth');
+Route::get('/download-template', 'ExcelController@downloadTemplate')->name('download-template')->middleware('auth');
 
 /* User Account Management Routes */
 /* View Users */
-Route::get('/dashboard/user-view', 'ViewUserController@viewUsers')->name('user-view')->middleware('auth');
+Route::get('/user-view', 'ViewUserController@viewUsers')->name('user-view')->middleware('auth');
 /* Create New User Account */
-Route::get('/dashboard/user-add', 'MyController@usertypes')->name('user-add');
+Route::get('/user-add', 'MyController@usertypes')->name('user-add');
 /* Edit User Account Information */
-Route::get('/dashboard/user-editinfo', 'MyController@users')->name('user-editinfo')->middleware('auth');
-Route::get('/dashboard/user-editinfo-process', 'MyController@editinfo')->name('user-editinfo-process')->middleware('auth');
+Route::get('/user-editinfo', 'MyController@users')->name('user-editinfo')->middleware('auth');
+Route::get('/user-editinfo-process', 'MyController@editinfo')->name('user-editinfo-process')->middleware('auth');
 /* Edit User Account Credentials */
-Route::get('/dashboard/user-editcreds', 'MyController@usercreds')->name('user-editcreds')->middleware('auth');
-Route::get('/dashboard/user-editcreds-process', 'MyController@editcreds')->name('user-editcreds-process')->middleware('auth');
+Route::get('/user-editcreds', 'MyController@usercreds')->name('user-editcreds')->middleware('auth');
+Route::get('/user-editcreds-process', 'MyController@editcreds')->name('user-editcreds-process')->middleware('auth');
 
 /* Campus Information Management Routes */
 /* View Campus */
-Route::get('/dashboard/campus-view', 'ViewUserController@viewCampus')->name('campus-view')->middleware('auth');
+Route::get('/campus-view', 'ViewUserController@viewCampus')->name('campus-view')->middleware('auth');
 /* Add New Campus/Institute */
-Route::get('/dashboard/campus-add', 'AddController@loadToCampus')->name('campus-add')->middleware('auth');
-Route::post('/dashboard/campus-add-process', 'InstitutionController@create')->name('campus-add-process')->middleware('auth');
+Route::get('/campus-add', 'AddController@loadToCampus')->name('campus-add')->middleware('auth');
+Route::post('/campus-add-process', 'InstitutionController@create')->name('campus-add-process')->middleware('auth');
 
 /* Edit Campus/Institute */
-Route::get('/dashboard/campus-editinfo', function() {
+Route::get('/campus-editinfo', function() {
     return view('campus-editinfo');
 })->name('campus-editinfo')->middleware('auth');
-Route::get('/dashboard/campus-editinfo-process', 'InstitutionController@edit')->name('campus-editinfo-process')->middleware('auth');
+Route::get('/campus-editinfo-process', 'InstitutionController@edit')->name('campus-editinfo-process')->middleware('auth');
 
 /* View Departments/Offices */
-Route::get('/dashboard/department-view', 'ViewUserController@viewDepartments')->name('department-view')->middleware('auth');
-Route::get('/dashboard/department-view-search', 'ViewUserController@viewDepartmentsSearch')->name('department-view-search')->middleware('auth');
+Route::get('/department-view', 'ViewUserController@viewDepartments')->name('department-view')->middleware('auth');
+Route::get('/department-view-search', 'ViewUserController@viewDepartmentsSearch')->name('department-view-search')->middleware('auth');
 Route::get('/department-search','ViewUserController@viewDepartmentsProcess')->name('department-search')->middleware('auth');
 
 
 
 
 /* Add New Department/Offices */
-Route::get('/dashboard/department-add', 'AddController@loadToDepartment')->name('department-add')->middleware('auth');
-Route::post('/dashboard/department-add-process', 'DepartmentController@create')->name('department-add-process')->middleware('auth');
+Route::get('/department-add', 'AddController@loadToDepartment')->name('department-add')->middleware('auth');
+Route::post('/department-add-process', 'DepartmentController@create')->name('department-add-process')->middleware('auth');
 /* Edit Department/Offices */
-Route::get('/dashboard/department-editinfo',function() {
+Route::get('/department-editinfo',function() {
     return view('department-editinfo');
 })->name('department-editinfo')->middleware('auth');
-Route::get('/dashboard/department-editinfo-process', 'DepartmentController@edit')->name('department-editinfo-process')->middleware('auth');
+Route::get('/department-editinfo-process', 'DepartmentController@edit')->name('department-editinfo-process')->middleware('auth');
 
 /* View Vehicles */
-Route::get('/dashboard/vehicle-view', 'ViewUserController@viewVehicles')->name('vehicle-view')->middleware('auth');
+Route::get('/vehicle-view', 'ViewUserController@viewVehicles')->name('vehicle-view')->middleware('auth');
 /* Add New Vehicle */
-Route::get('/dashboard/vehicle-add', 'AddController@loadtoVehicle')->name('vehicle-add')->middleware('auth');
-Route::post('/dashboard/vehicle-add-process', 'VehicleController@create')->name('vehicle-add-process')->middleware('auth');
+Route::get('/vehicle-add', 'AddController@loadtoVehicle')->name('vehicle-add')->middleware('auth');
+Route::post('/vehicle-add-process', 'VehicleController@create')->name('vehicle-add-process')->middleware('auth');
 /* Edit Vehicle */
-Route::get('/dashboard/vehicle-editinfo', function() {
+Route::get('/vehicle-editinfo', function() {
     return view('vehicle-editinfo');
 })->name('vehicle-editinfo')->middleware('auth');
-Route::get('/dashboard/vehicle-editinfo-process', 'VehicleController@edit')->name('vehicle-editinfo-process')->middleware('auth');
+Route::get('/vehicle-editinfo-process', 'VehicleController@edit')->name('vehicle-editinfo-process')->middleware('auth');
 /* Decommission Vehicle */
-Route::get('/dashboard/vehicle-decommission', function() {
+Route::get('/vehicle-decommission', function() {
     return view('vehicle-decommission');
 })->name('vehicle-decommission')->middleware('auth');
-Route::get('/dashboard/vehicle-decommission-process', 'VehicleController@decommission')->name('vehicle-decommission-process')->middleware('auth');
+Route::get('/vehicle-decommission-process', 'VehicleController@decommission')->name('vehicle-decommission-process')->middleware('auth');
 
 /* Report Maker */
-Route::get('/dashboard/report-maker', function() {
+Route::get('/report-maker', function() {
     return view('report-maker');
 })->name('report-maker')->middleware('auth');
 
-Route::get('/dashboard/reports', function() {
+Route::get('/reports', function() {
     return view('reports');
 })->name('reports')->middleware('auth');
 
-Route::post('/dashboard/reports-process', 'DashboardController@generate')->name('reports-process')->middleware('auth');
+Route::post('/reports-process', 'DashboardController@generate')->name('reports-process')->middleware('auth');
 
-Route::get('/dashboard/emissionsreport', function() {
+Route::get('/emissionsreport', function() {
     return view('emissionsreport');
 })->name('emissionsreport')->middleware('auth');
 

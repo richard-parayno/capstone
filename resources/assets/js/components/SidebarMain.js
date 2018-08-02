@@ -46,26 +46,106 @@ export default class SidebarMain extends Component {
     
 
     render() {
+        let homeItems = [];
+        let accountItems = [];
+        let campusItems = [];
         
-        let homeItems = [
-            <p key="home"><strong>Home</strong></p>,
-            <li key="dashboard" id="home" className="menu-item" ><a href={window.dashboard} style={{color: 'white'}}>Dashboard</a></li>,
-            <li key="reports" id="about" className="menu-item" href="/about"><a href={window.reports} style={{color: 'white'}}>Reports</a></li>,
-            <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
-            <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
-        ];
+        switch(this.state.currentUser.userTypeID) {
+            
+            case 1: //sysadmin
+                homeItems = [
+                    <p key="home"><strong>Home</strong></p>,
+                    <li key="dashboard" id="home" className="menu-item" ><a href={window.dashboard} style={{color: 'white'}}>Dashboard</a></li>,
+                    <li key="reports" id="about" className="menu-item" href="/about"><a href={window.reports} style={{color: 'white'}}>Reports</a></li>,
+                    <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
+                    <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
+                ];
+        
+                accountItems = [
+                    <p key="account"><strong>Account Management</strong></p>,
+                    <li key="userManage" id="home" className="menu-item" ><a href={window.userManagement} style={{color: 'white'}}>  User Management</a></li>,
+                ];
+        
+                campusItems = [
+                    <p key="campus"><strong>Campus Information Management</strong></p>,
+                    <li key="editCampus" id="home" className="menu-item" ><a href={window.campusManagement} style={{color: 'white'}}>Campus Management</a></li>,
+                    <li key="departmentManage" id="home" className="menu-item" ><a href={window.departmentManagement} style={{color: 'white'}}>Department Management</a></li>,
+                    <li key="vehicleManage" id="home" className="menu-item" ><a href={window.vehicleManagement} style={{color: 'white'}}>Vehicle Management</a></li>,
+                ];
 
-        let accountItems = [
-            <p key="account"><strong>Account Management</strong></p>,
-            <li key="userManage" id="home" className="menu-item" ><a href={window.userManagement} style={{color: 'white'}}>  User Management</a></li>,
-        ];
+                break;
 
-        let campusItems = [
-            <p key="campus"><strong>Campus Information Management</strong></p>,
-            <li key="editCampus" id="home" className="menu-item" ><a href={window.campusManagement} style={{color: 'white'}}>Campus Management</a></li>,
-            <li key="departmentManage" id="home" className="menu-item" ><a href={window.departmentManagement} style={{color: 'white'}}>Department Management</a></li>,
-            <li key="vehicleManage" id="home" className="menu-item" ><a href={window.vehicleManagement} style={{color: 'white'}}>Vehicle Management</a></li>,
-        ];
+            case 2: //life
+                homeItems = [
+                    <p key="home"><strong>Home</strong></p>,
+                    <li key="dashboard" id="home" className="menu-item" ><a href={window.dashboard} style={{color: 'white'}}>Dashboard</a></li>,
+                    <li key="reports" id="about" className="menu-item" href="/about"><a href={window.reports} style={{color: 'white'}}>Reports</a></li>,
+                    <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
+                    <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
+                ];
+        
+                accountItems = [
+                    <p key="account"><strong>Account Management</strong></p>,
+                    <li key="userManage" id="home" className="menu-item" ><a href={window.userManagement} style={{color: 'white'}}>  User Management</a></li>,
+                ];
+        
+                campusItems = [
+                    <p key="campus"><strong>Campus Information Management</strong></p>,
+                    <li key="editCampus" id="home" className="menu-item" ><a href={window.campusManagement} style={{color: 'white'}}>Campus Management</a></li>,
+                    <li key="departmentManage" id="home" className="menu-item" ><a href={window.departmentManagement} style={{color: 'white'}}>Department Management</a></li>,
+                    <li key="vehicleManage" id="home" className="menu-item" ><a href={window.vehicleManagement} style={{color: 'white'}}>Vehicle Management</a></li>,
+                ];
+
+                break;
+
+            case 3: //champion
+                homeItems = [
+                    <p key="home"><strong>Home</strong></p>,
+                    <li key="dashboard" id="home" className="menu-item" ><a href={window.dashboard} style={{color: 'white'}}>Dashboard</a></li>,
+                    <li key="reports" id="about" className="menu-item" href="/about"><a href={window.reports} style={{color: 'white'}}>Reports</a></li>,
+                    <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
+                    <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
+                ];
+        
+                accountItems = [];
+        
+                campusItems = [];
+
+                break;
+
+            case 4: //dispatch
+                homeItems = [
+                    <p key="home"><strong>Home</strong></p>,
+                    <li key="dashboard" id="home" className="menu-item" ><a href={window.dashboard} style={{color: 'white'}}>Dashboard</a></li>,
+                    <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
+                    <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
+                ];
+        
+                accountItems = [];
+        
+                campusItems = [];
+
+                break;
+
+            case 5: //sao
+                homeItems = [
+                    <p key="home"><strong>Home</strong></p>,
+                    <li key="reports" id="about" className="menu-item" href="/about"><a href={window.reports} style={{color: 'white'}}>Reports</a></li>,
+                    <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
+                ];
+        
+                accountItems = [];
+        
+                campusItems = [
+                    <p key="campus"><strong>Campus Information Management</strong></p>,
+                    <li key="editCampus" id="home" className="menu-item" ><a href={window.campusManagement} style={{color: 'white'}}>Campus Management</a></li>,
+                    <li key="vehicleManage" id="home" className="menu-item" ><a href={window.vehicleManagement} style={{color: 'white'}}>Vehicle Management</a></li>,
+                ];
+
+
+                break;
+        }
+
 
         let styles = {
             bmBurgerButton: {

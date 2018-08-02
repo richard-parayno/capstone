@@ -124,7 +124,7 @@ use Illuminate\Support\Facades\Route;
 
 @section('scripts')
 <script>
-  window.currentUserID = "<?php echo Auth::user()->userTypeID ?>"
+  window.currentUserID = "<?php echo Auth::user()->id ?>"
 </script>
 <script>
   window.dashboard = "{{ route('dashboard') }}";

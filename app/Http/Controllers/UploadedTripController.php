@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Trip;
 use App\Models\Monthlyemissionsperschool;
 use App\Models\Deptsperinstitution;
+use App\Models\Institution;
 use DateTime;
 use Debugbar;
 
@@ -128,7 +129,9 @@ class UploadedTripController extends Controller
         for ($x = 0; $x < $y; $x++) {
             $checkerPlate = DB::table('vehicles_mv')->where('plateNumber', $cleanThis[$x]['Plate Number'])->first();
             $checkerDept = DB::table('deptsperinstitution')->where('deptName', $cleanThis[$x]['Requesting Department'])->first();
-            $checkerInstitution = DB::table('institutions')->where('institutionID', $checkerDept->institutionID)->first();
+            
+        
+            $checkerInstitution = Institution::where('institutionID', $checkerDept->institutionID)->firstOrFail();
             if ($checkerPlate == null || $checkerDept == null) {
                 $throw[$holdCount]['Date'] = $cleanThis[$x]['Date'];
                 $throw[$holdCount]['Departure Time'] = $cleanThis[$x]['Departure Time'];
