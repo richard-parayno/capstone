@@ -19,10 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 /** Campus/Institution Management APIs */
 Route::get('/institution', 'InstitutionController@index');
+Route::get('/institution/schooltypes', 'InstitutionController@showSchoolType');
 Route::get('/institution/{institution}', 'InstitutionController@show');
-Route::post('/institution/{institution}', 'InstitutionController@store');
-Route::put('/institution/{institution}', 'InstitutionController@update');
-Route::delete('/institution/{institution}', 'InstitutionController@delete');
+Route::post('/institution/update/{institution}', 'InstitutionController@update');
 
 /** User Management APIs */
 Route::get('/users', 'UserController@index');

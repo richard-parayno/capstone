@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\Models\Institution;
+use App\Models\SchooltypeRef;
 use Illuminate\Support\Facades\Validator;
 
 class InstitutionController extends Controller
@@ -96,21 +97,27 @@ class InstitutionController extends Controller
 
     public function update(Request $request) {
       $data = $request->all();
+      $originalInstitution = $data['originalInstitution'];
+      
+      $institution = Institution::find($originalInstitution);
 
-      $currentInstitution = $data['current-ci'];
-      $institution = $data['ci-name'];
-      $location = $data['ci-location'];
-      $type = $data['ci-type'];
-
-      $instution = Institution::find($currentInstitution);
-
-      $institution->institutionName = $institution;
-      $institution->location = $location;
-      $institution->schoolTypeID = $type;
+      if (isset($data['institutionName']))
+        $institution->institutionName = $data['institutionName'];
+      if (isset($data['location']))
+        $institution->location = $data['location'];
+      if (isset($data['schoolTypeID']))
+        $institution->schoolTypeID = $data['schoolTypeID'];
 
       $institution->save();
 
       return response()->json($institution, 200);
+    }
+
+    public function showSchoolType() {
+      $schoolTypes = SchooltypeRef::all();
+      $schoolTypes->toArray();
+
+      return response()->json($schoolTypes);
     }
 
     public function delete(Institution $institution) {
