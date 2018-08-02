@@ -853,7 +853,6 @@ else{
         /** TODO: Push margin more to the right. Make the box centered to the user. **/
 
         #box-form {
-            background-color: #363635;
             margin-top: 20px;
             padding: 40px;
             border-radius: 10px;
@@ -1527,7 +1526,7 @@ else{
           }]
         });
     </script>
-    
+
     <script type="application/javascript">
     <?php
         echo "var start = " . $start . ';
