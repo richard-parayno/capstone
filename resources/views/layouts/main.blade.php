@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/style-dash.css') }}">
   <link rel="shortcut icon" href="{{ URL::asset('favicon.ico') }}">
   <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css">
+  
 
   <script>
     (function(){
@@ -156,6 +157,7 @@ use Illuminate\Support\Facades\Route;
   });
 </script>
 <script src="{{ URL::to('js/app.js') }}"></script>
+
 
 
 

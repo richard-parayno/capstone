@@ -1277,7 +1277,6 @@ else{
     </div>
     </div>
     */ ?>
-    @endsection @section('scripts')
     <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
     <script src="https://www.amcharts.com/lib/3/serial.js"></script>
     <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
@@ -1528,6 +1527,7 @@ else{
           }]
         });
     </script>
+    
     <script type="application/javascript">
     <?php
         echo "var start = " . $start . ';
@@ -1598,4 +1598,5 @@ else{
     gauge.animationSpeed = 32; // set animation speed (32 is default value)
     gauge.set(start); // set actual value
     </script>
-    @endsection
+
+    @endsection 

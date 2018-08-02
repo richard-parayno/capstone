@@ -740,8 +740,6 @@
         </div>
     </div>
 
-    @endsection @section('scripts')
-    
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js" type="text/javascript"></script>
     <!--angular js script-->
     <script>
@@ -1143,4 +1141,5 @@ function resetChart() {
                             </script>';
         }
     ?>
+
     @endsection
