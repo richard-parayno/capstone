@@ -26,7 +26,7 @@ Route::post('/institution/update/{institution}', 'InstitutionController@update')
 /** User Management APIs */
 Route::get('/users', 'UserController@index');
 Route::get('/users/{user}', 'UserController@show');
-Route::post('/users/{user}', 'UserController@store');
+Route::post('/users/update/{user}', 'UserController@update');
 
 
 /** Department Management APIs */

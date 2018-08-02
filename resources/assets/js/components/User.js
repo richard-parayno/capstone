@@ -1,9 +1,48 @@
 import React, { Component } from 'react';
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
-
+import Modal from 'react-responsive-modal';
+import UserModal from './UserModal';
 
 export default class User extends Component {
+    constructor() {
+        super();
+        this.state = {
+            open: false,
+            userInfo: false,
+            userCreds: false,
+            rowValue: []
+
+        }
+        this.onOpenModal = this.onOpenModal.bind(this);
+        this.onCloseModal = this.onCloseModal.bind(this);
+    }
+
+    onOpenModal(row, param) {
+        if (param === "a") {
+            this.setState({ 
+                open: true,
+                rowValue: row,
+                userInfo: true,
+                userCreds: false
+            });
+        }
+        if (param === "b") {
+            this.setState({ 
+                open: true,
+                rowValue: row,
+                userInfo: false,
+                userCreds: true
+            });
+        }
+        
+    };
+
+    onCloseModal() {
+        this.setState({
+           open: false 
+        });
+    };
 
     render() {
         const users = this.props.users;
@@ -48,8 +87,8 @@ export default class User extends Component {
             accessor: 'id',
             Cell: row => (
                 <div style={{textAlign: "center"}}>
-                    <a href={"user-editinfo?user=" + row.value}>Update User Info</a> <br/>
-                    <a href={"user-editcreds?user=" + row.value}>Update User Credentials</a>
+                    <a onClick={() => this.onOpenModal(row.value, "a")} href="#updateinfo">Update User Info</a> <br/>
+                    <a onClick={() => this.onOpenModal(row.value, "b")} href="#updatecreds">Update User Credentials</a>
                 </div>
             ),
             filterable: false
@@ -58,14 +97,21 @@ export default class User extends Component {
         
     
         return (
-            <ReactTable
-                filterable
-                defaultFilterMethod={(filter, row) =>
-                    String(row[filter.id]) === filter.value}
-                data={users}
-                columns={columns}
-                className="-striped -highlight"
-                />
+            <div>
+                <ReactTable
+                    filterable
+                    defaultFilterMethod={(filter, row) =>
+                        String(row[filter.id]) === filter.value}
+                    data={users}
+                    columns={columns}
+                    className="-striped -highlight"
+                    />
+
+                <Modal open={this.state.open} onClose={this.onCloseModal} center>
+                    <UserModal originalUser={this.state.rowValue} userInfo={this.state.userInfo} userCreds={this.state.userCreds} open={this.state.open} />
+                </Modal>
+            </div>
+            
         );
     }
 }

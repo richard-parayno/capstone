@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-export default class Vehicle extends Component {
+export default class VehicleModal extends Component {
     constructor() {
         super();
         this.state = {
