@@ -9,6 +9,8 @@
   <link rel="stylesheet" type="text/css" href="{{ url('/css/normalize.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url('/css/skeleton.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url('/css/style.css') }}">
+  <link rel="shortcut icon" href="{{ URL::asset('favicon.ico') }}">
+
 </head>
 <body>
   <div class="row">
