@@ -212,7 +212,7 @@
             }
         }
         elseif($data['reportName']=="vehicleUsage"){
-            if($data['isFiltered']=="true"){
+            if($data['isFiltered']=='true'){
                 if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null || $data['carTypeID']!=null || $data['fuelTypeID']!=null || $data['carBrandID']!=null){
                     if(!$schoolSort){
                         if($data['institutionID'] != null){
@@ -341,7 +341,7 @@
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select(DB::raw('round(sum(trips.emissions), 4)'))
+                    ->select(DB::raw('round(sum(trips.emissions), 4) as totalEmissions'))
                     ->whereRaw($rawDB)
                     ->get();
                 
@@ -352,11 +352,13 @@
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select(DB::raw('sum(trips.kilometerReading)'))
+                    ->select(DB::raw('sum(trips.kilometerReading) as totalKM'))
                     ->whereRaw($rawDB)
                     ->get();
                 
-            }else{
+            }
+            else{
+                
                 $vehicleData=DB::table('vehicles_mv')
                     ->join('trips', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
                     ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
@@ -452,13 +454,31 @@
     @endsection @section('content')
     <script type="text/javascript" src="jspdf.debug.js"></script>
     <div ng-app="myapp">
+     <br><div class="row">
+     <div class="six columns">
+      <h5>&nbsp; Dashboard > Reports <?php if(isset($data)){
+    echo "> ";
+    switch($data['reportName']){
+        case "vehicleUsage": {echo "Vehicle Usage Report"; break;}
+        case "trip": {echo "Trip Report"; break;}
+        default: 
+    }
+    echo "</h5></div>";
+    echo '<div class="five columns offset-by-one"><button onclick="demoFromHTML();">Print to PDF</button>
+        <button onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Print to CSV</button></div>';
+} ?>
+      </div>
        <?php
             if($showChartDiv){
                 echo '<div class="row">
                 <div class="eight columns">
                         <div id="chartdiv2" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div></div>
                 <div class="four columns">
-                        <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div></div>
+                        <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;">';
+                if(isset($vehicleData)){
+                    //show top 1 cards here
+                }
+                echo '</div></div>
                     </div>
                     <div class="row">';
                 if(isset($tripData)){
@@ -477,8 +497,8 @@
                         echo "<tr></tr>";
                         echo "<tr>
                             <td>Total Trips: </td><td>".count($tripData)."</td>";
-                        echo "<td>Total Emissions: </td><td>".$tripEmissionTotal[0]->totalEmissions." MT</td></tr><tr></tr>";
-                        echo "<tr><td>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><td>Car Type</td><td>Vehicle Model Name</td><td>Remarks/Itenerary</td><td>Trip Emission</td></tr>";
+                        echo "<td>Total Emissions: </td><td>".$tripEmissionTotal[0]->totalEmissions." MT CO2</td></tr><tr></tr>";
+                        echo "<tr><td>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><td>Car Type</td><td>Vehicle Model Name</td><td>Remarks/Itenerary</td><td>Trip Emission in MT C02</td></tr>";
                          foreach($tripData as $trip){
                              echo "<tr>";
                                  echo "<td>".$trip->tripDate."</td>";
@@ -506,7 +526,7 @@
                     <table id=\"table_id\" class='display'>
                       <thead>
                           <tr>
-                            <th>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><th>Car Type</td><td>Remarks/Itenerary</td><td>Trip Emission</td>
+                            <th>Trip Date</td><td>Trip Time</td><td>Institution</td><td>Department</td><td>Plate Number</td><td>KM Reading</td><td>Fuel Type</td><th>Car Type</td><td>Remarks/Itenerary</td><td>Trip Emission in MT C02</td>
                           </tr>
                       </thead>
                       </tbody>";
@@ -566,15 +586,12 @@
                         </tr>
                 </table>
             </div></div></div>";
-                                    echo '</div>
-                                    <button onclick="demoFromHTML();">Print to PDF</button>
-                                    <button onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Print to CSV</button>';}
+                    }
                 }
             }
-        
+        echo "<br>";
         ?>
         <div ng-controller="MyController">
-                <h5>&nbsp; Dashboard > Reports</h5>
                 <form method="post" action="{{ route('reports-process') }}" ng-init="showSchoolFilter = <?php echo $schoolSort; ?>"> {{ csrf_field() }}
                     <input type="hidden" name="isFiltered" value="<?php echo " {{showFilter}} "?>">
                     <input type="hidden" name="isRecurrFiltered" value="<?php echo " {{showRecurrFilter}} "?>">
@@ -724,6 +741,7 @@
     </div>
 
     @endsection @section('scripts')
+    
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js" type="text/javascript"></script>
     <!--angular js script-->
     <script>
@@ -882,6 +900,8 @@
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/serial.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <script src="amcharts/plugins/export/export.min.js"></script>
+    <link  type="text/css" href="../export.css" rel="stylesheet">
     <script>
     function demoFromHTML() {
         var pdf = new jsPDF('p', 'pt', 'letter');
@@ -958,6 +978,9 @@
 					],
 					"allLabels": [],
 					"balloon": {},
+                    "export": {
+                        "enabled": true
+                      },
 					"titles": [
 						{
 							"id": "Title-1",
@@ -1007,6 +1030,9 @@
 					],
 					"allLabels": [],
 					"balloon": {},
+                    "export": {
+                        "enabled": true
+                      },
 					"titles": [
 						{
 							"id": "Title-1",
@@ -1066,6 +1092,9 @@ var chart = AmCharts.makeChart("chartdiv2", {
         }
     ],
   "categoryField": "carTypeName",
+  "export": {
+    "enabled": true
+  },
   "categoryAxis": {
     "gridPosition": "start",
     "axisAlpha": 0,
