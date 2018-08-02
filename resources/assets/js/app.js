@@ -40,3 +40,6 @@ require('./components/ExcelUploadMain');
 require('./components/ExcelUploadInput');
 require('./components/UploadedTripMain');
 require('./components/UploadedTrip');
+
+// Sidebar
+require('./components/SidebarMain');

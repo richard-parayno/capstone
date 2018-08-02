@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import UploadedTrip from './UploadedTrip';
+import { slide as Menu } from 'react-burger-menu';
+
 
 export default class UploadedTripMain extends Component {
     constructor() {
@@ -25,9 +27,7 @@ export default class UploadedTripMain extends Component {
 
     render() {
         return (
-            <div>
-                <UploadedTrip trip={this.state.trip}/>
-            </div>   
+            <UploadedTrip trip={this.state.trip}/>
         );
     }
 }
