@@ -130,8 +130,7 @@ class UploadedTripController extends Controller
             $checkerPlate = DB::table('vehicles_mv')->where('plateNumber', $cleanThis[$x]['Plate Number'])->first();
             $checkerDept = DB::table('deptsperinstitution')->where('deptName', $cleanThis[$x]['Requesting Department'])->first();
             
-        
-            $checkerInstitution = Institution::where('institutionID', $checkerDept->institutionID)->firstOrFail();
+
             if ($checkerPlate == null || $checkerDept == null) {
                 $throw[$holdCount]['Date'] = $cleanThis[$x]['Date'];
                 $throw[$holdCount]['Departure Time'] = $cleanThis[$x]['Departure Time'];
@@ -140,6 +139,7 @@ class UploadedTripController extends Controller
                 $throw[$holdCount]['Plate Number'] = $cleanThis[$x]['Plate Number'];
                 $throw[$holdCount]['Requesting Department'] = $cleanThis[$x]['Requesting Department'];
             } else {
+                $checkerInstitution = Institution::where('institutionID', $checkerDept->institutionID)->first();
                 if ($checkerPlate == null) {
                     $plateNull = true;
                 } else {

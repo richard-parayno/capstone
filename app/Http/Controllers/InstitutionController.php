@@ -27,7 +27,7 @@ class InstitutionController extends Controller
         ]);
 
         if ($validator->fails()) {
-          return redirect('/dashboard/campus-add')->withErrors($validator)->withInput();
+          return redirect('/campus-view')->withErrors($validator)->withInput();
         }
 
         else if ($validator->passes()) {
@@ -44,7 +44,7 @@ class InstitutionController extends Controller
           $institution->schoolTypeID = $data['schoolTypeID'];
           $institution->save();
 
-          return redirect('/dashboard/campus-add')->with('success', true)->with('message', $data['institutionName'].' added!');
+          return redirect('/campus-add')->with('success', true)->with('message', $data['institutionName'].' added!');
         }
     }
 

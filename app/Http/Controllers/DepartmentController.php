@@ -15,12 +15,12 @@ class DepartmentController extends Controller
 
         $validator = Validator::make($data, [
           'institutionID' => 'required|int|max:100',
-          'deptName' => 'required|string|max:45',
+          'deptName' => 'required|string|max:100',
           'motherDeptID' => 'nullable|int',
         ]);
 
         if ($validator->fails()) {
-          return redirect('/dashboard/department-add')->withErrors($validator)->withInput();
+          return redirect('/department-add')->withErrors($validator)->withInput();
         }
 
         else if ($validator->passes()) {
@@ -30,7 +30,7 @@ class DepartmentController extends Controller
           $department->motherDeptID = $data['department-mother'];
           $department->save();
 
-          return redirect('/dashboard/department-add')->with('success', true)->with('message', $data['deptName'].' added!');
+          return redirect('/department-add')->with('success', true)->with('message', $data['deptName'].' added!');
         }
       } else {
         $data = $request->all();
@@ -41,7 +41,7 @@ class DepartmentController extends Controller
         ]);
 
         if ($validator->fails()) {
-          return redirect('/dashboard/department-add')->withErrors($validator)->withInput();
+          return redirect('/department-add')->withErrors($validator)->withInput();
         }
 
         else if ($validator->passes()) {
@@ -50,7 +50,7 @@ class DepartmentController extends Controller
           $department->deptName = $data['deptName'];
           $department->save();
 
-          return redirect('/dashboard/department-add')->with('success', true)->with('message', $data['deptName'].' successfully added!');
+          return redirect('/department-add')->with('success', true)->with('message', $data['deptName'].' successfully added!');
         }
       }
     }

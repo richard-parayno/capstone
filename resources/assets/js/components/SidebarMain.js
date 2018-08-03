@@ -84,16 +84,11 @@ export default class SidebarMain extends Component {
                     <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
                 ];
         
-                accountItems = [
-                    <p key="account"><strong>Account Management</strong></p>,
-                    <li key="userManage" id="home" className="menu-item" ><a href={window.userManagement} style={{color: 'white'}}>  User Management</a></li>,
-                ];
+                accountItems = [];
         
                 campusItems = [
                     <p key="campus"><strong>Campus Information Management</strong></p>,
                     <li key="editCampus" id="home" className="menu-item" ><a href={window.campusManagement} style={{color: 'white'}}>Campus Management</a></li>,
-                    <li key="departmentManage" id="home" className="menu-item" ><a href={window.departmentManagement} style={{color: 'white'}}>Department Management</a></li>,
-                    <li key="vehicleManage" id="home" className="menu-item" ><a href={window.vehicleManagement} style={{color: 'white'}}>Vehicle Management</a></li>,
                 ];
 
                 break;
@@ -118,12 +113,14 @@ export default class SidebarMain extends Component {
                     <p key="home"><strong>Home</strong></p>,
                     <li key="dashboard" id="home" className="menu-item" ><a href={window.dashboard} style={{color: 'white'}}>Dashboard</a></li>,
                     <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
-                    <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
                 ];
         
                 accountItems = [];
         
-                campusItems = [];
+                campusItems = [
+                    <p key="campus"><strong>Campus Information Management</strong></p>,
+                    <li key="vehicleManage" id="home" className="menu-item" ><a href={window.vehicleManagement} style={{color: 'white'}}>Vehicle Management</a></li>,
+                ];
 
                 break;
 
