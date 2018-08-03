@@ -64,7 +64,7 @@ export default class ExcelUploadMain extends Component {
                 .then(excelFileErrors => {
                     excelFileErrors = excelFileErrors.data
                     //console.log("Errors:")
-                    console.log(excelFileError)
+                    console.log(excelFileErrors)
                     this.setState({ excelFileErrors: excelFileErrors });
 
                     // make another post request to display cleaned excel
