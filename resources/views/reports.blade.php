@@ -9,7 +9,11 @@
         $rawDB.="trips.institutionID=".$userSchool;
         $add = true;
     }
-
+    $institutions = DB::table('institutions')->get();
+    $departments = DB::table('deptsperinstitution')->get();   
+    $fuelTypes = DB::table('fueltype_ref')->get();
+    $carTypes = DB::table('cartype_ref')->get();
+    $carBrands = DB::table('carbrand_ref')->get();
     $tripYears = DB::table('trips')
         ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear'))
         ->groupBy(DB::raw('1'))
@@ -356,6 +360,51 @@
                     ->whereRaw($rawDB)
                     ->get();
                 
+                $column = "round(SUM(trips.emissions),4) as emission";
+                     
+                $fuelContributions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select('fuelType_ref.fuelTypeName', DB::raw($column))
+                    ->whereRaw($rawDB)
+                    ->groupBy('fuelType_ref.fuelTypeName')
+                    ->orderByRaw('2 DESC')
+                    ->limit(1)
+                    ->get();
+
+                //get most car type contributions (emission total)
+                $carContributions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))
+                    ->whereRaw($rawDB)
+                    ->groupBy('vehicles_mv.modelName')
+                    ->orderByRaw('2 DESC')
+                    ->limit(1)
+                    ->get();
+
+                //get most car brand type contributions (emission total)
+                $carBrandContributions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select('carbrand_ref.carBrandName', DB::raw($column))
+                    ->whereRaw($rawDB)
+                    ->groupBy('carbrand_ref.carbrandName')
+                    ->orderByRaw('2 DESC')
+                    ->limit(1)
+                    ->get();
             }
             else{
                 
@@ -366,7 +415,7 @@
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select('trips.plateNumber', 'institutions.institutionName','fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', DB::raw('COUNT(trips.tripID) as tripCount, SUM(trips.kilometerReading) as totalKM, SUM(trips.emissions) as totalEmissions'))
+                    ->select('trips.plateNumber', 'institutions.institutionName','fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'carbrand_ref.carBrandName', 'vehicles_mv.modelName', DB::raw('COUNT(trips.tripID) as tripCount, SUM(trips.kilometerReading) as totalKM, round(SUM(trips.emissions),4) as totalEmissions'))
                     ->groupBy('vehicles_mv.plateNumber')
                     ->orderByRaw('9 DESC')
                     ->get();
@@ -379,16 +428,141 @@
                     ->select(DB::raw('sum(trips.kilometerReading) as totalKM'))
                     ->get();
                 
-                
+                $column = "round(SUM(trips.emissions),4) as emission";
+                     
+                $fuelContributions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select('fuelType_ref.fuelTypeName', DB::raw($column))
+                    ->groupBy('fuelType_ref.fuelTypeName')
+                    ->orderByRaw('2 DESC')
+                    ->limit(1)
+                    ->get();
+
+                //get most car type contributions (emission total)
+                $carContributions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))
+                    ->groupBy('vehicles_mv.modelName')
+                    ->orderByRaw('2 DESC')
+                    ->limit(1)
+                    ->get();
+
+                //get most car brand type contributions (emission total)
+                $carBrandContributions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select('carbrand_ref.carBrandName', DB::raw($column))
+                    ->groupBy('carbrand_ref.carbrandName')
+                    ->orderByRaw('2 DESC')
+                    ->limit(1)
+                    ->get();
+            }
+        }
+        elseif($data['reportName']=="forecast"){
+             $forecastData = DB::table('trips')
+                 ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear, round(sum(trips.emissions), 4) as emission')) 
+                 ->groupBy(DB::raw('1'))
+                 ->orderBy(DB::raw('1'), 'asc')
+                 ->get();
+        
+             $r = 0;
+             $summationOfNumerator = 0;
+             $xAve = 0;
+             $yAve = 0;
+             for($x = 1; $x <= count($forecastData); $x++) {
+                 $xAve += $x;
+             }
+             for($x = 0; $x < count($forecastData); $x++) {
+                 $yAve += $forecastData[$x]->emission;
+             }
+             $xAve = $xAve/count($forecastData);
+             $yAve = $yAve/count($forecastData);
+             for($x = 1; $x <= count($forecastData); $x++) {
+                 $summationOfNumerator+=($x - $xAve)*($forecastData[$x - 1]->emission - $yAve);
+             }
+ 
+             //denominator 
+             $denominator = 0;
+             $summationTerm1 = 0;
+             $summationTerm2 = 0;
+             for($x = 1; $x <= count($forecastData); $x++) {
+                 $summationTerm1+=($x - $xAve)*($x - $xAve);
+                 $summationTerm2+=($forecastData[$x - 1]->emission - $yAve)*($forecastData[$x - 1]->emission - $yAve);
+             }
+ 
+             $denominator = sqrt($summationTerm1 * $summationTerm2);
+             $r = $summationOfNumerator/$denominator;
+ 
+             //standard deviation calculation
+             $Sy = sqrt($summationTerm2/(count($forecastData)-1));
+             $Sx = sqrt($summationTerm1/(count($forecastData)-1));
+ 
+             //slope calculation
+             $b = $r * ($Sy/$Sx);
+ 
+             //y-intercept calculation
+             $a;
+             $a = $yAve - ($b * $xAve);
+ 
+             $regressionLine = array($a, $b);
+            $ctr = 0;
+            foreach($forecastData as $point){
+                $forecastData[$ctr]->forecastPoint = round($regressionLine[0]+($regressionLine[1]*($ctr+1)), 4);
+                $ctr++;
+            }
+            $forecastPoint = round($regressionLine[0]+($regressionLine[1]*($ctr+1)), 4);
+            $toPush = json_decode('{"monthYear":"Forecast","emission":'.$forecastPoint.',"forecastPoint":'.$forecastPoint.'}');
+            $forecastData->push($toPush);
+        }
+        elseif($data['reportName']=='treeSeq'){
+            $monthlyTreeSeq = DB::Table('institutionbatchplant')
+                ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
+                ->groupBy(DB::raw('1'))
+                ->orderBy(DB::raw('1'))
+                ->get();
+            
+            $monthlyEmissions = DB::table('trips')
+                 ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear, round(sum(trips.emissions), 4) as emission')) 
+                 ->groupBy(DB::raw('1'))
+                 ->orderBy(DB::raw('1'), 'asc')
+                 ->get();
+            $red = 0;
+            $yellow = 0;
+            $green = 0;
+            for($x = 0; $x < count($monthlyEmissions); $x++){
+                for($y = 0; $y < count($monthlyTreeSeq); $y++){
+                    if($monthlyEmissions[$x]->monthYear==$monthlyTreeSeq[$y]->monthYear){
+                        $monthlyEmissions[$x]->treeSeq = (($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001;
+                        if(((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 < 40){
+                            $red++;
+                        }elseif(((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 >= 40 && ((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 < 80){
+                            $yellow++;
+                        }else $green++;
+                    }
+                }
+            }
+            for($x = 0; $x < count($monthlyEmissions); $x++){
+                if(!isset($monthlyEmissions[$x]->treeSeq)){
+                    $monthlyEmissions[$x]->treeSeq = 0;
+                    $red++;
+                }
             }
         }
     }
-    $institutions = DB::table('institutions')->get();
-    $departments = DB::table('deptsperinstitution')->get();   
-    $fuelTypes = DB::table('fueltype_ref')->get();
-    $carTypes = DB::table('cartype_ref')->get();
-    $carBrands = DB::table('carbrand_ref')->get();
-
 ?>
     @extends('layouts.main') @section('styling')
     <style>
@@ -451,34 +625,71 @@
         }
     </style>
     @endsection @section('content')
-    <script type="text/javascript" src="jspdf.debug.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
     <div ng-app="myapp">
-     <br><div class="row">
-     <div class="six columns">
+     <br>
       <h5>&nbsp; Dashboard > Reports <?php if(isset($data)){
     echo "> ";
     switch($data['reportName']){
         case "vehicleUsage": {echo "Vehicle Usage Report"; break;}
         case "trip": {echo "Trip Report"; break;}
+        case "comparison": {echo "Comparison Report"; break;}
+        case "treeSeq": {echo "Tree Sequestration Report"; break;}
+        case "forecast": {echo "Forecast Report"; break;}
+        case "emission": {echo "Emission Report"; break;}
         default: 
     }
-    echo "</h5></div>";
-    echo '<div class="five columns offset-by-one"><button onclick="demoFromHTML();">Print to PDF</button>
-        <button onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Print to CSV</button></div>';
-} ?>
-      </div>
+    echo '<br><br><button onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export Table to CSV</button>';
+} ?></h5>
        <?php
             if($showChartDiv){
-                echo '<div class="row">
-                <div class="eight columns">
-                        <div id="chartdiv2" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div></div>
-                <div class="four columns">
-                        <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;">';
-                if(isset($vehicleData)){
-                    //show top 1 cards here
+                if(isset($regressionLine)){
+                    $div = "twelve";
                 }
-                echo '</div></div>
-                    </div>
+                else $div = "eight";
+                echo '<div class="row">
+                <div class="'.$div.' columns">
+                        <div id="chartdiv2" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div></div>';
+                if(!isset($regressionLine)){
+                echo '<div class="four columns">
+                        <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;">';
+                }else echo '<div><div>';
+                if(isset($vehicleData)){
+                    echo '<br><table>
+                              <tr>
+                                  <td width="40%">Top Vehicle</td>
+                                  <td width="30%"><strong>'.$carContributions[0]->modelName.'</strong></td>
+                                  <td width="30%">'.$carContributions[0]->emission.' MT C02</td>
+                              </tr>
+                                 <tr>
+                                  <td>Top Fuel Type</td>
+                                  <td><strong>'.$fuelContributions[0]->fuelTypeName.'</strong></td>
+                                  <td>'.$fuelContributions[0]->emission.' MT C02</td>
+                              </tr>
+                                 <tr>
+                                  <td>Top Car Brand</td>
+                                  <td><strong>'.$carBrandContributions[0]->carBrandName.'</strong></td>
+                                  <td>'.$carBrandContributions[0]->emission.' MT C02</td>
+                              </tr>
+                          </table>';
+                }
+                elseif(isset($monthlyEmissions)){
+                    echo '<br><br><table>
+                              <tr>
+                                  <td width="40%">Red Sequestration Months</td>
+                                  <td width="30%"><strong>'.$red.'</strong></td>
+                              </tr>
+                                 <tr>
+                                  <td>Yellow Sequestration Months</td>
+                                  <td><strong>'.$yellow.'</strong></td>
+                              </tr>
+                                 <tr>
+                                  <td>Green Sequestration Months</td>
+                                  <td><strong>'.$green.'</strong></td>
+                              </tr>
+                          </table>';
+                }
+                echo '</div></div></div>
                     <div class="row">';
                 if(isset($tripData)){
                    //table for excel print 
@@ -520,8 +731,8 @@
                 </div>";
                 }
                   //table for html print 
-                { 
-                echo "<div class=\"row\" ng-hide=\"false\"><div class=\"ten columns offset-by-one\">
+                    { 
+                echo "<div class=\"row\" ng-hide=\"false\"><div class=\"twelve columns\">
                     <table id=\"table_id\" class='display'>
                       <thead>
                           <tr>
@@ -583,8 +794,154 @@
                         echo "<tr><td></td>
                             <td>Showing ".count($vehicleData)." Rows</td>
                         </tr>
+                        <tr></tr>
+                        <tr>
+                              <td width=\"40%\">Top Vehicle</td>
+                              <td width=\"30%\"><strong>".$carContributions[0]->modelName."</strong></td>
+                              <td width=\"30%\">".$carContributions[0]->emission." MT C02</td>
+                              </tr><tr>
+                              <td>Top Fuel Type</td>
+                              <td><strong>".$fuelContributions[0]->fuelTypeName."</strong></td>
+                              <td>".$fuelContributions[0]->emission." MT C02</td>
+                              </tr><tr>
+                              <td>Top Car Brand</td>
+                              <td><strong>".$carBrandContributions[0]->carBrandName."</strong></td>
+                              <td>".$carBrandContributions[0]->emission." MT C02</td>
+                              </tr>
                 </table>
             </div></div></div>";
+                    }
+                    //table for html print
+                    {
+                    echo "<div class=\"row\" ng-hide=\"false\"><div class=\"twelve columns\">
+                    <table id=\"table_id\" class='display'>
+                      <thead>
+                          <tr>
+                            <td>Institution Name</td><td>Car Type</td><td>Car Brand</td><td>Car Model</td><td>Plate Number</td><td>Fuel Type</td><td>Number of Trips</td><td>Distance Traveled</td><td>Total Emissions</td>
+                          </tr>
+                      </thead>
+                      </tbody>";
+                         foreach($vehicleData as $car){
+                         echo "<tr>";
+                             echo "<td>".$car->institutionName."</td>";
+                             echo "<td>".$car->carTypeName."</td>";
+                             echo "<td>".$car->carBrandName."</td>";
+                             echo "<td>".$car->modelName."</td>";
+                             echo "<td>".$car->plateNumber."</td>";
+                             echo "<td>".$car->fuelTypeName."</td>";
+                             echo "<td>".$car->tripCount."</td>";
+                             echo "<td>".$car->totalKM."</td>";
+                             echo "<td>".$car->totalEmissions." MT C02</td>";
+                         echo "</tr>";
+                        }
+                            echo "</tbody>
+                    </table>
+                </div></div>";
+                    }
+                }
+                elseif(isset($forecastData)){
+                    //table for html print
+                    {
+                    echo '<div class="row" ng-hide="false"><div class="twelve columns">
+                    <table id="table_id" class=\'display\'>
+                              <thead>
+                                  <tr>
+                                      <th style="text-align: center">Month-Year</th>
+                                      <th style="text-align: center">Emission</th>
+                                      <th style="text-align: center">Regression Point</th>
+                                  </tr>
+                              </thead>
+                              <tbody>';
+                    foreach($forecastData as $point){
+                        echo '<tr>';
+                        echo '<td>'.$point->monthYear.'</td>
+                            <td style="text-align: right">'.$point->emission.'</td>
+                            <td style="text-align: right">'.$point->forecastPoint.'</td></tr>';
+                    }
+                    echo '</tbody>
+                          </table></div></div></div>';
+                    }
+                    
+                    //for excel print
+                    {
+                        echo "<div class=\"row\"><div class=\"eleven columns offset-by-one\"><div ng-hide=\"true\" id=\'report\'>
+                <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\" class='display'>
+                  <thead>
+                      <tr>
+                          <th>
+                            <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
+                            <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
+                          </th>
+                      </tr>
+                  </thead>";
+                    echo "<tr></tr>";
+                    echo "<tr><td>Month-Year</td><td>Emission</td><td>Forecast Value</td></tr>";
+                     foreach($forecastData as $point){
+                        echo '<tr>';
+                        echo '<td>'.$point->monthYear.'</td>
+                            <td style="text-align: right">'.$point->emission.'</td>
+                            <td style="text-align: right">'.$point->forecastPoint.'</td></tr>';
+                    }
+                        echo "<tr><td></td>
+                            <td>Showing ".count($forecastData)." Rows</td>
+                        </tr>
+                </table>
+            </div></div></div>";
+                    }
+                }
+                elseif(isset($monthlyEmissions)){
+                    //table for excel print
+                    {
+                     echo "<div class=\"row\"><div class=\"eleven columns offset-by-one\"><div ng-hide=\"true\" id=\'report\'>
+                <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\" class='display'>
+                  <thead>
+                      <tr>
+                          <th>
+                            <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
+                            <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
+                          </th>
+                      </tr>
+                  </thead>";
+                    echo "<tr></tr>";
+                    echo "<tr>";
+                    echo "<td>Red Sequestration Months: </td><td>".$red."</td>";
+                    echo "<td>Yellow Sequestration Months: </td><td>".$yellow."</td>";
+                    echo "<td>Green Sequestration Months: </td><td>".$green."</td></tr><tr></tr>";
+                    echo "<tr><td>Month-Year</td><td>Emission</td><td>Tree Sequestration</td></tr>";
+                     foreach($monthlyEmissions as $month){
+                         echo "<tr>";
+                             echo "<td style=\"text-align:center\">".$month->monthYear."</td>";
+                             echo "<td style=\"text-align:center\">".$month->emission."</td>";
+                             echo "<td style=\"text-align:center\">".$month->treeSeq."</td>";
+                         echo "</tr>";
+                        }
+                        echo "<tr><td></td>
+                            <td>Showing ".count($monthlyEmissions)." Rows</td>
+                        </tr>
+                        <tr></tr>
+                </table>
+            </div></div></div>";
+                    }
+                    //table for html print
+                    {
+                    echo "<div class=\"row\" ng-hide=\"false\"><div class=\"twelve columns\">
+                    <table id=\"table_id\" class='display'>
+                      <thead>
+                          <tr>"; 
+                            echo "<tr><td>Month-Year</td><td>Emission</td><td>Tree Sequestration</td></tr>";
+                          echo "</tr>
+                      </thead>
+                      </tbody>";
+                         foreach($monthlyEmissions as $month){
+                         echo "<tr>";
+                             echo "<td>".$month->monthYear."</td>";
+                             echo "<td style=\"text-align:right\">".$month->emission."</td>";
+                             echo "<td style=\"text-align:right\">".$month->treeSeq."</td>";
+                         echo "</tr>";
+                        }
+                            echo "</tbody>
+                    </table>
+                </div></div>";
                     }
                 }
             }
@@ -596,7 +953,7 @@
                     <input type="hidden" name="isRecurrFiltered" value="<?php echo " {{showRecurrFilter}} "?>">
                     <input type="hidden" name="reportName" value='<?php echo "{{reportName}}"?>'>
                     <div class="row">
-                        <div class="five columns offset-by-one">
+                        <div class="six columns">
                             <!-- GENERAL REPORTS -->
                             <div class="row">
                                 <div class="five columns">
@@ -672,20 +1029,20 @@
                             </div>
                             <div class="row">
                                 <div class="twelve columns tooltip">
-                                   <span class="tooltiptext">What are my emissions?</span>
+                                   <span class="tooltiptext">Show me the trips and their emissions</span>
                                     <input type="submit" class="button-primary" ng-click='addReport("trip");' value="Trip Report" style="width: 100%">
                                 </div>
                                 <div class="twelve columns tooltip">
-                                    <span class="tooltiptext">How are vehicles utilized?</span>
+                                    <span class="tooltiptext">Show me how vehicles are utilized</span>
                                     <input type="submit" class="button-primary" ng-click="addReport('vehicleUsage')" value="Vehicle Usage Report" style="width: 100%">
                                 </div>
-                                <div class="twelve columns tooltip">
-                                    <span class="tooltiptext">What are my emission expected to be?</span>
-                                    <input type="submit" class="button-primary" ng-click="addReport('forecast')" value="Forecast Report" style="width: 100%">
+                                <div class="twelve columns tooltip" ng-hide="true">
+                                    <span class="tooltiptext">Let me compare emissions from two different times</span>
+                                    <input type="submit" class="button-primary" ng-click="addReport('comparison')" value="Comparison Report" style="width: 100%">
                                 </div>
                             </div>
                         </div>
-                        <div class="five columns">
+                        <div class="six columns">
                             <div class="row">
                                 <div class="six columns">
                                     <h5>Recurring Reports</h5>
@@ -726,11 +1083,17 @@
                                </div>
                             </div>
                             <div class="row">
-                                <div class="twelve columns">
-                                    <input type="submit" class="button-primary" ng-click='addReport("trip");' value="Emission Report" style="width: 100%">
+                                <div class="twelve columns tooltip" ng-hide="true">
+                                   <span class="tooltiptext">Show me the emissions</span>
+                                    <input type="submit" class="button-primary" ng-click='addReport("emission");' value="Emission Report" style="width: 100%">
                                 </div>
-                                <div class="twelve columns">
-                                    <input type="submit" class="button-primary" ng-click="addReport('forecast')" value="Tree Sequestration Report" style="width: 100%">
+                                <div class="twelve columns tooltip">
+                                   <span class="tooltiptext">Show me how much C02 our trees get</span>
+                                    <input type="submit" class="button-primary" ng-click="addReport('treeSeq')" value="Tree Sequestration Report" style="width: 100%">
+                                </div>
+                                <div class="twelve columns tooltip">
+                                    <span class="tooltiptext">Show me predicted emissions next month</span>
+                                    <input type="submit" class="button-primary" ng-click="addReport('forecast')" value="Forecast Report" style="width: 100%">
                                 </div>
                             </div>
                         </div>
@@ -789,6 +1152,7 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
     <script>
     $(document).ready(function() {
+        $.noConflict();
         $('#table_id').DataTable();
     });
     </script>
@@ -897,8 +1261,8 @@
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/serial.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-    <script src="amcharts/plugins/export/export.min.js"></script>
-    <link  type="text/css" href="../export.css" rel="stylesheet">
+    <script src="cdn.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <link  type="text/css" href="cdn.amcharts.com/lib/3/plugins/export/export.css" rel="stylesheet">
     <script>
     function demoFromHTML() {
         var pdf = new jsPDF('p', 'pt', 'letter');
@@ -1138,6 +1502,133 @@ function resetChart() {
   chart.animateAgain();
 }
                             </script>';
+        }
+        elseif(isset($regressionLine)){
+            echo '<script type="text/javascript">
+			AmCharts.makeChart("chartdiv2",
+				{
+					"type": "serial",
+					"categoryField": "monthYear",
+					"startDuration": 1,
+					"theme": "light",
+					"categoryAxis": {
+						"gridPosition": "start"
+					},
+					"trendLines": [],
+					"graphs": [
+						{
+							"balloonText": "[[title]]: [[value]]",
+							"fillAlphas": 1,
+							"id": "AmGraph-1",
+							"labelText": "[[value]]",
+							"title": "Emission",
+							"type": "column",
+							"valueField": "emission"
+						},
+						{
+							"balloonText": "[[title]]: [[value]]",
+							"bullet": "round",
+							"id": "AmGraph-2",
+							"lineThickness": 2,
+							"title": "Regression point",
+							"valueField": "forecastPoint"
+						}
+					],
+					"guides": [],
+                    "export": {
+                        "enabled": true
+                      },
+					"valueAxes": [
+						{
+							"id": "ValueAxis-1",
+							"title": "C02 Emission in MT"
+						}
+					],
+					"allLabels": [],
+					"balloon": {},
+					"legend": {
+						"enabled": true,
+						"useGraphSettings": true
+					},
+					"titles": [
+						{
+							"id": "Title-1",
+							"size": 15,
+							"text": "Emissions and Forecasted Value"
+						}
+					],
+					"dataProvider": '.json_encode($forecastData).'
+				}
+			);
+		</script>';
+        }
+        elseif(isset($monthlyEmissions)){
+            echo '<script type="text/javascript">
+			AmCharts.makeChart("chartdiv2",
+				{
+					"type": "serial",
+					"categoryField": "monthYear",
+					"colors": [
+						"#b93e3d",
+						"#84b761",
+						"#fdd400",
+						"#cc4748",
+						"#cd82ad",
+						"#2f4074",
+						"#448e4d",
+						"#b7b83f",
+						"#b9783f",
+						"#b93e3d",
+						"#913167"
+					],
+					"startDuration": 1,
+					"theme": "light",
+					"categoryAxis": {
+						"gridPosition": "start"
+					},
+					"trendLines": [],
+					"graphs": [
+						{
+							"balloonText": "[[category]]: [[value]]",
+							"fillAlphas": 1,
+							"id": "AmGraph-1",
+							"title": "Emissions",
+							"type": "column",
+							"valueField": "emission"
+						},
+						{
+							"balloonText": "[[category]]: [[value]]",
+							"fillAlphas": 1,
+							"id": "AmGraph-2",
+							"title": "Tree Sequestration",
+							"type": "column",
+							"valueField": "treeSeq"
+						}
+					],
+					"guides": [],
+					"valueAxes": [
+						{
+							"id": "ValueAxis-1",
+							"title": ""
+						}
+					],
+					"allLabels": [],
+					"balloon": {},
+					"legend": {
+						"enabled": true,
+						"useGraphSettings": true
+					},
+					"titles": [
+						{
+							"id": "Title-1",
+							"size": 15,
+							"text": "Emission vs Tree Sequestration"
+						}
+					],
+					"dataProvider": '.json_encode($monthlyEmissions).'
+				}
+			);
+		</script>';
         }
     ?>
 
