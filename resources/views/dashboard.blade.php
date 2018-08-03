@@ -415,6 +415,14 @@
         }
         }
     else{
+        $column = "SUM(trips.emissions) as percentage";
+         $institutionEmissions = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+        ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        
+        ->get();
         $columnTable = DB::table('trips')
             ->select(DB::raw('sum(trips.emissions) as emissions'))
             ->get();
@@ -651,6 +659,14 @@ if(isset($data)){
             }
         }
             if(!$emptySet){
+                $column = "SUM(trips.emissions) as percentage";
+                 $institutionEmissions = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+            ->whereRaw($rawDB)
+        ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        ->get();
             $emissionData = DB::table('trips')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
             ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
@@ -666,10 +682,18 @@ if(isset($data)){
                     dd("dito talaga eh");
                 }
                 $tripEmissionTotal = DB::table('trips')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->select(DB::raw('sum(emissions) as totalEmissions'))
                     ->whereRaw($rawDB)
                     ->get();
                 $tripCountTotal = DB::table('trips')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->select(DB::raw('count(emissions) as totalCount'))
                     ->whereRaw($rawDB)
                     ->get();
@@ -698,10 +722,18 @@ if(isset($data)){
 
                 }
          $tripEmissionTotal = DB::table('trips')
+             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->select(DB::raw('sum(emissions) as totalEmissions'))
                     ->whereRaw($rawDB)
                     ->get();
          $tripCountTotal = DB::table('trips')
+             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->select(DB::raw('count(emissions) as totalCount'))
                     ->whereRaw($rawDB)
                     ->get();
@@ -754,6 +786,10 @@ if(isset($data)){
                 }
                     
             $tripEmissionTotal = DB::table('trips')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->select(DB::raw('sum(emissions) as totalEmissions'))
                     ->get();
             $tripCountTotal = DB::table('trips')
@@ -769,6 +805,10 @@ if(isset($data)){
         ->get();
     
     $totalEmissions = DB::table('trips')
+        ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
         ->select(DB::raw('SUM(emissions) as totalEmissions'))
         ->get();
     
@@ -809,6 +849,10 @@ else{
                     dd("dito???");
                 }
                 $tripEmissionTotal = DB::table('trips')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->select(DB::raw('sum(emissions) as totalEmissions'))
                     ->get();
                 $tripCountTotal = DB::table('trips')
@@ -883,22 +927,10 @@ else{
         <div ng-controller="MyController">
            <div ng-hide="<?php echo $emptySet; ?>">
             <div class="row">
-                <table>
-                        <tr>
-                           <td colspan="4"></td>
-                            <td colspan="4">
-                                <a class="button" ng-click="toggleFilter();">Show Filters</a>
-                            </td>
-                            <td colspan="4"  ng-show="showFilter">
-                                <a ng-click="togglePreset()" class="button">Toggle Date Filter</a>
-                            </td>
-                            
-                        </tr>
-                </table>
                 <table ng-show="showFilter">
                         <tr>
                         <form method="post" action="{{ route('dashboard-process') }}" <?php if($userType <=2 ){ echo "ng-init=\"nonschool=true\""; } ?>> {{ csrf_field() }}
-                                <td colspan="3">
+                                <td colspan="3" ng-hide="<?php echo $schoolSort ?>">
                                     <select name="institutionID" id="institutionID" style="color: black;">
                                        <option value="">All Institutions</option>
                                         @foreach($institutions as $institution)
@@ -954,7 +986,11 @@ else{
             </div>
             <div class="row" ng-init="showGenChartDiv=<?php echo !$emptySet;?>">
                 <div class="six columns" style="text-align: center;" ng-show="showGenChartDiv">
-                    <div id="institutionPieChart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+                    <?php 
+                    
+                    if(!$schoolSort) echo '<div id="institutionPieChart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>';
+                    else echo '<div id="chartdiv2" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>';
+                    ?>
                 </div>
                 <div class="six columns" style="text-align: center;">
                     <h5>Emissions to Sequestration Ratio</h5>    
@@ -1526,7 +1562,60 @@ else{
           }]
         });
     </script>
+    <?php
 
+     echo '<script type="text/javascript">
+			AmCharts.makeChart("chartdiv2",
+				{
+					"type": "serial",
+					"categoryField": "tripDate",
+					"dataDateFormat": "YYYY-MM-DD",
+					"startDuration": 1,
+					"categoryAxis": {
+						"gridPosition": "start",
+						"parseDates": true
+					},
+					"chartCursor": {
+						"enabled": true
+					},
+					"chartScrollbar": {
+						"enabled": true
+					},
+					"trendLines": [],
+					"graphs": [
+						{
+							"fillAlphas": 1,
+							"id": "AmGraph-1",
+							"title": "Trips",
+							"type": "column",
+							"valueField": "emissions"
+						}
+					],
+					"guides": [],
+					"valueAxes": [
+						{
+							"id": "ValueAxis-1",
+							"title": "C02 Emissions in MT"
+						}
+					],
+					"allLabels": [],
+					"balloon": {},
+                    "export": {
+                        "enabled": true
+                      },
+					"titles": [
+						{
+							"id": "Title-1",
+							"size": 15,
+							"text": "Trip Emissions"
+						}
+					],
+					"dataProvider":'.json_encode($emissionData);
+            echo '
+				}
+			);
+		</script>';
+    ?>
     <script type="application/javascript">
     <?php
         echo "var start = " . $start . ';

@@ -478,7 +478,7 @@
                  ->groupBy(DB::raw('1'))
                  ->orderBy(DB::raw('1'), 'asc')
                  ->get();
-        
+
              $r = 0;
              $summationOfNumerator = 0;
              $xAve = 0;
@@ -527,7 +527,7 @@
             $forecastPoint = round($regressionLine[0]+($regressionLine[1]*($ctr+1)), 4);
             $toPush = json_decode('{"monthYear":"Forecast","emission":'.$forecastPoint.',"forecastPoint":'.$forecastPoint.'}');
             $forecastData->push($toPush);
-        }
+        }   
         elseif($data['reportName']=='treeSeq'){
             $monthlyTreeSeq = DB::Table('institutionbatchplant')
                 ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
@@ -1047,7 +1047,7 @@
                                 <div class="six columns">
                                     <h5>Recurring Reports</h5>
                                 </div>
-                                <div class="six columns"><a class="button" ng-click="toggleRecurrFilter();" style="width: 100%">Filters</a></div>
+                                <div class="six columns" ng-hide="true"><a class="button" ng-click="toggleRecurrFilter();" style="width: 100%">Filters</a></div>
                             </div>
                             <div class="row" ng-show="showRecurrFilter">
                                <div class="twelve columns">
@@ -1061,21 +1061,8 @@
                             </div>
                             <div class="row" ng-show="showRecurrFilter">
                                 <div class="twelve columns">
-                                    <select name="recurrPreset" id="irecurrPreset" style="color: black; width: 100%" ng-model="recurrPreset">
+                                    <select name="recurrPreset" id="irecurrPreset" style="color: black; width: 100%" value="<?php echo '{{recurrPreset}}'; ?>" ng-model="recurrPreset">
                                         <option value="1" selected>Monthly</option>
-                                        <option value="2">Quarterly</option>
-                                        <option value="3">Semi-Annual</option>
-                                        <option value="4">Annual</option>
-                                    </select>
-                               </div>
-                            </div>
-                            <div class="row" ng-show="showRecurrFilter">
-                               <div class="four columns">
-                                   
-                               </div>
-                                <div class="twelve columns" ng-show="recurrPreset==1">
-                                    <select name="recurrMonthly" id="recurrMonthly" style="color: black; width: 100%">
-                                        <option value="1" selected>January to April</option>
                                         <option value="2">Quarterly</option>
                                         <option value="3">Semi-Annual</option>
                                         <option value="4">Annual</option>
@@ -1470,7 +1457,7 @@ chart.addListener("clickGraphItem", function(event) {
     event.chart.dataProvider = event.item.dataContext.tripRows;
 
     // update the chart title
-    event.chart.titles[0].text = event.item.dataContext.category + \' Trip Rows\';
+    event.chart.titles[0].text =\' Trip Rows\';
 
     // let\'s add a label to go back to yearly data
     event.chart.addLabel(
