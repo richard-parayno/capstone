@@ -89,6 +89,7 @@ export default class SidebarMain extends Component {
                 campusItems = [
                     <p key="campus"><strong>Campus Information Management</strong></p>,
                     <li key="editCampus" id="home" className="menu-item" ><a href={window.campusManagement} style={{color: 'white'}}>Campus Management</a></li>,
+                    <li key="departmentManage" id="home" className="menu-item" ><a href={window.departmentManagement} style={{color: 'white'}}>Department Management</a></li>,
                 ];
 
                 break;

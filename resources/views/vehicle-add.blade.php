@@ -6,8 +6,6 @@
   #box-form {
     margin-top: 20px;
     padding: 40px;
-    box-shadow: 5px 10px 20px 0 rgba(0,0,0,0.20);
-    border-radius: 20px;
   }
   #box-form h1 {
     text-align: center;
