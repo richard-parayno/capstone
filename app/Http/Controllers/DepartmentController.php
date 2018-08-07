@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Deptsperinstitution;
 use Validator;
 use DB;
+use Illuminate\Validation\Rule;
 
 class DepartmentController extends Controller
 {
@@ -136,11 +137,28 @@ class DepartmentController extends Controller
 
     $dept = Deptsperinstitution::find($originalDept);
 
+    $this->validate($request, [
+      'institutionID' => [
+        'required',
+        'numeric',
+        Rule::unique('deptsperinstitution')->ignore($request->input('institution'), 'institutionID')
+      ],
+      'deptName' => [
+        'required',
+        Rule::unique('deptsperinstitution')->ignore($request->input('deptName'), 'deptName')
+      ],
+      'motherDeptID' => [
+        'required',
+        'numeric',
+        Rule::unique('deptsperinstitution')->ignore($request->input('motherDept'), 'motherDeptID')
+        ]
+    ]);
+
     if (isset($data['institution']))
       $dept->institutionID = $data['institution'];
     if (isset($data['deptName']))    
       $dept->deptName = $data['deptName'];
-    if (isset($data['motherDept']))
+    if (isset($data['motherDeptID']))
       $dept->motherDeptID = $data['motherDept'];
     
     $dept->save();

@@ -13,8 +13,8 @@ export default class DepartmentModal extends Component {
         this.state = {
             institutions: [],
             originalDept: [],
-            department: []
-            
+            department: [],
+            errorMessages: []   
         }
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -50,18 +50,21 @@ export default class DepartmentModal extends Component {
                     position: toast.POSITION.TOP_RIGHT
                 })
                 console.log(updated);
-                setTimeout(function() {
-                    window.location.reload()
-                }, 1500);
+                if (response.status.success) {
+                    setTimeout(function() {
+                        window.location.reload()
+                    }, 1500);
+                }
+                
             })
             .catch((error) => {
                 // Error
-                if (error.response) {
+                if (error.response.status == 422) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response.data);
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
+                    this.setState({ errorMessages: error.response.data.errors });
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -71,7 +74,7 @@ export default class DepartmentModal extends Component {
                     // Something happened in setting up the request that triggered an Error
                     console.log('Error', error.message);
                 }
-                console.log(error.config);
+                
             });
         
     }
@@ -85,12 +88,27 @@ export default class DepartmentModal extends Component {
         const institutions = this.state.institutions;
         const originalDept = this.state.originalDept;
         const department = this.state.department;
+    
         const institutionItems = institutions.map((institution) =>
             <option key={institution.institutionID} value={institution.institutionID}>{institution.institutionName}</option> 
         );
         const departmentItems = department.map((department) =>
             <option key={department.deptID} value={department.deptID}>{department.deptName}</option> 
         );
+
+        let deptError;
+        let institutionError;
+        let motherDeptError;
+
+        console.log(this.state.errorMessages);
+
+        if (this.state.errorMessages.deptName) {
+            deptError = this.state.errorMessages.deptName[0];
+            institutionError = this.state.errorMessages.institutionID[0];
+            motherDeptError = this.state.errorMessages.motherDeptID[0];
+        }
+      
+      
           
         return (
             <div>
@@ -108,6 +126,7 @@ export default class DepartmentModal extends Component {
                     <div className="twelve columns">
                         <label htmlFor="deptName">Update Department Name</label>
                         <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName} />
+                        
                     </div>
                     <div className="twelve columns">
                         <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
@@ -116,8 +135,21 @@ export default class DepartmentModal extends Component {
                         </select>
                     </div>
                     <br/>
+                    {this.state.errorMessages.deptName &&
+                        <div className="twelve columns">
+                            <div>
+                                <ul>
+                                    <li>{deptError}</li>
+                                    <li>{institutionError}</li>
+                                    <li>{motherDeptError}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
                     <input type="submit" className="button-primary u-pull-right" />
                 </form>
+               
+                
                 <ToastContainer autoClose={1000} />                
             </div>
         );
