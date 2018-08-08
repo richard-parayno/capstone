@@ -17,6 +17,7 @@ export default class DepartmentModal extends Component {
             errorMessages: []   
         }
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.changeInputHighlight = this.changeInputHighlight.bind(this);
     }
 
     populateForm() {
@@ -37,6 +38,11 @@ export default class DepartmentModal extends Component {
                 this.setState({ department: department });     
             })
     }
+
+    dismissAll(){
+        toast.dismiss();
+    }
+        
 
     handleSubmit(event) {
         event.preventDefault();
@@ -65,6 +71,24 @@ export default class DepartmentModal extends Component {
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
                     this.setState({ errorMessages: error.response.data.errors });
+                    if (this.state.errorMessages.deptName) {
+                        toast.error(this.state.errorMessages.deptName[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.institutionID) {
+                        toast.error(this.state.errorMessages.institutionID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.motherDeptID) {
+                        toast.error(this.state.errorMessages.motherDeptID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -83,6 +107,7 @@ export default class DepartmentModal extends Component {
         this.populateForm();
     }
 
+
    
     render() {
         const institutions = this.state.institutions;
@@ -95,20 +120,6 @@ export default class DepartmentModal extends Component {
         const departmentItems = department.map((department) =>
             <option key={department.deptID} value={department.deptID}>{department.deptName}</option> 
         );
-
-        let deptError;
-        let institutionError;
-        let motherDeptError;
-
-        console.log(this.state.errorMessages);
-
-        if (this.state.errorMessages.deptName) {
-            deptError = this.state.errorMessages.deptName[0];
-            institutionError = this.state.errorMessages.institutionID[0];
-            motherDeptError = this.state.errorMessages.motherDeptID[0];
-        }
-      
-      
           
         return (
             <div>
@@ -119,34 +130,39 @@ export default class DepartmentModal extends Component {
                 <form onSubmit={this.handleSubmit}>
                     <div className="twelve columns">
                         <label htmlFor="institution">Update Campus</label>
-                        <select className="u-full-width" name="institution" id="institution">
-                            {institutionItems}
-                        </select>
+                        {this.state.errorMessages.institutionID ?
+                            <select className="u-full-width" name="institution" id="institution" style={{border: "1px red solid"}}>
+                                {institutionItems}
+                            </select>
+                            :
+                            <select className="u-full-width" name="institution" id="institution">
+                                {institutionItems}
+                            </select>
+                        }
                     </div>
                     <div className="twelve columns">
                         <label htmlFor="deptName">Update Department Name</label>
-                        <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName} />
+                        {this.state.errorMessages.deptName ?
+                            <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName} style={{border: "1px red solid"}}/> 
+                            :
+                            <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName}  />
+                        }
                         
                     </div>
                     <div className="twelve columns">
                         <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
-                        <select className="u-full-width" name="motherDept" id="motherDept">
-                            {departmentItems}
-                        </select>
+                        {this.state.errorMessages.motherDeptID ? 
+                            <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}>    
+                                {departmentItems}
+                            </select>   
+                            :
+                            <select className="u-full-width" name="motherDept" id="motherDept">    
+                                {departmentItems}
+                            </select>
+                        }        
                     </div>
                     <br/>
-                    {this.state.errorMessages.deptName &&
-                        <div className="twelve columns">
-                            <div>
-                                <ul>
-                                    <li>{deptError}</li>
-                                    <li>{institutionError}</li>
-                                    <li>{motherDeptError}</li>
-                                </ul>
-                            </div>
-                        </div>
-                    }
-                    <input type="submit" className="button-primary u-pull-right" />
+                    <input type="submit" className="button-primary u-pull-right" onClick={this.dismissAll}/>
                 </form>
                
                 
