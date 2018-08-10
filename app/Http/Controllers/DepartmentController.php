@@ -150,7 +150,6 @@ class DepartmentController extends Controller
         ]
       ], [
         'deptName.required' => 'The \'Update Department Name\' field is required!', 
-        'institutionID.required' => 'The \'Update Campus\' field is required!',  
       ]);
 
     if (isset($data['institution']))
