@@ -17,7 +17,7 @@ export default class DepartmentModal extends Component {
             errorMessages: []   
         }
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.changeInputHighlight = this.changeInputHighlight.bind(this);
+        //this.changeInputHighlight = this.changeInputHighlight.bind(this);
     }
 
     populateForm() {
@@ -115,10 +115,10 @@ export default class DepartmentModal extends Component {
         const department = this.state.department;
     
         const institutionItems = institutions.map((institution) =>
-            <option key={institution.institutionID} value={institution.institutionID}>{institution.institutionName}</option> 
+            <option key={institution.institutionID} value={parseInt(institution.institutionID)}>{institution.institutionName}</option> 
         );
         const departmentItems = department.map((department) =>
-            <option key={department.deptID} value={department.deptID}>{department.deptName}</option> 
+            <option key={department.deptID} value={parseInt(department.deptID)}>{department.deptName}</option> 
         );
           
         return (
@@ -143,9 +143,9 @@ export default class DepartmentModal extends Component {
                     <div className="twelve columns">
                         <label htmlFor="deptName">Update Department Name</label>
                         {this.state.errorMessages.deptName ?
-                            <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName} style={{border: "1px red solid"}}/> 
+                            <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName} style={{border: "1px red solid"}}/> 
                             :
-                            <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName}  />
+                            <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName}  />
                         }
                         
                     </div>
