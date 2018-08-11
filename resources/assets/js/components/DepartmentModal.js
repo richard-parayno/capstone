@@ -17,7 +17,7 @@ export default class DepartmentModal extends Component {
             errorMessages: []   
         }
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.changeInputHighlight = this.changeInputHighlight.bind(this);
+        this.checkInputs = this.checkInputs.bind(this);
     }
 
     populateForm() {
@@ -105,6 +105,16 @@ export default class DepartmentModal extends Component {
 
     componentDidMount() {
         this.populateForm();
+        
+    }
+
+    checkInputs() {
+        let dept = document.getElementById("deptName");
+        if (dept.value.length > 0) {
+            dept.removeAttribute("style");
+        } else {
+            dept.style.border = "1px solid red";
+        }
     }
 
 
@@ -113,7 +123,7 @@ export default class DepartmentModal extends Component {
         const institutions = this.state.institutions;
         const originalDept = this.state.originalDept;
         const department = this.state.department;
-    
+
         const institutionItems = institutions.map((institution) =>
             <option key={institution.institutionID} value={institution.institutionID}>{institution.institutionName}</option> 
         );
@@ -143,20 +153,22 @@ export default class DepartmentModal extends Component {
                     <div className="twelve columns">
                         <label htmlFor="deptName">Update Department Name</label>
                         {this.state.errorMessages.deptName ?
-                            <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName} style={{border: "1px red solid"}}/> 
+                            <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName} style={{border: "1px red solid" }} onInput={this.checkInputs} /> 
                             :
-                            <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName}  />
+                            <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName}/>
                         }
                         
                     </div>
                     <div className="twelve columns">
                         <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
                         {this.state.errorMessages.motherDeptID ? 
-                            <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}>    
+                            <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}>
+                                <option value="0">N/A</option>    
                                 {departmentItems}
                             </select>   
                             :
-                            <select className="u-full-width" name="motherDept" id="motherDept">    
+                            <select className="u-full-width" name="motherDept" id="motherDept">
+                                <option value="null">N/A</option>    
                                 {departmentItems}
                             </select>
                         }        
