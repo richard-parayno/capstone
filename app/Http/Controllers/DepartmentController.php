@@ -139,8 +139,6 @@ class DepartmentController extends Controller
 
     $this->validate($request, [
       'institutionID' => [
-        'required',
-        'numeric',
         Rule::unique('deptsperinstitution')->ignore($request->input('institution'), 'institutionID')
       ],
       'deptName' => [
@@ -148,11 +146,11 @@ class DepartmentController extends Controller
         Rule::unique('deptsperinstitution')->ignore($request->input('deptName'), 'deptName')
       ],
       'motherDeptID' => [
-        'required',
-        'numeric',
         Rule::unique('deptsperinstitution')->ignore($request->input('motherDept'), 'motherDeptID')
         ]
-    ]);
+      ], [
+        'deptName.required' => 'The \'Update Department Name\' field is required!', 
+      ]);
 
     if (isset($data['institution']))
       $dept->institutionID = $data['institution'];

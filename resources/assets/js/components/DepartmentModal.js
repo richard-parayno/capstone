@@ -125,10 +125,10 @@ export default class DepartmentModal extends Component {
         const department = this.state.department;
 
         const institutionItems = institutions.map((institution) =>
-            <option key={institution.institutionID} value={institution.institutionID}>{institution.institutionName}</option> 
+            <option key={institution.institutionID} value={parseInt(institution.institutionID)}>{institution.institutionName}</option> 
         );
         const departmentItems = department.map((department) =>
-            <option key={department.deptID} value={department.deptID}>{department.deptName}</option> 
+            <option key={department.deptID} value={parseInt(department.deptID)}>{department.deptName}</option> 
         );
           
         return (
