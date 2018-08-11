@@ -145,22 +145,29 @@ class DepartmentController extends Controller
 
     $dept = Deptsperinstitution::find($originalDept);
 
+
     $this->validate($request, [
       'deptName' => [
         'required',
-        Rule::unique('deptsperinstitution')->ignore($request->input('deptName'), 'deptName')
+        Rule::unique('deptsperinstitution')->ignore($dept->deptID, 'deptID')
       ],
       'motherDeptID' => [
-        Rule::unique('deptsperinstitution')->ignore($request->input('motherDept'), 'motherDeptID')
+        Rule::unique('deptsperinstitution')->ignore($dept->deptID, 'deptID')
         ]
       ], [
-        'deptName.required' => 'The \'Update Department Name\' field is required!', 
+        'deptName.required' => 'The \'Update Department Name\' field is required.', 
+        'deptName.unique' => 'This Department Name has already been taken.', 
       ]);
 
-    if (isset($data['deptName']))    
-      $dept->deptName = $data['deptName'];
+    if (isset($data['deptName'])) {
+      if ($data['deptName'] != $dept->deptName) {
+        $dept->deptName = $data['deptName'];
+      }
+    }    
     if (isset($data['motherDept'])) {
-      $dept->motherDeptID = $data['motherDept'];
+      if ($data['motherDept'] != $dept->motherDeptID) {
+        $dept->motherDeptID = $data['motherDept'];
+      }
     } else if ($data['motherDept'] == null) {
       $dept->motherDeptID = null;
     }

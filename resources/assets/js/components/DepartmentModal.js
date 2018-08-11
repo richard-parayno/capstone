@@ -61,8 +61,8 @@ export default class DepartmentModal extends Component {
                 toast.success("🎉 Department Info Updated!", {
                     position: toast.POSITION.TOP_RIGHT
                 })
-                console.log(updated);
-                if (response.status.success) {
+                console.log(response);
+                if (response.status == 200) {
                     setTimeout(function() {
                         window.location.reload()
                     }, 1500);
@@ -166,7 +166,7 @@ export default class DepartmentModal extends Component {
                         {this.state.errorMessages.motherDeptID ? 
                             <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}>
                                 <option value="">N/A</option>    
-                                {departmentItems}
+                                {specificDeptItems}
                             </select>   
                             :
                             <select className="u-full-width" name="motherDept" id="motherDept">
