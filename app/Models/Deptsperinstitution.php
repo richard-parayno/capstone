@@ -32,7 +32,6 @@ class Deptsperinstitution extends Eloquent
 
 	protected $casts = [
 		'institutionID' => 'int',
-		'motherDeptID' => 'int'
 	];
 
 	protected $fillable = [
@@ -41,19 +40,9 @@ class Deptsperinstitution extends Eloquent
 		'motherDeptID'
 	];
 
-	public function deptsperinstitution()
-	{
-		return $this->belongsTo(\App\Models\Deptsperinstitution::class, 'motherDeptID');
-	}
-
 	public function institution()
 	{
 		return $this->belongsTo(\App\Models\Institution::class, 'institutionID');
-	}
-
-	public function deptsperinstitutions()
-	{
-		return $this->hasMany(\App\Models\Deptsperinstitution::class, 'motherDeptID');
 	}
 
 	public function trips()

@@ -165,12 +165,12 @@ export default class DepartmentModal extends Component {
                         <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
                         {this.state.errorMessages.motherDeptID ? 
                             <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}>
-                                <option value="null">N/A</option>    
+                                <option value="">N/A</option>    
                                 {departmentItems}
                             </select>   
                             :
                             <select className="u-full-width" name="motherDept" id="motherDept">
-                                <option value="null">N/A</option>    
+                                <option value="">N/A</option>    
                                 {specificDeptItems}
                             </select>
                         }        

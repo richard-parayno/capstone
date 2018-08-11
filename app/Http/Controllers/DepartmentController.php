@@ -159,8 +159,13 @@ class DepartmentController extends Controller
 
     if (isset($data['deptName']))    
       $dept->deptName = $data['deptName'];
-    if (isset($data['motherDept']))
+    if (isset($data['motherDept'])) {
       $dept->motherDeptID = $data['motherDept'];
+    } else if ($data['motherDept'] == null) {
+      $dept->motherDeptID = null;
+    }
+    
+        
     
     $dept->save();
 
