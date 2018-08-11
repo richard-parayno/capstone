@@ -100,6 +100,8 @@ class DepartmentController extends Controller
         $institution = DB::table('institutions')->where('institutionID', $x->institutionID)->first();
         if ($motherDepartment != null) {
           $x['motherDeptName'] = $motherDepartment->deptName;
+        } else if ($motherDepartment == null) {
+          $x['motherDeptName'] = "N/A";
         }
         if ($institution != null) {
           $x['institutionName'] = $institution->institutionName;
@@ -127,6 +129,12 @@ class DepartmentController extends Controller
 
   }
 
+  public function showSpecific(Deptsperinstitution $department) {
+    $specific = DB::table('Deptsperinstitution')->where('institutionID', $department->institutionID)->where('deptID', '!=', $department->deptID)->get();
+   
+    return response()->json($specific);
+  }
+
   public function store(Request $request) {
 
   }
@@ -138,9 +146,6 @@ class DepartmentController extends Controller
     $dept = Deptsperinstitution::find($originalDept);
 
     $this->validate($request, [
-      'institutionID' => [
-        Rule::unique('deptsperinstitution')->ignore($request->input('institution'), 'institutionID')
-      ],
       'deptName' => [
         'required',
         Rule::unique('deptsperinstitution')->ignore($request->input('deptName'), 'deptName')
@@ -152,11 +157,9 @@ class DepartmentController extends Controller
         'deptName.required' => 'The \'Update Department Name\' field is required!', 
       ]);
 
-    if (isset($data['institution']))
-      $dept->institutionID = $data['institution'];
     if (isset($data['deptName']))    
       $dept->deptName = $data['deptName'];
-    if (isset($data['motherDeptID']))
+    if (isset($data['motherDept']))
       $dept->motherDeptID = $data['motherDept'];
     
     $dept->save();

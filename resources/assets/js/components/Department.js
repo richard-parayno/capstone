@@ -50,10 +50,10 @@ export default class Department extends Component {
             style: {'whiteSpace': 'unset'}
           }, {
             Header: 'From',
-            id: 'deptName',
-            accessor: 'deptName',
+            id: 'motherDeptName',
+            accessor: 'motherDeptName',
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ['deptName'] }),
+                matchSorter(rows, filter.value, { keys: ['motherDeptName'] }),
             filterAll: true,
             style: {'whiteSpace': 'unset'}
           }, {

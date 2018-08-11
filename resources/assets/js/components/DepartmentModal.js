@@ -13,6 +13,7 @@ export default class DepartmentModal extends Component {
         this.state = {
             institutions: [],
             originalDept: [],
+            specificDept: [],
             department: [],
             errorMessages: []   
         }
@@ -31,6 +32,11 @@ export default class DepartmentModal extends Component {
             .then(response => {
                 let originalDept = response.data;
                 this.setState({ originalDept: originalDept });     
+            })
+        axios.get('api/department/specific/' + this.props.originalDept) //populate  original dept
+            .then(response => {
+                let specificDept = response.data;
+                this.setState({ specificDept: specificDept });     
             })
         axios.get('api/department') //populate  dept
             .then(response => {
@@ -123,6 +129,7 @@ export default class DepartmentModal extends Component {
         const institutions = this.state.institutions;
         const originalDept = this.state.originalDept;
         const department = this.state.department;
+        const specificDept = this.state.specificDept;
 
         const institutionItems = institutions.map((institution) =>
             <option key={institution.institutionID} value={parseInt(institution.institutionID)}>{institution.institutionName}</option> 
@@ -130,26 +137,21 @@ export default class DepartmentModal extends Component {
         const departmentItems = department.map((department) =>
             <option key={department.deptID} value={parseInt(department.deptID)}>{department.deptName}</option> 
         );
+
+        const specificDeptItems = specificDept.map((specificDept) =>
+            <option key={specificDept.deptID} value={parseInt(specificDept.deptID)}>{specificDept.deptName}</option>
+        );
+
+        
           
         return (
             <div>
                 <h1 style={{textAlign: "center"}}>Update Department Info</h1>
                 <p><strong>Selected Department:</strong> {originalDept.deptName}</p>
                 <p><strong>From Campus:</strong> {originalDept.institutionName}</p>
+                <p><strong>Mother Department:</strong> {originalDept.motherDeptName}</p>
                 <br/>      
                 <form onSubmit={this.handleSubmit}>
-                    <div className="twelve columns">
-                        <label htmlFor="institution">Update Campus</label>
-                        {this.state.errorMessages.institutionID ?
-                            <select className="u-full-width" name="institution" id="institution" style={{border: "1px red solid"}}>
-                                {institutionItems}
-                            </select>
-                            :
-                            <select className="u-full-width" name="institution" id="institution">
-                                {institutionItems}
-                            </select>
-                        }
-                    </div>
                     <div className="twelve columns">
                         <label htmlFor="deptName">Update Department Name</label>
                         {this.state.errorMessages.deptName ?
@@ -163,13 +165,13 @@ export default class DepartmentModal extends Component {
                         <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
                         {this.state.errorMessages.motherDeptID ? 
                             <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}>
-                                <option value="0">N/A</option>    
+                                <option value="null">N/A</option>    
                                 {departmentItems}
                             </select>   
                             :
                             <select className="u-full-width" name="motherDept" id="motherDept">
                                 <option value="null">N/A</option>    
-                                {departmentItems}
+                                {specificDeptItems}
                             </select>
                         }        
                     </div>
