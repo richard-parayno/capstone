@@ -159,7 +159,37 @@
             ->orderByRaw('2 DESC')
             ->groupBy(DB::raw('1'))
             ->get();
+        
+        $minQ = DB::table('trips')
+            ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+            ->select('trips.tripDate')
+            ->whereRaw($rawDB)
+            ->orderByRaw('1 ASC')
+            ->limit('1')
+            ->get();
+        
+        $min = $minQ[0]->tripDate;
+        
+        $maxQ = DB::table('trips')
+            ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+            ->select('trips.tripDate')
+            ->whereRaw($rawDB)
+            ->orderByRaw('1 DESC')
+            ->limit('1')
+            ->get();
 
+        $max = $maxQ[0]->tripDate;
+        
         $columnTable = DB::table('trips')
             ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
@@ -377,19 +407,31 @@
             ->select(DB::raw('count(emissions) as totalCount'))
             ->whereRaw($rawDB)
             ->get();
+        if(isset($institutionID)){
+            $treeRaw = "institutionID = ".$institutionID;
         
-        $treeRaw = "institutionID = ".$institutionID;
+            $seqTotal = DB::table('institutionbatchplant')
+                ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                ->whereRaw($treeRaw)
+                ->get();
+
+            $totalTreesPlanted = DB::table('institutionbatchplant')
+                ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
+                ->whereRaw($treeRaw)
+                ->groupBy(DB::raw('1'))
+                ->get();
+        }
+        else{
+            $seqTotal = DB::table('institutionbatchplant')
+                ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                ->get();
+
+            $totalTreesPlanted = DB::table('institutionbatchplant')
+                ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
+                ->groupBy(DB::raw('1'))
+                ->get();
+        }
         
-        $seqTotal = DB::table('institutionbatchplant')
-            ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
-            ->whereRaw($treeRaw)
-            ->get();
-        
-        $totalTreesPlanted = DB::table('institutionbatchplant')
-            ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
-            ->whereRaw($treeRaw)
-            ->groupBy(DB::raw('1'))
-            ->get();
             
         $thresholds = DB::table('thresholds_ref')
             ->select(DB::raw('*'))
@@ -434,6 +476,34 @@
             ->orderByRaw('2 DESC')
             ->groupBy(DB::raw('1'))
             ->get();
+        
+        $minQ = DB::table('trips')
+            ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+            ->select('trips.tripDate')
+            ->orderByRaw('1 ASC')
+            ->limit('1')
+            ->get();
+        
+        $min = $minQ[0]->tripDate;
+        
+        $maxQ = DB::table('trips')
+            ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+            ->select('trips.tripDate')
+            ->orderByRaw('1 DESC')
+            ->limit('1')
+            ->get();
+
+        $max = $maxQ[0]->tripDate;
         
         $columnTable = DB::table('trips')
             ->select(DB::raw('sum(trips.emissions) as emissions'))
@@ -601,6 +671,7 @@
     //debuggers
     {
         //dd($rawDB);
+        //dd($min);
     }
     
 ?>
@@ -639,129 +710,119 @@
     <div ng-app="myapp">
         <div ng-controller="MyController">
             <div ng-hide="<?php echo $emptySet; ?>">
-            <div class="row">
-                <table ng-show="showFilter">
-                        <tr>
-                        <form method="post" action="{{ route('dashboard-process') }}" <?php if($userType <=2 ){ echo "ng-init=\"nonschool=true\""; } ?>> {{ csrf_field() }}
-                               <input type="hidden" name="filter" value="<?php echo "{{showFilter}}"; ?>">
-                                <td colspan="3" ng-hide="<?php echo isset($institutionID) ?>">
-                                    <select name="institutionID" id="institutionID" style="color: black;">
-                                       <option value="">All Institutions</option>
-                                        @foreach($institutions as $institution)
-                                          <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td colspan="2" ng-hide="datePreset">
-                                    <p style="text-align: left;" ng-hide="datePreset">From </p>
-                                    <input class="u-full-width" type="date" name="fromDate" id="fromDate" ng-hide="datePreset">
-                                </td>
-                                <td colspan="2" ng-hide="datePreset">
-                                    <p style="text-align: left;"  ng-hide="datePreset">To: </p>
-                                    <input class="u-full-width" type="date" name="toDate" id="toDate"  ng-hide="datePreset">
-                                </td>
-                                <td colspan="4" ng-show="datePreset">
-                                    <select name="datePreset" id="">
-                                        <option value="0" selected>Select Date Preset</option>
-                                        <option value="1">2 Weeks</option>
-                                        <option value="2">Last Month</option>
-                                        <option value="3">Last 3 Months</option>
-                                        <option value="4">Last 6 Months</option>
-                                        <option value="5">Last 1 Year</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <div class="row">
-                                    <div class="four columns">
-                                        <select class="u-full-width" name="carTypeID" id="carTypeID" style="color: black; width: 100%">
-                           <option value="">All Car Types</option>
-                            @foreach($carTypes as $carType)
-                              <option value="{{ $carType->carTypeID }}">{{ $carType->carTypeName }}</option>
-                            @endforeach
-                        </select>
-                                    </div>
-                                    <div class="four columns">
-                                        <select class="u-full-width" name="fuelTypeID" id="fuelTypeID" style="color: black; width: 100%">
-                             <option value="">All Fuel Types</option>
-                              @foreach($fuelTypes as $fuelType)
-                                <option value="{{ $fuelType->fuelTypeID }}">{{ $fuelType->fuelTypeName }}</option>
-                              @endforeach
-                        </select>
-                                    </div>
-                                <div class="four columns">
-                                        <select class="u-full-width" name="carBrandID" id="carbrandID" style="color: black; width: 100%">
-                             <option value="">All Car Brands</option>
-                              @foreach($carBrands as $carBrand)
-                                <option value="{{ $carBrand->carBrandID }}">{{ $carBrand->carBrandName }}</option>
-                              @endforeach
-                        </select>
-                                    </div>
-                                </div>
-                                </td>
-                                <td colspan="2" ng-show="showFilter">
-                                <input class="button-primary" type="submit">
-                            </td>
-                            </form>
-                        </tr>
-                </table>
-            </div>
-            <div class="row">
-                <div class="four columns offset-by-one"><h5>Total Emissions: &nbsp;<strong><?php echo round($totalEmissions[0]->totalEmissions, 4);?> MT</strong></h5></div>
-                <div class="three columns"><h5>Total Trips: &nbsp;<strong><?php echo $tripCountTotal[0]->totalCount;?></strong></h5></div>
-                <div class="four columns"><h5>Total Sequestration: <strong><?php echo ($seqTotal[0]->totalSeq)*22*0.001;?> MT</strong></h5></div>
-            </div>
-            <div class="row" ng-init="showGenChartDiv=<?php echo !$emptySet;?>">
-                <div class="six columns" style="text-align: center;" ng-show="showGenChartDiv">
-                    <?php 
-                    
-                    if(!isset($institutionID)) echo '<div id="institutionPieChart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>';
-                    else echo '<div id="chartdiv2" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>';
-                    ?>
-                </div>
-                <div class="six columns" style="text-align: center;">
-                    <h5>Emissions to Sequestration Ratio</h5>    
-                    <div>
-                        <canvas class="u-full-width" id="foo"></canvas>
+                <div class="row" ng-show="showFilter">
+                    <form method="post" action="{{ route('dashboard-process') }}" <?php if($userType <=2 ){ echo "ng-init=\"nonschool=true;\""; } ?>> {{ csrf_field() }}
+                        <input type="hidden" name="filter" value="<?php echo "{{showFilter}}"; ?>">
+                        <div class="two columns" ng-hide="<?php echo isset($institutionID) ?>">
+                            <select name="institutionID" id="institutionID" style="color: black;">
+                               <option value="">All Institutions</option>
+                                @foreach($institutions as $institution)
+                                  <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                        <?php
-                            //add change time period
-                            //add change threshold values
-                            if($tillOrange > 0 ){
-                                $treesLeft = ($tillOrange / 0.001) / 22; //number of trees to catch up in a year
-                                echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Orange Zone (" . $red * 100 . '%)</p>';
-                            }
-                            if($tillYellow > 0 ){
-                                $treesLeft = ($tillYellow / 0.001) / 22; //number of trees to catch up in a year
-                                echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Yellow Zone (" . $orange * 100 . '%)</p>';
-                            }
-                            if($tillGreen > 0 ){
-                                $treesLeft = ($tillGreen / 0.001) / 22; //number of trees to catch up in a year
-                                echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Green Zone (" . $yellow * 100 . '%)</p>';
-                            }        
+                        <div class="two columns" ng-hide="datePreset">
+                            <p style="text-align: left;" ng-hide="datePreset">From </p>
+                            <input class="u-full-width" type="date" name="fromDate" id="fromDate" max="<?php echo "{{max}}"; ?>" ng-model="min" ng-hide="datePreset">
+                        </div>
+                        <div class="two columns" ng-hide="datePreset">
+                            <p style="text-align: left;"  ng-hide="datePreset">To: </p>
+                            <input class="u-full-width" type="date" name="toDate" id="toDate" ng-model="max" min="<?php echo "{{min}}"; ?>" ng-hide="datePreset">
+                        </div>
+                        <div class="four columns" ng-show="datePreset">
+                            <select name="datePreset" id="">
+                                <option value="0" selected>Select Date Preset</option>
+                                <option value="1">2 Weeks</option>
+                                <option value="2">Last Month</option>
+                                <option value="3">Last 3 Months</option>
+                                <option value="4">Last 6 Months</option>
+                                <option value="5">Last 1 Year</option>
+                            </select>
+                        </div>
+                        <div class="two columns">
+                            <select class="u-full-width" name="carTypeID" id="carTypeID" style="color: black; width: 100%">
+                               <option value="">All Car Types</option>
+                                @foreach($carTypes as $carType)
+                                  <option value="{{ $carType->carTypeID }}">{{ $carType->carTypeName }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="two columns">
+                            <select class="u-full-width" name="fuelTypeID" id="fuelTypeID" style="color: black; width: 100%">
+                                 <option value="">All Fuel Types</option>
+                                  @foreach($fuelTypes as $fuelType)
+                                    <option value="{{ $fuelType->fuelTypeID }}">{{ $fuelType->fuelTypeName }}</option>
+                                  @endforeach
+                            </select>
+                        </div>
+                        <div class="two columns">
+                            <select class="u-full-width" name="carBrandID" id="carbrandID" style="color: black; width: 100%">
+                                 <option value="">All Car Brands</option>
+                                  @foreach($carBrands as $carBrand)
+                                    <option value="{{ $carBrand->carBrandID }}">{{ $carBrand->carBrandName }}</option>
+                                  @endforeach
+                            </select>
+                        </div>
+                        <div class="one column">
+                            <input class="button-primary" type="submit">
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="four columns offset-by-one"><h5>Total Emissions: &nbsp;<strong><?php echo round($totalEmissions[0]->totalEmissions, 4);?> MT</strong></h5></div>
+                    <div class="three columns"><h5>Total Trips: &nbsp;<strong><?php echo $tripCountTotal[0]->totalCount;?></strong></h5></div>
+                    <div class="four columns"><h5>Total Sequestration: <strong><?php echo ($seqTotal[0]->totalSeq)*22*0.001;?> MT</strong></h5></div>
+                </div>
+                <div class="row" ng-init="showGenChartDiv=<?php echo !$emptySet;?>">
+                    <div class="six columns" style="text-align: center;" ng-show="showGenChartDiv">
+                        <?php 
+
+                        if(!isset($institutionID)) echo '<div id="institutionPieChart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>';
+                        else echo '<div id="chartdiv2" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>';
                         ?>
                     </div>
+                    <div class="six columns" style="text-align: center;">
+                        <h5>Emissions to Sequestration Ratio</h5>    
+                        <div>
+                            <canvas class="u-full-width" id="foo"></canvas>
+                            </div>
+                            <?php
+                                //add change time period
+                                //add change threshold values
+                                if($tillOrange > 0 ){
+                                    $treesLeft = ($tillOrange / 0.001) / 22; //number of trees to catch up in a year
+                                    echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Orange Zone (" . $red * 100 . '%)</p>';
+                                }
+                                if($tillYellow > 0 ){
+                                    $treesLeft = ($tillYellow / 0.001) / 22; //number of trees to catch up in a year
+                                    echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Yellow Zone (" . $orange * 100 . '%)</p>';
+                                }
+                                if($tillGreen > 0 ){
+                                    $treesLeft = ($tillGreen / 0.001) / 22; //number of trees to catch up in a year
+                                    echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Green Zone (" . $yellow * 100 . '%)</p>';
+                                }        
+                            ?>
+                        </div>
+                    </div>
+                <div class="row">
+                    <div class="four columns" style="text-align: center;"><div id="carTypePieChart" style="min-width: 100%; height: 400px; max-width: 100%; margin: 0 auto"></div></div>
+                    <div class="four columns" style="text-align: center;"><div id="fuelTypePieChart" style="min-width: 100%; height: 400px; max-width: 100%; margin: 0 auto"></div></div>
+                    <div class="four columns" style="text-align: center;"><div id="carBrandPieChart" style="min-width: 100%; height: 400px; max-width: 100%; margin: 0 auto"></div></div>
                 </div>
-            <div class="row">
-                <div class="four columns" style="text-align: center;"><div id="carTypePieChart" style="min-width: 100%; height: 400px; max-width: 100%; margin: 0 auto"></div></div>
-                <div class="four columns" style="text-align: center;"><div id="fuelTypePieChart" style="min-width: 100%; height: 400px; max-width: 100%; margin: 0 auto"></div></div>
-                <div class="four columns" style="text-align: center;"><div id="carBrandPieChart" style="min-width: 100%; height: 400px; max-width: 100%; margin: 0 auto"></div></div>
-            </div>
             </div>
             <div ng-show="<?php echo $emptySet; ?>"><h4><br><div class="row" style="text-align: center"><?php echo "No Data Available"?><br><a href="{{ route('dashboard') }}" class="button button-primary">Go Back</a></div></h4></div>
         </div>
-            </div>
+    </div>
+
     <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
     <script src="https://www.amcharts.com/lib/3/serial.js"></script>
     <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/pie.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/chalk.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js" type="text/javascript"></script>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
-
-
 
     <!--angular js script-->
     <script>
@@ -772,6 +833,8 @@
                 $scope.nonschool = false;
                 $scope.showFilter = true;
                 $scope.datePreset = false;
+                $scope.min = new Date("<?php echo $min; ?>");
+                $scope.max = new Date("<?php echo $max; ?>");
                     
                 $scope.toggleFilter = function() {
                     $scope.showFilter = !$scope.showFilter
