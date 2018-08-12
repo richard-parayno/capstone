@@ -1,4 +1,295 @@
 <?php
+
+    //initialization
+    {
+    $filter = false;
+    $emptySet = true;
+    $dataSet = false;
+    $userType = Auth::user()->userTypeID;
+    if($userType > 2){
+        $instituitonID = Auth::user()->institutionID;
+        $filter = true;
+    }
+
+    if(isset($data)){
+        if($data['filtered']=='true'){
+            $filter = true;
+        }
+    }
+    }
+    //filtering
+    {
+    if($filter){
+        $rawDB = "";
+        $add = false;
+        if($data['datePreset']==0){   
+            if($data['fromDate'] != null && $data['toDate'] != null){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated ";
+                }
+                $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
+                $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+            }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated ";
+                }
+                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
+                $filterMessage .= "before ".$data['toDate'];
+            }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " dated  ";
+                }
+                $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+                $filterMessage .= "after ".$data['fromDate'];
+            }
+        }
+        else{
+            switch($data['datePreset']){
+                case "1": {
+                        if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
+                    $filterMessage .= "from 2 weeks ago";
+                    break;
+                }
+                case "2": {
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
+                    $filterMessage .= "from 1 month ago";
+                    break;
+                } 
+                case "3": {
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
+                    $filterMessage .= "from 3 month ago";
+                    break;
+                }
+                case "4": {
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
+                    $filterMessage .= "from 6 month ago";
+                    break;
+                }
+                case "5": {
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
+                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
+                    $filterMessage .= "from 1 year ago";
+                    break;
+                }
+                default: $rawDB .= "";
+            }
+        }
+        if($data['institutionID'] != null){
+                $institutionID = $data['institutionID'];
+        }
+        if($data['carTypeID']!=null){
+            if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " by " . $data['carTypeID'];
+                }
+                $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
+                $add = true;
+        }
+        if($data['fuelTypeID']!=null){
+            if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " by " . $data['fuelTypeID'];
+                }
+                $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
+                $add = true;
+        }
+        if($data['carBrandID']!=null){
+            if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " by " . $data['carBrandID'];
+                }
+                $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
+                $add = true;
+        }
+    }
+    }
+    //table fetch
+    {
+    //Filtered queries
+    if($filter){
+        
+    }
+    //no filter
+    else{
+        $column = "SUM(trips.emissions) as percentage";
+         $institutionEmissions = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+        ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        
+        ->get();
+        $columnTable = DB::table('trips')
+            ->select(DB::raw('sum(trips.emissions) as emissions'))
+            ->get();
+        if($columnTable[0]->emissions!=null){
+        //$column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
+        $column = "SUM(trips.emissions) as percentage";
+        $institutionEmissions = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+        ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        
+        ->get();
+    //get most vehicle type contributions (emission total)
+    $vehicleContributions = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('cartype_ref', 'cartype_ref.carTypeID','=', 'vehicles_mv.carTypeID')
+        ->select('cartype_ref.carTypeName', DB::raw($column))
+        ->groupBy('carTypeName')
+        ->orderByRaw('2 DESC')
+        
+        ->get();
+        
+    $deptContributions = DB::table('trips')
+        ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
+         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
+        ->groupBy('deptsperinstitution.deptID')
+        ->orderByRaw('2 DESC')
+        
+        ->get();
+        
+    $fuelContributions = DB::table('trips')
+    ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+    ->join('fuelType_ref', 'vehicles_mv.fuelTypeID', '=', 'fuelType_ref.fuelTypeID')
+    ->select('fuelType_ref.fuelTypeName', DB::raw($column))
+    ->groupBy('fuelType_ref.fuelTypeName')
+    ->orderByRaw('2 DESC')
+
+    ->get();
+
+
+    //get most car type contributions (emission total)
+    $carContributions = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('institutions', 'institutions.institutionID','=', 'vehicles_mv.institutionID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
+        ->groupBy(DB::raw('1'))
+        ->orderByRaw('2 DESC')
+        
+        ->get();
+        
+     //get most car brand type contributions (emission total)
+    $carBrandContributions = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
+        ->select('carbrand_ref.carBrandName', DB::raw($column))
+        ->groupBy('carbrand_ref.carbrandName')
+        ->orderByRaw('2 DESC')
+        
+        ->get();
+
+    $columnTable = DB::table('trips')
+        ->select(DB::raw('count(trips.emissions) as tripCount'))
+        ->get();
+    $column = "count(trips.emissions) as percentage";    
+        
+     $institutionTripNumber = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select('institutions.institutionName', DB::raw($column))
+        ->orderByRaw('2 DESC')
+        ->groupBy(DB::raw('1'))
+        
+        ->get();
+        
+    //trip number
+    //get most car brand type contributions (trip number)
+     $carBrandTripNumber = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
+        ->select('carbrand_ref.carbrandName', DB::raw($column))
+        ->groupBy(DB::raw('1'))
+        ->orderByRaw('2 DESC')
+        
+        ->get();
+        
+    //get most car contributions (trip number)
+    $carTripNumber = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
+        ->groupBy(DB::raw('1'))
+        ->orderByRaw('2 desc')
+        
+        ->get();
+        
+    //get most vehicle type contributions (trip number)
+    $vehicleTripNumber = DB::table('trips')
+        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
+        ->join('cartype_ref', 'cartype_ref.carTypeID','=', 'vehicles_mv.carTypeID')
+        ->select('cartype_ref.carTypeName', DB::raw($column))
+        ->groupBy('carTypeName')
+        ->orderByRaw('2 DESC')
+        
+        ->get();
+    
+    //get most department type contributions (trip number)
+    $deptTripNumber = DB::table('trips')
+        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+        ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
+        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
+        ->groupBy(DB::raw('1'))
+        ->orderByRaw('2 DESC')
+        
+        ->get();
+            
+    $totalTreesPlanted = DB::table('institutionbatchplant')
+        ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
+        ->groupBy(DB::raw('1'))
+        ->get();
+    
+    $totalEmissions = DB::table('trips')
+        ->select(DB::raw('SUM(emissions) as totalEmissions'))
+        ->get();
+    
+    $monthCount = DB::table('trips')
+        ->select(DB::raw('EXTRACT(YEAR_MONTH FROM tripDate) as monthYear'))
+        ->groupby(DB::raw('1'))
+        ->get();
+
+    $thresholds = DB::table('thresholds_ref')
+        ->select(DB::raw('*'))
+        ->get();
+        
+    }
+    }
+    }
+    //empty set checker
+    {
+    
+    }
+
+    //debuggers
+    {
+        dd();
+    }
+
+    /*
+
     $schoolSort = false;
     $emptySet = false;
     $userType = Auth::user()->userTypeID;  
@@ -20,7 +311,7 @@
         maxVal = start;
     else maxVal = total emission * 1.5
     */
-
+    /*
     if(isset($data) && !$emptySet){
         if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null){
         $rawDB = "";
@@ -890,7 +1181,8 @@ else{
     $tillOrange = ($red * $totalEmissions->get(0)->totalEmissions) - $start;
     $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
     $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
-        }
+        }*/
+        
 ?>
     @extends('layouts.main') @section('styling')
     <style>
