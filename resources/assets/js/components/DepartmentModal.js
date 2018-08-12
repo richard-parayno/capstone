@@ -13,10 +13,12 @@ export default class DepartmentModal extends Component {
         this.state = {
             institutions: [],
             originalDept: [],
-            department: []
-            
+            specificDept: [],
+            department: [],
+            errorMessages: []   
         }
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.checkInputs = this.checkInputs.bind(this);
     }
 
     populateForm() {
@@ -31,12 +33,22 @@ export default class DepartmentModal extends Component {
                 let originalDept = response.data;
                 this.setState({ originalDept: originalDept });     
             })
+        axios.get('api/department/specific/' + this.props.originalDept) //populate  original dept
+            .then(response => {
+                let specificDept = response.data;
+                this.setState({ specificDept: specificDept });     
+            })
         axios.get('api/department') //populate  dept
             .then(response => {
                 let department = response.data;
                 this.setState({ department: department });     
             })
     }
+
+    dismissAll(){
+        toast.dismiss();
+    }
+        
 
     handleSubmit(event) {
         event.preventDefault();
@@ -49,19 +61,40 @@ export default class DepartmentModal extends Component {
                 toast.success("🎉 Department Info Updated!", {
                     position: toast.POSITION.TOP_RIGHT
                 })
-                console.log(updated);
-                setTimeout(function() {
-                    window.location.reload()
-                }, 1500);
+                console.log(response);
+                if (response.status == 200) {
+                    setTimeout(function() {
+                        window.location.reload()
+                    }, 1500);
+                }
+                
             })
             .catch((error) => {
                 // Error
-                if (error.response) {
+                if (error.response.status == 422) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response.data);
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
+                    this.setState({ errorMessages: error.response.data.errors });
+                    if (this.state.errorMessages.deptName) {
+                        toast.error(this.state.errorMessages.deptName[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.institutionID) {
+                        toast.error(this.state.errorMessages.institutionID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.motherDeptID) {
+                        toast.error(this.state.errorMessages.motherDeptID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -71,53 +104,82 @@ export default class DepartmentModal extends Component {
                     // Something happened in setting up the request that triggered an Error
                     console.log('Error', error.message);
                 }
-                console.log(error.config);
+                
             });
         
     }
 
     componentDidMount() {
         this.populateForm();
+        
     }
+
+    checkInputs() {
+        let dept = document.getElementById("deptName");
+        if (dept.value.length > 0) {
+            dept.removeAttribute("style");
+        } else {
+            dept.style.border = "1px solid red";
+        }
+    }
+
 
    
     render() {
         const institutions = this.state.institutions;
         const originalDept = this.state.originalDept;
         const department = this.state.department;
+        const specificDept = this.state.specificDept;
+
         const institutionItems = institutions.map((institution) =>
-            <option key={institution.institutionID} value={institution.institutionID}>{institution.institutionName}</option> 
+            <option key={institution.institutionID} value={parseInt(institution.institutionID)}>{institution.institutionName}</option> 
         );
         const departmentItems = department.map((department) =>
-            <option key={department.deptID} value={department.deptID}>{department.deptName}</option> 
+            <option key={department.deptID} value={parseInt(department.deptID)}>{department.deptName}</option> 
         );
+
+        const specificDeptItems = specificDept.map((specificDept) =>
+            <option key={specificDept.deptID} value={parseInt(specificDept.deptID)}>{specificDept.deptName}</option>
+        );
+
+        
           
         return (
             <div>
                 <h1 style={{textAlign: "center"}}>Update Department Info</h1>
                 <p><strong>Selected Department:</strong> {originalDept.deptName}</p>
                 <p><strong>From Campus:</strong> {originalDept.institutionName}</p>
+                <p><strong>Mother Department:</strong> {originalDept.motherDeptName}</p>
                 <br/>      
                 <form onSubmit={this.handleSubmit}>
                     <div className="twelve columns">
-                        <label htmlFor="institution">Update Campus</label>
-                        <select className="u-full-width" name="institution" id="institution">
-                            {institutionItems}
-                        </select>
-                    </div>
-                    <div className="twelve columns">
                         <label htmlFor="deptName">Update Department Name</label>
-                        <input className="u-full-width" type="text" name="deptName" id="deptName" placeholder={department.deptName} />
+                        {this.state.errorMessages.deptName ?
+                            <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName} style={{border: "1px red solid" }} onInput={this.checkInputs} /> 
+                            :
+                            <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName}/>
+                        }
+                        
                     </div>
                     <div className="twelve columns">
                         <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
-                        <select className="u-full-width" name="motherDept" id="motherDept">
-                            {departmentItems}
-                        </select>
+                        {this.state.errorMessages.motherDeptID ? 
+                            <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}>
+                                <option value="">N/A</option>    
+                                {specificDeptItems}
+                            </select>   
+                            :
+                            <select className="u-full-width" name="motherDept" id="motherDept">
+                                <option value="">N/A</option>    
+                                {specificDeptItems}
+                            </select>
+                        }        
                     </div>
                     <br/>
-                    <input type="submit" className="button-primary u-pull-right" />
+                    <input type="submit" className="button-primary u-pull-right" onClick={this.dismissAll}/>
                 </form>
+               
+                
                 <ToastContainer autoClose={1000} />                
             </div>
         );

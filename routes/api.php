@@ -27,6 +27,7 @@ Route::post('/users/update/{user}', 'UserController@update');
 /** Department Management APIs */
 Route::get('/department', 'DepartmentController@index');
 Route::get('/department/{department}', 'DepartmentController@show');
+Route::get('/department/specific/{department}', 'DepartmentController@showSpecific');
 Route::post('/department/update/{department}', 'DepartmentController@update');
 
 

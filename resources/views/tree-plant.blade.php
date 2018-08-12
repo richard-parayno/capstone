@@ -143,9 +143,6 @@
         }        
     ?>
 </div>
-@endsection
-
-@section('scripts')
 <script type="application/javascript">
     <?php
         echo "var start = " . $start . ';
@@ -216,4 +213,5 @@
     gauge.animationSpeed = 32; // set animation speed (32 is default value)
     gauge.set(start); // set actual value
 </script>
+
 @endsection

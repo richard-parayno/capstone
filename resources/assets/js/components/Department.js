@@ -33,32 +33,35 @@ export default class Department extends Component {
         const department = this.props.department;
 
         const columns = [{
-            Header: 'Department Name',
+            Header: 'Name',
             id: 'deptName',
             accessor: 'deptName', // String-based value accessors!
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['deptName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
-            Header: 'From Campus',
+            Header: 'Campus',
             id: 'institutionName',
             accessor: 'institutionName',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['institutionName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
-            Header: 'From Department',
-            id: 'deptName',
-            accessor: 'deptName',
+            Header: 'From',
+            id: 'motherDeptName',
+            accessor: 'motherDeptName',
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ['deptName'] }),
-            filterAll: true
+                matchSorter(rows, filter.value, { keys: ['motherDeptName'] }),
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Actions', // Custom header components!
             accessor: 'deptID',
             Cell: row => (
                 <div style={{textAlign: "center"}}>
-                    <a onClick={() => this.onOpenModal(row.value)} href="#update">Update Department Info</a>
+                    <a onClick={() => this.onOpenModal(row.value)} href="#update">Update</a>
                 </div>
             ),
             filterable: false
@@ -67,7 +70,7 @@ export default class Department extends Component {
         
     
         return (
-            <div>
+            <div >
                 <ReactTable
                     filterable
                     defaultFilterMethod={(filter, row) =>

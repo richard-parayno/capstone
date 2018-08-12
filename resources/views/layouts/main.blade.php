@@ -113,7 +113,7 @@ use Illuminate\Support\Facades\Route;
     <div id="progress"></div>
   </div>
   <main class="container" id="page-wrap">
-    <div id="box-form">
+    <div>
       @yield('content')
 
     </div>

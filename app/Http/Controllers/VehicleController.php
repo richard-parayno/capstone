@@ -26,7 +26,7 @@ class VehicleController extends Controller
         ]);
 
         if ($validator->fails()) {
-          return redirect('/dashboard/vehicle-add')->withErrors($validator)->withInput();
+          return redirect('/vehicle-add')->withErrors($validator)->withInput();
         }
 
         else if ($validator->passes()) {
@@ -40,7 +40,7 @@ class VehicleController extends Controller
           $vehicle->active = 1;
           $vehicle->save();
 
-          return redirect('/dashboard/vehicle-add')->with('success', true)->with('message', $data['modelName'].'-'.$data['plateNumber'].' added!');
+          return redirect('/vehicle-add')->with('success', true)->with('message', $data['modelName'].'-'.$data['plateNumber'].' added!');
         }
     }
 

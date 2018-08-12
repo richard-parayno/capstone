@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Deptsperinstitution;
 use Validator;
 use DB;
+use Illuminate\Validation\Rule;
 
 class DepartmentController extends Controller
 {
@@ -15,12 +16,12 @@ class DepartmentController extends Controller
 
         $validator = Validator::make($data, [
           'institutionID' => 'required|int|max:100',
-          'deptName' => 'required|string|max:45',
+          'deptName' => 'required|string|max:100',
           'motherDeptID' => 'nullable|int',
         ]);
 
         if ($validator->fails()) {
-          return redirect('/dashboard/department-add')->withErrors($validator)->withInput();
+          return redirect('/department-add')->withErrors($validator)->withInput();
         }
 
         else if ($validator->passes()) {
@@ -30,7 +31,7 @@ class DepartmentController extends Controller
           $department->motherDeptID = $data['department-mother'];
           $department->save();
 
-          return redirect('/dashboard/department-add')->with('success', true)->with('message', $data['deptName'].' added!');
+          return redirect('/department-add')->with('success', true)->with('message', $data['deptName'].' added!');
         }
       } else {
         $data = $request->all();
@@ -41,7 +42,7 @@ class DepartmentController extends Controller
         ]);
 
         if ($validator->fails()) {
-          return redirect('/dashboard/department-add')->withErrors($validator)->withInput();
+          return redirect('/department-add')->withErrors($validator)->withInput();
         }
 
         else if ($validator->passes()) {
@@ -50,7 +51,7 @@ class DepartmentController extends Controller
           $department->deptName = $data['deptName'];
           $department->save();
 
-          return redirect('/dashboard/department-add')->with('success', true)->with('message', $data['deptName'].' successfully added!');
+          return redirect('/department-add')->with('success', true)->with('message', $data['deptName'].' successfully added!');
         }
       }
     }
@@ -99,6 +100,8 @@ class DepartmentController extends Controller
         $institution = DB::table('institutions')->where('institutionID', $x->institutionID)->first();
         if ($motherDepartment != null) {
           $x['motherDeptName'] = $motherDepartment->deptName;
+        } else if ($motherDepartment == null) {
+          $x['motherDeptName'] = "N/A";
         }
         if ($institution != null) {
           $x['institutionName'] = $institution->institutionName;
@@ -126,6 +129,12 @@ class DepartmentController extends Controller
 
   }
 
+  public function showSpecific(Deptsperinstitution $department) {
+    $specific = DB::table('Deptsperinstitution')->where('institutionID', $department->institutionID)->where('deptID', '!=', $department->deptID)->get();
+   
+    return response()->json($specific);
+  }
+
   public function store(Request $request) {
 
   }
@@ -136,12 +145,34 @@ class DepartmentController extends Controller
 
     $dept = Deptsperinstitution::find($originalDept);
 
-    if (isset($data['institution']))
-      $dept->institutionID = $data['institution'];
-    if (isset($data['deptName']))    
-      $dept->deptName = $data['deptName'];
-    if (isset($data['motherDept']))
-      $dept->motherDeptID = $data['motherDept'];
+
+    $this->validate($request, [
+      'deptName' => [
+        'required',
+        Rule::unique('deptsperinstitution')->ignore($dept->deptID, 'deptID')
+      ],
+      'motherDeptID' => [
+        Rule::unique('deptsperinstitution')->ignore($dept->deptID, 'deptID')
+        ]
+      ], [
+        'deptName.required' => 'The \'Update Department Name\' field is required.', 
+        'deptName.unique' => 'This Department Name has already been taken.', 
+      ]);
+
+    if (isset($data['deptName'])) {
+      if ($data['deptName'] != $dept->deptName) {
+        $dept->deptName = $data['deptName'];
+      }
+    }    
+    if (isset($data['motherDept'])) {
+      if ($data['motherDept'] != $dept->motherDeptID) {
+        $dept->motherDeptID = $data['motherDept'];
+      }
+    } else if ($data['motherDept'] == null) {
+      $dept->motherDeptID = null;
+    }
+    
+        
     
     $dept->save();
 
