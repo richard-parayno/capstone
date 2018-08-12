@@ -29,6 +29,7 @@ Route::get('/department', 'DepartmentController@index');
 Route::get('/department/{department}', 'DepartmentController@show');
 Route::get('/department/specific/{department}', 'DepartmentController@showSpecific');
 Route::post('/department/update/{department}', 'DepartmentController@update');
+Route::delete('/department/remove/{department}', 'DepartmentController@delete');
 
 
 

@@ -181,5 +181,8 @@ class DepartmentController extends Controller
 
   public function delete(Deptsperinstitution $department) {
 
+    $department->delete();
+
+    return response()->json();
   }
 }

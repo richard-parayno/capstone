@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import ReactTable from "react-table";
-import matchSorter from 'match-sorter'
-import Modal from 'react-responsive-modal';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -19,6 +16,8 @@ export default class DepartmentModal extends Component {
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.checkInputs = this.checkInputs.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     populateForm() {
@@ -61,7 +60,7 @@ export default class DepartmentModal extends Component {
                 toast.success("🎉 Department Info Updated!", {
                     position: toast.POSITION.TOP_RIGHT
                 })
-                console.log(response);
+               
                 if (response.status == 200) {
                     setTimeout(function() {
                         window.location.reload()
@@ -109,6 +108,20 @@ export default class DepartmentModal extends Component {
         
     }
 
+    handleDelete(event) {
+        event.preventDefault();
+        
+        axios.delete('api/department/remove/' + this.props.originalDept)
+    }
+
+    handleClose(event) {
+        event.preventDefault;
+        var e = new Event("keydown");
+        e.keyCode=27;
+        e.which=e.keyCode;
+        document.dispatchEvent(e);// just enter the char you want to send 
+    }
+
     componentDidMount() {
         this.populateForm();
         
@@ -126,6 +139,9 @@ export default class DepartmentModal extends Component {
 
    
     render() {
+        const update = this.props.update;
+        const deleteProp = this.props.delete;
+
         const institutions = this.state.institutions;
         const originalDept = this.state.originalDept;
         const department = this.state.department;
@@ -143,46 +159,67 @@ export default class DepartmentModal extends Component {
         );
 
         
-          
-        return (
-            <div>
-                <h1 style={{textAlign: "center"}}>Update Department Info</h1>
-                <p><strong>Selected Department:</strong> {originalDept.deptName}</p>
-                <p><strong>From Campus:</strong> {originalDept.institutionName}</p>
-                <p><strong>Mother Department:</strong> {originalDept.motherDeptName}</p>
-                <br/>      
-                <form onSubmit={this.handleSubmit}>
-                    <div className="twelve columns">
-                        <label htmlFor="deptName">Update Department Name</label>
-                        {this.state.errorMessages.deptName ?
-                            <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName} style={{border: "1px red solid" }} onInput={this.checkInputs} /> 
-                            :
-                            <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName}/>
-                        }
+        if (update) {
+            return (
+                <div>
+                    <h1 style={{textAlign: "center"}}>Update Department Info</h1>
+                    <p><strong>Selected Department:</strong> {originalDept.deptName}</p>
+                    <p><strong>From Campus:</strong> {originalDept.institutionName}</p>
+                    <p><strong>Mother Department:</strong> {originalDept.motherDeptName}</p>
+                    <br/>      
+                    <form onSubmit={this.handleSubmit}>
+                        <div className="twelve columns">
+                            <label htmlFor="deptName">Update Department Name</label>
+                            {this.state.errorMessages.deptName ?
+                                <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName} style={{border: "1px red solid" }} onInput={this.checkInputs} /> 
+                                :
+                                <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName}/>
+                            }
+                            
+                        </div>
+                        <div className="twelve columns">
+                            <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
+                            {this.state.errorMessages.motherDeptID ? 
+                                <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}  value={originalDept.motherDeptID != null ? originalDept.motherDeptID : 0}>
+                                    <option value="">N/A</option>    
+                                    {specificDeptItems}
+                                </select>   
+                                :
+                                <select className="u-full-width" name="motherDept" id="motherDept" value={originalDept.motherDeptID != null ? originalDept.motherDeptID : 0}>
+                                    <option value="">N/A</option>    
+                                    {specificDeptItems}
+                                </select>
+                            }        
+                        </div>
+                        <br/>
+                        <input type="submit" className="button-primary u-pull-right" onClick={this.dismissAll}/>
+                    </form>
+                   
+                    
+                    <ToastContainer autoClose={1000} />                
+                </div>
+            );
+        } else if (deleteProp) {
+            return (
+                <div>
+                    <h1 style={{textAlign: "center"}}>Remove Department</h1>
+                    <p><strong>Selected Department:</strong> {originalDept.deptName}</p>
+                    <p><strong>From Campus:</strong> {originalDept.institutionName}</p>
+                    <p><strong>Mother Department:</strong> {originalDept.motherDeptName}</p>
+                    <br/>      
+                    <form onSubmit={this.handleDelete}>
+                        <p><strong>Are you sure you want to remove this department? There will be no undoing this action.</strong></p>
+                        <br/>
+                        <div className="twelve columns">
+                        <input type="submit" value="Yes" className="button-primary u-pull-right" onClick={this.dismissAll}/>
                         
-                    </div>
-                    <div className="twelve columns">
-                        <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
-                        {this.state.errorMessages.motherDeptID ? 
-                            <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}>
-                                <option value="">N/A</option>    
-                                {specificDeptItems}
-                            </select>   
-                            :
-                            <select className="u-full-width" name="motherDept" id="motherDept">
-                                <option value="">N/A</option>    
-                                {specificDeptItems}
-                            </select>
-                        }        
-                    </div>
-                    <br/>
-                    <input type="submit" className="button-primary u-pull-right" onClick={this.dismissAll}/>
-                </form>
-               
-                
-                <ToastContainer autoClose={1000} />                
-            </div>
-        );
+                        <a className="button button-primary" onClick={this.handleClose}>No</a>
+                        </div>
+                    </form>
+                    <ToastContainer autoClose={1000} />                
+                </div>
+            );
+        }
         
         
         
