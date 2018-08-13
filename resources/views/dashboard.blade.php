@@ -5,6 +5,7 @@
     $filterPost = false;
     $emptySet = true;
     $dataSet = false;
+        
     $fuelTypes = DB::table('fueltype_ref')->get();
     $carTypes = DB::table('cartype_ref')->get();
     $carBrands = DB::table('carbrand_ref')->get();
@@ -670,6 +671,7 @@
 
     //debuggers
     {
+        //dd($notifications);
         //dd($rawDB);
         //dd($min);
     }
@@ -819,7 +821,6 @@
     <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/pie.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/chalk.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js" type="text/javascript"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
