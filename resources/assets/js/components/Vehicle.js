@@ -54,52 +54,59 @@ export default class Vehicle extends Component {
             accessor: 'carTypeName', // String-based value accessors!
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['carTypeName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
-            Header: 'Car Model',
+            Header: 'Model',
             id: 'modelName',
             accessor: 'modelName',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['modelName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
-            Header: 'Plate Number',
+            Header: 'Plate No.',
             id: 'plateNumber',
             accessor: 'plateNumber',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['plateNumber'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
-            Header: 'Home Campus',
+            Header: 'Campus',
             id: 'institutionName',
             accessor: 'institutionName',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['institutionName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Fuel Type',
             id: 'fuelTypeName',
             accessor: 'fuelTypeName',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['fuelTypeName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Status',
             id: 'status',
             accessor: 'status',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['status'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Actions', // Custom header components!
             accessor: 'plateNumber',
             Cell: row => (
                 <div style={{textAlign: "center"}}>
-                    <a onClick={() => this.onOpenModal(row.value, "a")} href="#update">Update Vehicle Info</a> <br/>
-                    <a onClick={() => this.onOpenModal(row.value, "b")} href="#decommission">Update Vehicle Status</a>
+                    <a onClick={() => this.onOpenModal(row.value, "a")} href="#update">Update Info</a> <br/>
+                    <a onClick={() => this.onOpenModal(row.value, "b")} href="#decommission">Update Status</a>
                 </div>
             ),
-            filterable: false
+            filterable: false,
+            style: {'whiteSpace': 'unset'}
           }]; 
           
         

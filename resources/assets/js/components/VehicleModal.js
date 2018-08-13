@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import ReactTable from "react-table";
-import matchSorter from 'match-sorter'
-import Modal from 'react-responsive-modal';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -175,35 +172,35 @@ export default class VehicleModal extends Component {
                     <form onSubmit={this.handleSubmit}>
                         <div className="twelve columns">
                             <label htmlFor="vehicleCampus">Update Campus</label>
-                            <select className="u-full-width" name="vehicleCampus" id="vehicleCampus">
+                            <select className="u-full-width" name="vehicleCampus" id="vehicleCampus" value={vehicles.institutionID}>
                                 {institutionItems}
                             </select>
                         </div>
                         <div className="twelve columns">
                             <label htmlFor="vehicleBrand">Update Vehicle Brand</label>
-                            <select className="u-full-width" name="vehicleBrand" id="vehicleBrand">
+                            <select className="u-full-width" name="vehicleBrand" id="vehicleBrand" value={vehicles.carBrandID}>
                                 {vehicleBrandItems}
                             </select>
                         </div>
                         <div className="twelve columns">
                             <label htmlFor="vehicleType">Update Vehicle Type</label>
-                            <select className="u-full-width" name="vehicleType" id="vehicleType">
+                            <select className="u-full-width" name="vehicleType" id="vehicleType" value={vehicles.carTypeID}>
                                 {vehicleTypeItems}
                             </select>
                         </div>
                         <div className="twelve columns">
                             <label htmlFor="vehicleFuel">Update Fuel Type</label>
-                            <select className="u-full-width" name="vehicleFuel" id="vehicleFuel">
+                            <select className="u-full-width" name="vehicleFuel" id="vehicleFuel" value={vehicles.fuelTypeID}>
                                 {fuelTypeItems}
                             </select>
                         </div>
                         <div className="twelve columns">
                             <label htmlFor="vehicleModel">Update Model Name</label>
-                            <input className="u-full-width" type="text" name="vehicleModel" id="vehicleModel" placeholder="L300" />
+                            <input className="u-full-width" type="text" name="vehicleModel" id="vehicleModel" defaultValue={vehicles.modelName} />
                         </div>
                         <div className="twelve columns">
                             <label htmlFor="vehiclePlate">Update Plate Number</label>
-                            <input className="u-full-width" type="text" name="vehiclePlate" id="vehiclePlate" placeholder={this.props.plateNumber} maxLength="6"/>
+                            <input className="u-full-width" type="text" name="vehiclePlate" id="vehiclePlate" defaultValue={vehicles.plateNumber} maxLength="6"/>
                         </div>
                         <input type="submit" className="button-primary u-pull-right" />
                     </form>
