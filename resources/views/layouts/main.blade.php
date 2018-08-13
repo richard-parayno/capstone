@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Route;
   <link href="{{ URL::asset('/css/sb-admin-2.css') }}" rel="stylesheet">
   <link rel="shortcut icon" href="{{ URL::asset('favicon.ico') }}">
   <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css">
-  <script src="{{ URL::asset('/js/jquery-3.2.1.min.js') }}"></script>
 <!-- Bootstrap Core JavaScript -->
+<script src="{{ URL::asset('/js/jquery-3.2.1.min.js') }}"></script>
 <script src="{{ URL::asset('/js/bootstrap.min.js') }}"></script>
 
 <!-- Metis Menu Plugin JavaScript -->
@@ -84,13 +84,13 @@ use Illuminate\Support\Facades\Route;
 @show
 <body>
      <?php 
-        $noNotifs = false;   
+        $noNotifs = true;   
         //notif checker
         {
             $userID = Auth::user()->id;
             $notifications = DB::table('notifications')->whereRaw('toUserID = '.$userID)->get();
             if(count($notifications) > 0){
-                $noNotifs = true;   
+                $noNotifs = false;   
             }
         }
 
@@ -113,29 +113,6 @@ use Illuminate\Support\Facades\Route;
     <div class="twelve column bar">
       <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>
       <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-            <i class="fa fa-bell fa-fw"></i> Notifications Panel
-        </div>
-        <!-- /.panel-heading -->
-        <div class="panel-body">
-            <div class="list-group">
-                <a href="#" class="list-group-item">
-                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
-                    <span class="pull-right text-muted small"><em>11:32 AM</em>
-                    </span>
-                </a>
-                <a href="#" class="list-group-item">
-                    <i class="fa fa-warning fa-fw"></i> Server Not Responding
-                    <span class="pull-right text-muted small"><em>10:57 AM</em>
-                    </span>
-                </a>
-            </div>
-            <!-- /.list-group -->
-            <a href="#" class="btn btn-default btn-block">View All Alerts</a>
-        </div>
-        <!-- /.panel-body -->
-    </div>
     </div>
   </div>
   @else
@@ -163,7 +140,29 @@ use Illuminate\Support\Facades\Route;
   <main class="container" id="page-wrap">
     <div>
       @yield('content')
-
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <i class="fa fa-bell fa-fw"></i> Notifications Panel
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item">
+                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                    <span class="pull-right text-muted small"><em>11:32 AM</em>
+                    </span>
+                </a>
+                <a href="#" class="list-group-item">
+                    <i class="fa fa-warning fa-fw"></i> Server Not Responding
+                    <span class="pull-right text-muted small"><em>10:57 AM</em>
+                    </span>
+                </a>
+            </div>
+            <!-- /.list-group -->
+            <a href="#" class="btn btn-default btn-block">View All Alerts</a>
+        </div>
+        <!-- /.panel-body -->
+    </div>
     </div>
   </main>
   <!-- main content -->
