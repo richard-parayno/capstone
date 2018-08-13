@@ -101,8 +101,7 @@ export default class Vehicle extends Component {
             accessor: 'plateNumber',
             Cell: row => (
                 <div style={{textAlign: "center"}}>
-                    <a onClick={() => this.onOpenModal(row.value, "a")} href="#update">Update Info</a> <br/>
-                    <a onClick={() => this.onOpenModal(row.value, "b")} href="#decommission">Update Status</a>
+                    <a onClick={() => this.onOpenModal(row.value, "a")} href="#update">Update</a>
                 </div>
             ),
             filterable: false,
