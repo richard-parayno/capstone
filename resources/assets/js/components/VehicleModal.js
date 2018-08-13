@@ -65,12 +65,30 @@ export default class VehicleModal extends Component {
             })
             .catch((error) => {
                 // Error
-                if (error.response) {
+                if (error.response.status == 422) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response.data);
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
+                    this.setState({ errorMessages: error.response.data.errors });
+                    if (this.state.errorMessages.deptName) {
+                        toast.error(this.state.errorMessages.deptName[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.institutionID) {
+                        toast.error(this.state.errorMessages.institutionID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.motherDeptID) {
+                        toast.error(this.state.errorMessages.motherDeptID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -195,30 +213,37 @@ export default class VehicleModal extends Component {
     
                     <form onSubmit={this.handleSubmit}>
                         <div className="twelve columns">
-                            <label htmlFor="vehicleBrand">Update Vehicle Brand</label>
-                            <select className="u-full-width" name="vehicleBrand" id="vehicleBrand" value={vehicles.carBrandID}>
+                            <label htmlFor="carBrandID">Update Vehicle Brand</label>
+                            <select className="u-full-width" name="carBrandID" id="carBrandID" defaultValue={vehicles.carBrandID}>
                                 {vehicleBrandItems}
                             </select>
                         </div>
                         <div className="twelve columns">
-                            <label htmlFor="vehicleType">Update Vehicle Type</label>
-                            <select className="u-full-width" name="vehicleType" id="vehicleType" value={vehicles.carTypeID}>
+                            <label htmlFor="carTypeID">Update Vehicle Type</label>
+                            <select className="u-full-width" name="carTypeID" id="carTypeID" defaultValue={vehicles.carTypeID}>
                                 {vehicleTypeItems}
                             </select>
                         </div>
                         <div className="twelve columns">
-                            <label htmlFor="vehicleFuel">Update Fuel Type</label>
-                            <select className="u-full-width" name="vehicleFuel" id="vehicleFuel" value={vehicles.fuelTypeID}>
+                            <label htmlFor="fuelTypeID">Update Fuel Type</label>
+                            <select className="u-full-width" name="fuelTypeID" id="fuelTypeID" defaultValue={vehicles.fuelTypeID}>
                                 {fuelTypeItems}
                             </select>
                         </div>
                         <div className="twelve columns">
-                            <label htmlFor="vehicleModel">Update Model Name</label>
-                            <input className="u-full-width" type="text" name="vehicleModel" id="vehicleModel" defaultValue={vehicles.modelName} />
+                            <label htmlFor="modelName">Update Model Name</label>
+                            <input className="u-full-width" type="text" name="modelName" id="modelName" defaultValue={vehicles.modelName} />
                         </div>
                         <div className="twelve columns">
-                            <label htmlFor="vehiclePlate">Update Plate Number</label>
-                            <input className="u-full-width" type="text" name="vehiclePlate" id="vehiclePlate" defaultValue={vehicles.plateNumber} maxLength="6"/>
+                            <label htmlFor="plateNumber">Update Plate Number</label>
+                            <input className="u-full-width" type="text" name="plateNumber" id="plateNumber" defaultValue={vehicles.plateNumber} maxLength="6"/>
+                        </div>
+                        <div className="twelve columns">
+                            <label htmlFor="vehicleChoice">Update Vehicle Status</label>
+                            <select className="u-full-width" name="vehicleChoice" id="vehicleChoice" defaultValue={vehicles.active}>
+                                <option value="1">Active</option>
+                                <option value="0">Decommissioned</option>
+                            </select>
                         </div>
                         <input type="submit" className="button-primary u-pull-right" />
                     </form>

@@ -10,6 +10,8 @@ use App\Models\CarbrandRef;
 use App\Models\FueltypeRef;
 use Validator;
 use DB;
+use Illuminate\Validation\Rule;
+
 
 class VehicleController extends Controller
 {
@@ -255,27 +257,34 @@ class VehicleController extends Controller
     $originalPlateNumber = $data['originalPlateNumber'];
     $vehicle = VehiclesMv::find($originalPlateNumber);
 
-    if (isset($data['vehicleCampus']))
-     $vehicle->institutionID = $data['vehicleCampus'];
-    if (isset($data['vehicleType']))    
-      $vehicle->carTypeID = $data['vehicleType'];
-    if (isset($data['vehicleBrand']))
-      $vehicle->carBrandID = $data['vehicleBrand'];
-    if (isset($data['vehicleFuel']))
-      $vehicle->fuelTypeID = $data['vehicleFuel'];
-    if (isset($data['vehicleModel']))
-      $vehicle->modelName = $data['vehicleModel'];
-    if (isset($data['vehiclePlate']))
-      $vehicle->plateNumber = $data['vehiclePlate'];
+    $this->validate($request, [
+      'modelName' => [
+        'required',
+      ],
+      'plateNumber' => [
+        'required',
+        Rule::unique('vehicles_mv')->ignore($vehicle->plateNumber, 'plateNumber')
+        ]
+      ], [
+        'modelName.required' => 'The \'Update Model Name\' field is required.', 
+        'plateNumber.required' => 'The \'Update Plate Number\' field is required.', 
+        'plateNumber.unique' => 'This Plate Number has already been taken.', 
+      ]);
+
+
+
+    if (isset($data['carTypeID']))    
+      $vehicle->carTypeID = $data['carTypeID'];
+    if (isset($data['carBrandID']))
+      $vehicle->carBrandID = $data['carBrandID'];
+    if (isset($data['fuelTypeID']))
+      $vehicle->fuelTypeID = $data['fuelTypeID'];
+    if (isset($data['modelName']))
+      $vehicle->modelName = $data['modelName'];
+    if (isset($data['plateNumber']))
+      $vehicle->plateNumber = $data['plateNumber'];
     if (isset($data['vehicleChoice'])) {
-      if ($vehicle->active == 1) {
-        $vehicle->active = 0;
-        
-      }
-      else if ($vehicle->active == 0) {
-        $vehicle->active = 1;
-        
-      }
+      $vehicle->active = $data['vehicleChoice'];
     }
 
     $vehicle->save();
