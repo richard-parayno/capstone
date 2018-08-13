@@ -119,18 +119,30 @@ export default class VehicleModal extends Component {
             return (
                 <div>
                     <h1 style={{textAlign: "center"}}>Decommission Vehicle</h1>
-                    <p><strong>Selected Vehicle's Plate Number:</strong> {vehicles.plateNumber}</p>
-                    <p><strong>Car Model:</strong> {vehicles.modelName}</p>
-                    <p><strong>Car Brand:</strong> {vehicles.carBrandName}</p>
-                    <p><strong>Car Type:</strong> {vehicles.carTypeName}</p>
-                    <p><strong>Campus:</strong> {vehicles.institutionName}</p>
-                    <p><strong>Fuel Type:</strong> {vehicles.fuelTypeName}</p>
-                    {vehicles.active === 1 && 
-                        <p><strong>Status: {vehicles.status}</strong></p>
-                    } 
-                    {vehicles.active === 0 &&
-                        <p><strong>Status: {vehicles.status}</strong></p>
-                    }
+                    <p><strong>Selected Vehicle's Details:</strong></p>
+                    <br/>
+                    <table style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                        <thead>
+                            <tr>
+                                <th>Car Type</th>
+                                <th>Model</th>
+                                <th>Plate No.</th>
+                                <th>Campus</th>
+                                <th>Fuel Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{vehicles.carTypeName}</td>    
+                                <td>{vehicles.modelName}</td>    
+                                <td>{vehicles.plateNumber}</td>    
+                                <td>{vehicles.institutionName}</td>    
+                                <td>{vehicles.fuelTypeName}</td>    
+                                <td>{vehicles.status}</td>
+                            </tr>    
+                        </tbody>
+                    </table>
                     <br/>
 
                     {vehicles.active === 1 && 
@@ -155,27 +167,33 @@ export default class VehicleModal extends Component {
             return (
                 <div>
                     <h1 style={{textAlign: "center"}}>Update Vehicle Info</h1>
-                    <p><strong>Selected Vehicle's Plate Number:</strong> {vehicles.plateNumber}</p>
-                    <p><strong>Car Model:</strong> {vehicles.modelName}</p>
-                    <p><strong>Car Brand:</strong> {vehicles.carBrandName}</p>
-                    <p><strong>Car Type:</strong> {vehicles.carTypeName}</p>
-                    <p><strong>Campus:</strong> {vehicles.institutionName}</p>
-                    <p><strong>Fuel Type:</strong> {vehicles.fuelTypeName}</p>
-                    {vehicles.active === 1 && 
-                        <p><strong>Status: {vehicles.status}</strong></p>
-                    } 
-                    {vehicles.active === 0 &&
-                        <p><strong>Status: {vehicles.status}</strong></p>
-                    }
+                    <p><strong>Selected Vehicle's Details:</strong></p>
+                    <br/>
+                    <table style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                        <thead>
+                            <tr>
+                                <th>Car Type</th>
+                                <th>Model</th>
+                                <th>Plate No.</th>
+                                <th>Campus</th>
+                                <th>Fuel Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{vehicles.carTypeName}</td>    
+                                <td>{vehicles.modelName}</td>    
+                                <td>{vehicles.plateNumber}</td>    
+                                <td>{vehicles.institutionName}</td>    
+                                <td>{vehicles.fuelTypeName}</td>    
+                                <td>{vehicles.status}</td>
+                            </tr>    
+                        </tbody>
+                    </table>
                     <br/>
     
                     <form onSubmit={this.handleSubmit}>
-                        <div className="twelve columns">
-                            <label htmlFor="vehicleCampus">Update Campus</label>
-                            <select className="u-full-width" name="vehicleCampus" id="vehicleCampus" value={vehicles.institutionID}>
-                                {institutionItems}
-                            </select>
-                        </div>
                         <div className="twelve columns">
                             <label htmlFor="vehicleBrand">Update Vehicle Brand</label>
                             <select className="u-full-width" name="vehicleBrand" id="vehicleBrand" value={vehicles.carBrandID}>
