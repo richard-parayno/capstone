@@ -79,7 +79,6 @@ export default class Department extends Component {
                     <a onClick={() => this.onOpenModal(row.value, "update")} href="#update">Update</a>
                     <br/>
                 </div> 
-
             ),
             filterable: false
           }]; 

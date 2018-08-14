@@ -60,7 +60,7 @@ export default class DepartmentModal extends Component {
                 toast.success("🎉 Department Info Updated!", {
                     position: toast.POSITION.TOP_RIGHT
                 })
-               
+                console.log(response);
                 if (response.status == 200) {
                     setTimeout(function() {
                         window.location.reload()
