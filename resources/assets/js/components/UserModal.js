@@ -39,12 +39,30 @@ export default class UserModal extends Component {
             })
             .catch((error) => {
                 // Error
-                if (error.response) {
+                if (error.response.status == 422) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response.data);
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
+                    this.setState({ errorMessages: error.response.data.errors });
+                    if (this.state.errorMessages.deptName) {
+                        toast.error(this.state.errorMessages.deptName[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.institutionID) {
+                        toast.error(this.state.errorMessages.institutionID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.motherDeptID) {
+                        toast.error(this.state.errorMessages.motherDeptID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
