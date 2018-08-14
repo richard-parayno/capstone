@@ -59,12 +59,8 @@ class UserController extends Controller
       $data = $request->all();
       $originalUser = User::find($data['originalUser']);
 
-      if (isset($data['first-name']) && isset($data['last-name'])) {
-        $originalUser->accountName = $data['first-name']." ".$data['last-name'];
-      } else if (isset($data['first-name'])) {
-        $originalUser->accountName = $data['first-name'];
-      } else if (isset($data['last-name'])) {
-        $originalUser->accountName = $data['last-name'];
+      if (isset($data['accountName'])) {
+        $originalUser->accountName = $data['accountName'];
       }
       if (isset($data['username']))
         $originalUser->username = $data['username'];

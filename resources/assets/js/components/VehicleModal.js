@@ -134,53 +134,7 @@ export default class VehicleModal extends Component {
         );
         
         if (decom) {
-            return (
-                <div>
-                    <h1 style={{textAlign: "center"}}>Decommission Vehicle</h1>
-                    <p><strong>Selected Vehicle's Details:</strong></p>
-                    <br/>
-                    <table style={{marginLeft: 'auto', marginRight: 'auto'}}>
-                        <thead>
-                            <tr>
-                                <th>Car Type</th>
-                                <th>Model</th>
-                                <th>Plate No.</th>
-                                <th>Campus</th>
-                                <th>Fuel Type</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{vehicles.carTypeName}</td>    
-                                <td>{vehicles.modelName}</td>    
-                                <td>{vehicles.plateNumber}</td>    
-                                <td>{vehicles.institutionName}</td>    
-                                <td>{vehicles.fuelTypeName}</td>    
-                                <td>{vehicles.status}</td>
-                            </tr>    
-                        </tbody>
-                    </table>
-                    <br/>
-
-                    {vehicles.active === 1 && 
-                        <p><strong>Are you sure you want to decommission this vehicle?</strong></p>
-                    } 
-                    {vehicles.active === 0 &&
-                        <p><strong>Are you sure you want to make this vehicle active?</strong></p>
-                    }
-                    <form onSubmit={this.handleSubmit}>
-                        <input type="radio" name="vehicleChoice" value="yes" />
-                        <span className="label-body">Yes</span>
-                        <br/>
-                        <input type="radio" name="vehicleChoice" value="no" />
-                        <span className="label-body">No</span>
-                        <br/>
-                        <input type="submit" className="button-primary u-pull-right" />
-                    </form>
-                    <ToastContainer autoClose={1000} />                
-                </div>
-            );
+            
         } else if (update) {
             return (
                 <div>
@@ -191,6 +145,7 @@ export default class VehicleModal extends Component {
                         <thead>
                             <tr>
                                 <th>Car Type</th>
+                                <th>Brand</th>
                                 <th>Model</th>
                                 <th>Plate No.</th>
                                 <th>Campus</th>
@@ -201,6 +156,7 @@ export default class VehicleModal extends Component {
                         <tbody>
                             <tr>
                                 <td>{vehicles.carTypeName}</td>    
+                                <td>{vehicles.carBrandName}</td>    
                                 <td>{vehicles.modelName}</td>    
                                 <td>{vehicles.plateNumber}</td>    
                                 <td>{vehicles.institutionName}</td>    
@@ -212,40 +168,42 @@ export default class VehicleModal extends Component {
                     <br/>
     
                     <form onSubmit={this.handleSubmit}>
-                        <div className="twelve columns">
+                        <div className="six columns">
                             <label htmlFor="carBrandID">Update Vehicle Brand</label>
                             <select className="u-full-width" name="carBrandID" id="carBrandID" defaultValue={vehicles.carBrandID}>
                                 {vehicleBrandItems}
                             </select>
                         </div>
-                        <div className="twelve columns">
+                        <div className="six columns">
                             <label htmlFor="carTypeID">Update Vehicle Type</label>
                             <select className="u-full-width" name="carTypeID" id="carTypeID" defaultValue={vehicles.carTypeID}>
                                 {vehicleTypeItems}
                             </select>
                         </div>
-                        <div className="twelve columns">
+                        <div className="six columns" style={{marginLeft: 0}}>
                             <label htmlFor="fuelTypeID">Update Fuel Type</label>
                             <select className="u-full-width" name="fuelTypeID" id="fuelTypeID" defaultValue={vehicles.fuelTypeID}>
                                 {fuelTypeItems}
                             </select>
                         </div>
-                        <div className="twelve columns">
+                        <div className="six columns">
                             <label htmlFor="modelName">Update Model Name</label>
                             <input className="u-full-width" type="text" name="modelName" id="modelName" defaultValue={vehicles.modelName} />
                         </div>
-                        <div className="twelve columns">
+                        <div className="six columns" style={{marginLeft: 0}}>
                             <label htmlFor="plateNumber">Update Plate Number</label>
                             <input className="u-full-width" type="text" name="plateNumber" id="plateNumber" defaultValue={vehicles.plateNumber} maxLength="6"/>
                         </div>
-                        <div className="twelve columns">
+                        <div className="six columns">
                             <label htmlFor="vehicleChoice">Update Vehicle Status</label>
                             <select className="u-full-width" name="vehicleChoice" id="vehicleChoice" defaultValue={vehicles.active}>
                                 <option value="1">Active</option>
                                 <option value="0">Decommissioned</option>
                             </select>
                         </div>
-                        <input type="submit" className="button-primary u-pull-right" />
+                        <div className="twelve columns">
+                            <input type="submit" className="button-primary u-pull-right" />
+                        </div>
                     </form>
                     <ToastContainer autoClose={1000} />                
                 </div>

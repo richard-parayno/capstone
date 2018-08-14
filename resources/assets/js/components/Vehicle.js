@@ -57,6 +57,14 @@ export default class Vehicle extends Component {
             filterAll: true,
             style: {'whiteSpace': 'unset'}
           }, {
+            Header: 'Brand',
+            id: 'carBrandName',
+            accessor: 'carBrandName', // String-based value accessors!
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ['carBrandName'] }),
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
+          }, {
             Header: 'Model',
             id: 'modelName',
             accessor: 'modelName',

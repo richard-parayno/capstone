@@ -87,8 +87,7 @@ export default class User extends Component {
             accessor: 'id',
             Cell: row => (
                 <div style={{textAlign: "center"}}>
-                    <a onClick={() => this.onOpenModal(row.value, "a")} href="#updateinfo">Update User Info</a> <br/>
-                    <a onClick={() => this.onOpenModal(row.value, "b")} href="#updatecreds">Update User Credentials</a>
+                    <a onClick={() => this.onOpenModal(row.value, "a")} href="#updateinfo">Update</a>
                 </div>
             ),
             filterable: false

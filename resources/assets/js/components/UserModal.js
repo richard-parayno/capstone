@@ -70,7 +70,7 @@ export default class UserModal extends Component {
 
         const originalUser = this.state.user;
 
-        if (userInfo) {
+        if (userCreds) {
             return (
                 <div>
                     <h1 style={{textAlign: "center"}}>Update User Info</h1>
@@ -80,46 +80,65 @@ export default class UserModal extends Component {
                     <br/>
 
                     <form onSubmit={this.handleSubmit}>
-                        <div className="six columns">
-                            <label htmlFor="first-name">Update First Name</label>
-                            <input className="u-full-width" type="text" name="first-name" id="first-name" placeholder="Richard Lance" />
-                        </div>
-                        <div className="six columns">
-                            <label htmlFor="last-name">Update Last Name</label>
-                            <input className="u-full-width" type="text" name="last-name" id="last-name" placeholder="Parayno" />
-                        </div>
+                        
                         
                         <input type="submit" className="button-primary u-pull-right" />
                     </form>
                     <ToastContainer autoClose={1000} />                
                 </div>
             );
-        } else if (userCreds) {
+        } else if (userInfo) {
             return (
                 <div>
                     <h1 style={{textAlign: "center"}}>Update User Credentials</h1>
-                    <p><strong>Selected User:</strong> {originalUser.accountName}</p>
-                    <p><strong>User Type:</strong> {originalUser.userTypeName}</p>
-                    <p><strong>User Name:</strong> {originalUser.username}</p>
-                    <p><strong>Email:</strong> {originalUser.email}</p>
+                    <p><strong>Selected User's Details:</strong></p>
+                    <br/>
+                    <table style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Account Name</th>
+                                <th>Username</th>
+                                <th>E-mail</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{originalUser.userTypeName}</td>    
+                                <td>{originalUser.accountName}</td>    
+                                <td>{originalUser.username}</td>    
+                                <td>{originalUser.email}</td>    
+                                <td>{originalUser.status}</td>    
+                            </tr>    
+                        </tbody>
+                    </table>
                     
                     <br/>
     
+                    <div className="twelve columns">
                     <form onSubmit={this.handleSubmit}>
-                        <div className="twelve columns">
+                        <div className="six columns">
+                            <label htmlFor="accountName">Update Account Name</label>
+                            <input className="u-full-width" type="text" name="first-name" id="first-name" defaultValue="Richard Lance" />
+                        </div>
+                        <div className="six columns">
                             <label htmlFor="username">Update Userame</label>
-                            <input className="u-full-width" type="text" name="username" id="username" placeholder="richard.lance" />
+                            <input className="u-full-width" type="text" name="username" id="username" defaultValue="richard.lance" />
                         </div>
-                        <div className="twelve columns">
+                        <div className="six columns" style={{marginLeft: 0}}>
                             <label htmlFor="email">Update E-mail</label>
-                            <input className="u-full-width" type="email" name="email" id="email" placeholder="richard_parayno@dlsu.edu.ph" />
+                            <input className="u-full-width" type="email" name="email" id="email" defaultValue="richard_parayno@dlsu.edu.ph" />
                         </div>
-                        <div className="twelve columns">
+                        <div className="six columns">
                             <label htmlFor="password">Update Password</label>
                             <input className="u-full-width" type="password" name="password" id="password"/>
                         </div>
-                        <input type="submit" className="button-primary u-pull-right" />
+                        <div className="twelve columns">
+                            <input type="submit" className="button-primary u-pull-right" />
+                        </div>
                     </form>
+                    </div>
                     <ToastContainer autoClose={1000} />                
                 </div>
             );
