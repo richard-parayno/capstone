@@ -15,10 +15,6 @@ use Illuminate\Support\Facades\Route;
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/normalize.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/skeleton.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/style-dash.css') }}">
-  <link href="{{ URL::asset('/css/bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ URL::asset('/css/metisMenu.min.css') }}" rel="stylesheet">
-  <link href="{{ URL::asset('/css/sb-admin-2.css') }}" rel="stylesheet">
-  <link rel="shortcut icon" href="{{ URL::asset('favicon.ico') }}">
   <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css">
 <!-- Bootstrap Core JavaScript -->
 <script src="{{ URL::asset('/js/jquery-3.2.1.min.js') }}"></script>
@@ -140,29 +136,7 @@ use Illuminate\Support\Facades\Route;
   <main class="container" id="page-wrap">
     <div>
       @yield('content')
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <i class="fa fa-bell fa-fw"></i> Notifications Panel
-        </div>
-        <!-- /.panel-heading -->
-        <div class="panel-body">
-            <div class="list-group">
-                <a href="#" class="list-group-item">
-                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
-                    <span class="pull-right text-muted small"><em>11:32 AM</em>
-                    </span>
-                </a>
-                <a href="#" class="list-group-item">
-                    <i class="fa fa-warning fa-fw"></i> Server Not Responding
-                    <span class="pull-right text-muted small"><em>10:57 AM</em>
-                    </span>
-                </a>
-            </div>
-            <!-- /.list-group -->
-            <a href="#" class="btn btn-default btn-block">View All Alerts</a>
-        </div>
-        <!-- /.panel-body -->
-    </div>
+    
     </div>
   </main>
   <!-- main content -->

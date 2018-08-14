@@ -5,7 +5,7 @@
     $rawDB = "";
     if($userType > 2){
         $userSchool = Auth::user()->institutionID;
-        $schoolSort = true; 
+        $schoolSort = true;
         $rawDB.="trips.institutionID=".$userSchool;
         $add = true;
     }
@@ -19,29 +19,7 @@
         ->groupBy(DB::raw('1'))
         ->orderByRaw('1')
         ->get();
-    /*
-    if(!empty($tripYears)){
-        $totalConsecutive = 0;
-        $maxCon = 0;
-        $to
-        for($x=0;$x < count($tripYears); $x++){
-            $currRow = $tripYears[$x]->monthYear;
-            if($x == 0){
-                $previous = $currRow;
-            }else{
-                if((int) substr($previous, 4, 2) == ((int) substr($currRow, 4,2)) -1){
-                    $totalConsecutive++;
-                }elseif((int) substr($previous, 4, 2) == 12 && (int) substr($currRow, 4, 2) == 1){
-                    $totalConsecutive++;
-                }else{
-                    $maxCon = $totalConsecutive;
-                    $totalConsecutive = 0;
-                    $to = $currRow;
-                }
-            }
-        }
-    }
-    */
+
     if(isset($data)){
         $showChartDiv = true;
         $filterMessage = "";

@@ -1065,7 +1065,7 @@
         });
     </script>
     <?php
-
+    {
      echo '<script type="text/javascript">
 			AmCharts.makeChart("chartdiv2",
 				{
@@ -1117,9 +1117,11 @@
 				}
 			);
 		</script>';
+    }
     ?>
     <script type="application/javascript">
     <?php
+        {
         echo "var start = " . $start . ';
         ';
         if( $start > ($totalEmissions->get(0)->totalEmissions) * ($thresholds->get(0)->value)){
@@ -1127,7 +1129,8 @@
             ';
         }else echo 'maxVal = ' . $totalEmissions->get(0)->totalEmissions * ($thresholds->get(0)->value). ';
         ';
-    ?>
+        }
+        ?>
     var opts = {
         angle: 0.02,
         lineWidth: 0.2,
