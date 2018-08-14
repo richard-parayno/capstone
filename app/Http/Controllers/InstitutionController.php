@@ -7,6 +7,8 @@ use DB;
 use App\Models\Institution;
 use App\Models\SchooltypeRef;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
 
 class InstitutionController extends Controller
 {
@@ -100,6 +102,20 @@ class InstitutionController extends Controller
       $originalInstitution = $data['originalInstitution'];
       
       $institution = Institution::find($originalInstitution);
+
+      $this->validate($request, [
+        'institutionName' => [
+          'required',
+          Rule::unique('institutions')->ignore($institution->institutionID, 'institutionID')
+        ],
+        'location' => [
+          'required',
+          ]
+        ], [
+          'institutionName.required' => 'The \'Update Campus Name\' field is required.', 
+          'institutionName.unique' => 'This Institution Name has already been taken.', 
+          'location.required' => 'The \'Update Location\' field is required.', 
+        ]);
 
       if (isset($data['institutionName']))
         $institution->institutionName = $data['institutionName'];

@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import ReactTable from "react-table";
-import matchSorter from 'match-sorter'
-import Modal from 'react-responsive-modal';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,7 +9,8 @@ export default class CampusModal extends Component {
         super();
         this.state = {
             schoolTypes: [],
-            originalInstitution: []
+            originalInstitution: [],
+            errorMessages: []
             
         }
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -51,12 +49,24 @@ export default class CampusModal extends Component {
             })
             .catch((error) => {
                 // Error
-                if (error.response) {
+                if (error.response.status == 422) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response.data);
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
+                    this.setState({ errorMessages: error.response.data.errors });
+                    if (this.state.errorMessages.institutionName) {
+                        toast.error(this.state.errorMessages.institutionName[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.location) {
+                        toast.error(this.state.errorMessages.location[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -75,6 +85,29 @@ export default class CampusModal extends Component {
         this.populateForm();
     }
 
+    dismissAll(){
+        toast.dismiss();
+        let campus = document.getElementById("institutionName");
+        let location = document.getElementById("location");
+        campus.removeAttribute("style");
+        location.removeAttribute("style");
+    }
+
+    checkInputs() {
+        let campus = document.getElementById("institutionName");
+        if (campus.value.length > 0) {
+            campus.removeAttribute("style");
+        } else {
+            campus.style.border = "1px solid red";
+        }
+
+        let location = document.getElementById("location");
+        if (location.value.length > 0) {
+            location.removeAttribute("style");
+        } else {
+            location.style.border = "1px solid red";
+        }
+    }
    
     render() {
         const schoolTypes = this.state.schoolTypes;
@@ -94,20 +127,28 @@ export default class CampusModal extends Component {
                 <form onSubmit={this.handleSubmit}>
                     <div className="twelve columns">
                         <label htmlFor="institutionName">Update Campus Name</label>
-                        <input className="u-full-width" type="text" name="institutionName" id="institutionName" placeholder={originalInstitution.institutionName} />
+                        {typeof this.state.errorMessages.institutionName != undefined ?
+                            <input className="u-full-width" type="text" name="institutionName" id="institutionName" defaultValue={originalInstitution.institutionName} />
+                            :
+                            <input className="u-full-width" type="text" name="institutionName" id="institutionName" defaultValue={originalInstitution.institutionName} style={{border: "1px red solid" }} onInput={this.checkInputs}/>
+                        }
                     </div>
                     <div className="twelve columns">
                         <label htmlFor="location">Update Location</label>
-                        <input className="u-full-width" type="text" name="location" id="location" placeholder={originalInstitution.location} />
+                        {typeof this.state.errorMessages.location != undefined ?
+                            <input className="u-full-width" type="text" name="location" id="location" defaultValue={originalInstitution.location} />
+                            :
+                            <input className="u-full-width" type="text" name="location" id="location" defaultValue={originalInstitution.location} style={{border: "1px red solid"}} onInput={this.checkInputs}/>
+                        }
                     </div>
                     <div className="twelve columns">
                         <label htmlFor="schoolTypeID">Update Classification</label>
-                        <select className="u-full-width" name="schoolTypeID" id="schoolTypeID">
+                        <select className="u-full-width" name="schoolTypeID" id="schoolTypeID" value={originalInstitution.schoolTypeID}>
                             {schoolTypesItems}
                         </select>
                     </div>
                     <br/>
-                    <input type="submit" className="button-primary u-pull-right" />
+                    <input type="submit" className="button-primary u-pull-right" onClick={this.dismissAll} />
                 </form>
                 <ToastContainer autoClose={1000} />                
             </div>

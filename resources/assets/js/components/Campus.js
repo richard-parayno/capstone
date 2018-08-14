@@ -34,7 +34,7 @@ export default class Campus extends Component {
         const institutions = this.props.institutions;
 
         const columns = [{
-            Header: 'Campus/Institution',
+            Header: 'Name',
             id: 'institutionName',
             accessor: 'institutionName', // String-based value accessors!
             filterMethod: (filter, rows) =>
@@ -58,7 +58,7 @@ export default class Campus extends Component {
             Header: 'Actions', // Custom header components!
             accessor: 'institutionID',
             Cell: row => (
-                <a onClick={() => this.onOpenModal(row.value)} href="#update">Update Campus</a>
+                <a onClick={() => this.onOpenModal(row.value)} href="#update">Update</a>
             ),
             filterable: false
           }]; 

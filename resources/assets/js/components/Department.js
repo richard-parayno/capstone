@@ -9,17 +9,32 @@ export default class Department extends Component {
         super();
         this.state = {
             open: false,
-            rowValue: []
+            rowValue: [],
+            update: false,
+            delete: false
         }
         this.onOpenModal = this.onOpenModal.bind(this);
         this.onCloseModal = this.onCloseModal.bind(this);
     }
 
-    onOpenModal(row) {   
-        this.setState({ 
-            open: true,
-            rowValue: row,
-        });
+    onOpenModal(row, param) {   
+        
+        if (param === "update") {
+            this.setState({ 
+                open: true,
+                rowValue: row,
+                update: true,
+                delete: false
+            });
+        }
+        if (param === "delete") {
+            this.setState({ 
+                open: true,
+                rowValue: row,
+                update: false,
+                delete: true
+            });
+        }
     };
     
     onCloseModal() {
@@ -61,8 +76,9 @@ export default class Department extends Component {
             accessor: 'deptID',
             Cell: row => (
                 <div style={{textAlign: "center"}}>
-                    <a onClick={() => this.onOpenModal(row.value)} href="#update">Update</a>
-                </div>
+                    <a onClick={() => this.onOpenModal(row.value, "update")} href="#update">Update</a>
+                    <br/>
+                </div> 
             ),
             filterable: false
           }]; 
@@ -81,7 +97,7 @@ export default class Department extends Component {
                     />
 
                 <Modal open={this.state.open} onClose={this.onCloseModal} center>
-                    <DepartmentModal originalDept={this.state.rowValue} open={this.state.open} />
+                    <DepartmentModal originalDept={this.state.rowValue} update={this.state.update} delete={this.state.delete} open={this.state.open} />
                 </Modal>
             </div>
         );

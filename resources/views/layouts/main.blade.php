@@ -2,6 +2,12 @@
 <html lang="en" >
 @php
 use Illuminate\Support\Facades\Route;
+
+$user = Auth::user();
+$userType = DB::table('usertypes_ref')->where('userTypeID', $user->userTypeID)->first();
+
+$mytime = Carbon\Carbon::now();
+
 @endphp
 
 @section('header')
@@ -107,15 +113,15 @@ use Illuminate\Support\Facades\Route;
     </style>
   <div id="topbar">
     <div class="twelve column bar">
-      <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>
-      <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>
+      <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines Carbon Emission Dashboard</p></strong>     
+      <strong><p style="text-align: center; margin: 0px;">@php echo $user->accountName @endphp - @php echo $userType->userTypeName @endphp</p></strong>      
+      <strong><p style="text-align: center; margin: 0px;">@php echo $mytime->toDateString(); @endphp</p></strong>      
     </div>
   </div>
   @else
   <div id="analytics-topbar">
     <div class="twelve column bar">
-      <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines</p></strong>
-      <strong><p style="text-align: center; margin: 0px;">Carbon Emission Dashboard</p></strong>      
+      <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines Carbon Emission Dashboard</p></strong>      
     </div>
   </div>
   @endif

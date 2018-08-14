@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import ReactTable from "react-table";
-import matchSorter from 'match-sorter'
-import Modal from 'react-responsive-modal';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -68,12 +65,30 @@ export default class VehicleModal extends Component {
             })
             .catch((error) => {
                 // Error
-                if (error.response) {
+                if (error.response.status == 422) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response.data);
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
+                    this.setState({ errorMessages: error.response.data.errors });
+                    if (this.state.errorMessages.deptName) {
+                        toast.error(this.state.errorMessages.deptName[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.institutionID) {
+                        toast.error(this.state.errorMessages.institutionID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.motherDeptID) {
+                        toast.error(this.state.errorMessages.motherDeptID[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -119,93 +134,76 @@ export default class VehicleModal extends Component {
         );
         
         if (decom) {
-            return (
-                <div>
-                    <h1 style={{textAlign: "center"}}>Decommission Vehicle</h1>
-                    <p><strong>Selected Vehicle's Plate Number:</strong> {vehicles.plateNumber}</p>
-                    <p><strong>Car Model:</strong> {vehicles.modelName}</p>
-                    <p><strong>Car Brand:</strong> {vehicles.carBrandName}</p>
-                    <p><strong>Car Type:</strong> {vehicles.carTypeName}</p>
-                    <p><strong>Campus:</strong> {vehicles.institutionName}</p>
-                    <p><strong>Fuel Type:</strong> {vehicles.fuelTypeName}</p>
-                    {vehicles.active === 1 && 
-                        <p><strong>Status: {vehicles.status}</strong></p>
-                    } 
-                    {vehicles.active === 0 &&
-                        <p><strong>Status: {vehicles.status}</strong></p>
-                    }
-                    <br/>
-
-                    {vehicles.active === 1 && 
-                        <p><strong>Are you sure you want to decommission this vehicle?</strong></p>
-                    } 
-                    {vehicles.active === 0 &&
-                        <p><strong>Are you sure you want to make this vehicle active?</strong></p>
-                    }
-                    <form onSubmit={this.handleSubmit}>
-                        <input type="radio" name="vehicleChoice" value="yes" />
-                        <span className="label-body">Yes</span>
-                        <br/>
-                        <input type="radio" name="vehicleChoice" value="no" />
-                        <span className="label-body">No</span>
-                        <br/>
-                        <input type="submit" className="button-primary u-pull-right" />
-                    </form>
-                    <ToastContainer autoClose={1000} />                
-                </div>
-            );
+            
         } else if (update) {
             return (
                 <div>
                     <h1 style={{textAlign: "center"}}>Update Vehicle Info</h1>
-                    <p><strong>Selected Vehicle's Plate Number:</strong> {vehicles.plateNumber}</p>
-                    <p><strong>Car Model:</strong> {vehicles.modelName}</p>
-                    <p><strong>Car Brand:</strong> {vehicles.carBrandName}</p>
-                    <p><strong>Car Type:</strong> {vehicles.carTypeName}</p>
-                    <p><strong>Campus:</strong> {vehicles.institutionName}</p>
-                    <p><strong>Fuel Type:</strong> {vehicles.fuelTypeName}</p>
-                    {vehicles.active === 1 && 
-                        <p><strong>Status: {vehicles.status}</strong></p>
-                    } 
-                    {vehicles.active === 0 &&
-                        <p><strong>Status: {vehicles.status}</strong></p>
-                    }
+                    <p><strong>Selected Vehicle's Details:</strong></p>
+                    <br/>
+                    <table style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                        <thead>
+                            <tr>
+                                <th>Car Type</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Plate No.</th>
+                                <th>Campus</th>
+                                <th>Fuel Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{vehicles.carTypeName}</td>    
+                                <td>{vehicles.carBrandName}</td>    
+                                <td>{vehicles.modelName}</td>    
+                                <td>{vehicles.plateNumber}</td>    
+                                <td>{vehicles.institutionName}</td>    
+                                <td>{vehicles.fuelTypeName}</td>    
+                                <td>{vehicles.status}</td>
+                            </tr>    
+                        </tbody>
+                    </table>
                     <br/>
     
                     <form onSubmit={this.handleSubmit}>
-                        <div className="twelve columns">
-                            <label htmlFor="vehicleCampus">Update Campus</label>
-                            <select className="u-full-width" name="vehicleCampus" id="vehicleCampus">
-                                {institutionItems}
-                            </select>
-                        </div>
-                        <div className="twelve columns">
-                            <label htmlFor="vehicleBrand">Update Vehicle Brand</label>
-                            <select className="u-full-width" name="vehicleBrand" id="vehicleBrand">
+                        <div className="six columns">
+                            <label htmlFor="carBrandID">Update Vehicle Brand</label>
+                            <select className="u-full-width" name="carBrandID" id="carBrandID" defaultValue={vehicles.carBrandID}>
                                 {vehicleBrandItems}
                             </select>
                         </div>
-                        <div className="twelve columns">
-                            <label htmlFor="vehicleType">Update Vehicle Type</label>
-                            <select className="u-full-width" name="vehicleType" id="vehicleType">
+                        <div className="six columns">
+                            <label htmlFor="carTypeID">Update Vehicle Type</label>
+                            <select className="u-full-width" name="carTypeID" id="carTypeID" defaultValue={vehicles.carTypeID}>
                                 {vehicleTypeItems}
                             </select>
                         </div>
-                        <div className="twelve columns">
-                            <label htmlFor="vehicleFuel">Update Fuel Type</label>
-                            <select className="u-full-width" name="vehicleFuel" id="vehicleFuel">
+                        <div className="six columns" style={{marginLeft: 0}}>
+                            <label htmlFor="fuelTypeID">Update Fuel Type</label>
+                            <select className="u-full-width" name="fuelTypeID" id="fuelTypeID" defaultValue={vehicles.fuelTypeID}>
                                 {fuelTypeItems}
                             </select>
                         </div>
-                        <div className="twelve columns">
-                            <label htmlFor="vehicleModel">Update Model Name</label>
-                            <input className="u-full-width" type="text" name="vehicleModel" id="vehicleModel" placeholder="L300" />
+                        <div className="six columns">
+                            <label htmlFor="modelName">Update Model Name</label>
+                            <input className="u-full-width" type="text" name="modelName" id="modelName" defaultValue={vehicles.modelName} />
+                        </div>
+                        <div className="six columns" style={{marginLeft: 0}}>
+                            <label htmlFor="plateNumber">Update Plate Number</label>
+                            <input className="u-full-width" type="text" name="plateNumber" id="plateNumber" defaultValue={vehicles.plateNumber} maxLength="6"/>
+                        </div>
+                        <div className="six columns">
+                            <label htmlFor="vehicleChoice">Update Vehicle Status</label>
+                            <select className="u-full-width" name="vehicleChoice" id="vehicleChoice" defaultValue={vehicles.active}>
+                                <option value="1">Active</option>
+                                <option value="0">Decommissioned</option>
+                            </select>
                         </div>
                         <div className="twelve columns">
-                            <label htmlFor="vehiclePlate">Update Plate Number</label>
-                            <input className="u-full-width" type="text" name="vehiclePlate" id="vehiclePlate" placeholder={this.props.plateNumber} maxLength="6"/>
+                            <input type="submit" className="button-primary u-pull-right" />
                         </div>
-                        <input type="submit" className="button-primary u-pull-right" />
                     </form>
                     <ToastContainer autoClose={1000} />                
                 </div>
