@@ -1,14 +1,29 @@
 <?php
-    $showChartDiv = false;
+     //initialization
+    {
+    $filter = false;
+    $filterPost = false;
+    $emptySet = true;
+    $dataSet = false;
+        
+    $fuelTypes = DB::table('fueltype_ref')->get();
+    $carTypes = DB::table('cartype_ref')->get();
+    $carBrands = DB::table('carbrand_ref')->get();
     $userType = Auth::user()->userTypeID;
-    $schoolSort = false;
-    $rawDB = "";
     if($userType > 2){
-        $userSchool = Auth::user()->institutionID;
-        $schoolSort = true;
-        $rawDB.="trips.institutionID=".$userSchool;
-        $add = true;
+        $institutionID = Auth::user()->institutionID;
+        $filter = true;
     }
+
+    if(isset($data)){
+        if($data['isFiltered']=='true'){
+            $filterPost = true;
+        }
+    }
+    else{
+        $showChartDiv = false;
+    }
+    
     $institutions = DB::table('institutions')->get();
     $departments = DB::table('deptsperinstitution')->get();   
     $fuelTypes = DB::table('fueltype_ref')->get();
@@ -19,121 +34,126 @@
         ->groupBy(DB::raw('1'))
         ->orderByRaw('1')
         ->get();
-
+    }
     if(isset($data)){
         $showChartDiv = true;
         $filterMessage = "";
         $add = false;
         if($data['reportName']=="trip"){
             if($data['isFiltered']=="true"){
-                if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null || $data['carTypeID']!=null || $data['fuelTypeID']!=null || $data['carBrandID']!=null){
-        if(!$schoolSort){
-            if($data['institutionID'] != null){
-                    $userSchool = $data['institutionID'];
-                    $schoolSort = true;
+            $rawDB = "";
+            if($data['datePreset']==0){   
+                if($data['fromDate'] != null && $data['toDate'] != null){
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
                     $add = true;
-                    $filterMessage .= $userSchool;
-                    $rawDB.="trips.institutionID=".$userSchool;
+                    $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
+                    $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+                }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
+                    }
+                    $add = true;
+                    $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
+                    $filterMessage .= "before ".$data['toDate'];
+                }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated  ";
+                    }
+                    $add = true;
+                    $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+                    $filterMessage .= "after ".$data['fromDate'];
+                }
             }
-        }
-        if($data['carTypeID']!=null){
-            if($add){
+            else{
+                switch($data['datePreset']){
+                    case "1": {
+                            if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
+                        $filterMessage .= "from 2 weeks ago";
+                        break;
+                    }
+                    case "2": {
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
+                        $filterMessage .= "from 1 month ago";
+                        break;
+                    } 
+                    case "3": {
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
+                        $filterMessage .= "from 3 month ago";
+                        break;
+                    }
+                    case "4": {
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
+                        $filterMessage .= "from 6 month ago";
+                        break;
+                    }
+                    case "5": {
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
+                        $filterMessage .= "from 1 year ago";
+                        break;
+                    }
+                    default: $rawDB .= "";
+                }
+            }
+            if($data['institutionID'] != null){
+                    $institutionID = $data['institutionID'];
+            }
+            if($data['carTypeID']!=null){
+                if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " by " . $data['carTypeID'];
+                    }
+                    $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
+                    $add = true;
+            }
+            if($data['fuelTypeID']!=null){
+                if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " by " . $data['fuelTypeID'];
+                    }
+                    $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
+                    $add = true;
+            }
+            if($data['carBrandID']!=null){
+                if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " by " . $data['carBrandID'];
+                    }
+                    $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
+                    $add = true;
+            }
+            if(isset($institutionID)){
+                if($add){
                     $rawDB .= " AND ";
                     $filterMessage .= " by " . $data['carTypeID'];
                 }
-                $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
-                $add = true;
-        }
-        if($data['fuelTypeID']!=null){
-            if($add){
-                    $rawDB .= " AND ";
-                    $filterMessage .= " by " . $data['fuelTypeID'];
-                }
-                $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
-                $add = true;
-        }
-        if($data['carBrandID']!=null){
-            if($add){
-                    $rawDB .= " AND ";
-                    $filterMessage .= " by " . $data['carBrandID'];
-                }
-                $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
-                $add = true;
-        }
-        if($data['datePreset']==0){   
-            if($data['fromDate'] != null && $data['toDate'] != null){
-                if($add){
-                    $rawDB .= " AND ";
-                    $filterMessage .= " dated ";
-                }
-                $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
-                $filterMessage .= $data['fromDate']. " to ". $data['toDate'];
-            }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
-                if($add){
-                    $rawDB .= " AND ";
-                    $filterMessage .= " dated ";
-                }
-                $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
-                $filterMessage .= "before ".$data['toDate'];
-            }elseif($data['fromDate'] != null && !isset($data['toDate'])){
-                if($add){
-                    $rawDB .= " AND ";
-                    $filterMessage .= " dated  ";
-                }
-                $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
-                $filterMessage .= "after ".$data['fromDate'];
+                $rawDB .= "institutions.institutionID = ".$institutionID;
             }
-        }else{
-            switch($data['datePreset']){
-                case "1": {
-                        if($add){
-                        $rawDB .= " AND ";
-                        $filterMessage .= " dated ";
-                    }
-                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
-                    $filterMessage .= "from 2 weeks ago";
-                    break;
-                }
-                case "2": {
-                    if($add){
-                        $rawDB .= " AND ";
-                        $filterMessage .= " dated ";
-                    }
-                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
-                    $filterMessage .= "from 1 month ago";
-                    break;
-                } 
-                case "3": {
-                    if($add){
-                        $rawDB .= " AND ";
-                        $filterMessage .= " dated ";
-                    }
-                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
-                    $filterMessage .= "from 3 month ago";
-                    break;
-                }
-                case "4": {
-                    if($add){
-                        $rawDB .= " AND ";
-                        $filterMessage .= " dated ";
-                    }
-                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
-                    $filterMessage .= "from 6 month ago";
-                    break;
-                }
-                case "5": {
-                    if($add){
-                        $rawDB .= " AND ";
-                        $filterMessage .= " dated ";
-                    }
-                    $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
-                    $filterMessage .= "from 1 year ago";
-                    break;
-                }
-                default: $rawDB .= "";
-            }
-        }
-                $tripData=DB::table('trips')
+                    $tripData=DB::table('trips')
                     ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
                     ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
                     ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
@@ -167,7 +187,7 @@
                     ->whereRaw($rawDB)
                     ->get();
                 }
-            }else{
+            else{
                 $tripData=DB::table('trips')
                     ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
                     ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
@@ -195,114 +215,117 @@
         }
         elseif($data['reportName']=="vehicleUsage"){
             if($data['isFiltered']=='true'){
-                if($data['institutionID'] != null || $data['datePreset']!=0 || $data['fromDate'] != null || $data['toDate'] != null || $data['carTypeID']!=null || $data['fuelTypeID']!=null || $data['carBrandID']!=null){
-                    if(!$schoolSort){
-                        if($data['institutionID'] != null){
-                                $userSchool = $data['institutionID'];
-                                $schoolSort = true;
-                                $add = true;
-                                $filterMessage .= $userSchool;
-                                $rawDB.="trips.institutionID=".$userSchool;
-                        }
+                if($data['datePreset']==0){   
+                if($data['fromDate'] != null && $data['toDate'] != null){
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
                     }
-                    if($data['carTypeID']!=null){
-                        if($add){
-                                $rawDB .= " AND ";
-                                $filterMessage .= " by " . $data['carTypeID'];
-                            }
-                            $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
-                            $add = true;
+                    $add = true;
+                    $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
+                    $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+                }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated ";
                     }
-                    if($data['fuelTypeID']!=null){
-                        if($add){
-                                $rawDB .= " AND ";
-                                $filterMessage .= " by " . $data['fuelTypeID'];
-                            }
-                            $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
-                            $add = true;
+                    $add = true;
+                    $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
+                    $filterMessage .= "before ".$data['toDate'];
+                }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " dated  ";
                     }
-                    if($data['carBrandID']!=null){
-                        if($add){
-                                $rawDB .= " AND ";
-                                $filterMessage .= " by " . $data['carBrandID'];
-                            }
-                            $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
-                            $add = true;
-                    }
-                    if($data['datePreset']==0){   
-                        if($data['fromDate'] != null && $data['toDate'] != null){
-                            if($add){
-                                $rawDB .= " AND ";
-                                $filterMessage .= " dated ";
-                            }
-                            $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
-                            $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
-                        }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
-                            if($add){
-                                $rawDB .= " AND ";
-                                $filterMessage .= " dated ";
-                            }
-                            $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
-                            $filterMessage .= "before ".$data['toDate'];
-                        }elseif($data['fromDate'] != null && !isset($data['toDate'])){
-                            if($add){
-                                $rawDB .= " AND ";
-                                $filterMessage .= " dated  ";
-                            }
-                            $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
-                            $filterMessage .= "after ".$data['fromDate'];
-                        }
-                    }else{
-                        switch($data['datePreset']){
-                            case "1": {
-                                    if($add){
-                                    $rawDB .= " AND ";
-                                    $filterMessage .= " dated ";
-                                }
-                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
-                                $filterMessage .= "from 2 weeks ago";
-                                break;
-                            }
-                            case "2": {
-                                if($add){
-                                    $rawDB .= " AND ";
-                                    $filterMessage .= " dated ";
-                                }
-                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
-                                $filterMessage .= "from 1 month ago";
-                                break;
-                            } 
-                            case "3": {
-                                if($add){
-                                    $rawDB .= " AND ";
-                                    $filterMessage .= " dated ";
-                                }
-                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
-                                $filterMessage .= "from 3 month ago";
-                                break;
-                            }
-                            case "4": {
-                                if($add){
-                                    $rawDB .= " AND ";
-                                    $filterMessage .= " dated ";
-                                }
-                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
-                                $filterMessage .= "from 6 month ago";
-                                break;
-                            }
-                            case "5": {
-                                if($add){
-                                    $rawDB .= " AND ";
-                                    $filterMessage .= " dated ";
-                                }
-                                $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
-                                $filterMessage .= "from 1 year ago";
-                                break;
-                            }
-                            default: $rawDB .= "";
-                        }
-                    }
+                    $add = true;
+                    $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+                    $filterMessage .= "after ".$data['fromDate'];
                 }
+            }
+            else{
+                switch($data['datePreset']){
+                    case "1": {
+                            if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
+                        $filterMessage .= "from 2 weeks ago";
+                        break;
+                    }
+                    case "2": {
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
+                        $filterMessage .= "from 1 month ago";
+                        break;
+                    } 
+                    case "3": {
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
+                        $filterMessage .= "from 3 month ago";
+                        break;
+                    }
+                    case "4": {
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
+                        $filterMessage .= "from 6 month ago";
+                        break;
+                    }
+                    case "5": {
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
+                        $filterMessage .= "from 1 year ago";
+                        break;
+                    }
+                    default: $rawDB .= "";
+                }
+            }
+            if($data['institutionID'] != null){
+                    $institutionID = $data['institutionID'];
+            }
+            if($data['carTypeID']!=null){
+                if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " by " . $data['carTypeID'];
+                    }
+                    $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
+                    $add = true;
+            }
+            if($data['fuelTypeID']!=null){
+                if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " by " . $data['fuelTypeID'];
+                    }
+                    $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
+                    $add = true;
+            }
+            if($data['carBrandID']!=null){
+                if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " by " . $data['carBrandID'];
+                    }
+                    $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
+                    $add = true;
+            }
+            if(isset($institutionID)){
+                if($add){
+                    $rawDB .= " AND ";
+                    $filterMessage .= " by " . $data['carTypeID'];
+                }
+                $rawDB .= "institutions.institutionID = ".$institutionID;
+            }
                  $vehicleData=DB::table('vehicles_mv')
                     ->join('trips', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
                     ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
@@ -507,6 +530,146 @@
             $forecastData->push($toPush);
         }   
         elseif($data['reportName']=='treeSeq'){
+            if($data['isFiltered']=="true"){
+                $filterMessage = "";
+                $rawDB = "";
+                $add = false;
+                if($data['datePreset']==0){   
+                    if($data['fromDate'] != null && $data['toDate'] != null){
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $add = true;
+                        $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
+                        $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+                    }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $add = true;
+                        $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
+                        $filterMessage .= "before ".$data['toDate'];
+                    }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated  ";
+                        }
+                        $add = true;
+                        $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+                        $filterMessage .= "after ".$data['fromDate'];
+                    }
+                }
+                else{
+                    switch($data['datePreset']){
+                        case "1": {
+                                if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
+                            $filterMessage .= "from 2 weeks ago";
+                            break;
+                        }
+                        case "2": {
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
+                            $filterMessage .= "from 1 month ago";
+                            break;
+                        } 
+                        case "3": {
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
+                            $filterMessage .= "from 3 month ago";
+                            break;
+                        }
+                        case "4": {
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
+                            $filterMessage .= "from 6 month ago";
+                            break;
+                        }
+                        case "5": {
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
+                            $filterMessage .= "from 1 year ago";
+                            break;
+                        }
+                        default: $rawDB .= "";
+                    }
+                }
+                if($data['institutionID'] != null){
+                        $institutionID = $data['institutionID'];
+                }
+                if($data['carTypeID']!=null){
+                    if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " by " . $data['carTypeID'];
+                        }
+                        $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
+                        $add = true;
+                }
+                if($data['fuelTypeID']!=null){
+                    if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " by " . $data['fuelTypeID'];
+                        }
+                        $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
+                        $add = true;
+                }
+                if($data['carBrandID']!=null){
+                    if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " by " . $data['carBrandID'];
+                        }
+                        $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
+                        $add = true;
+                }            
+                if(isset($institutionID)){
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " by " . $data['carTypeID'];
+                    }
+                    $rawDB .= "institutions.institutionID = ".$institutionID;
+                }
+            
+                $monthlyEmissions = DB::table('trips')
+                     ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear, round(sum(trips.emissions), 4) as emission')) 
+                     ->whereRaw($rawDB)
+                     ->groupBy(DB::raw('1'))
+                     ->orderBy(DB::raw('1'), 'asc')
+                     ->get();
+                if(isset($institutionID)){
+                    $treeRaw = "institutionID = ".$institutionID;
+                    $monthlyTreeSeq = DB::Table('institutionbatchplant')
+                        ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
+                        ->whereRaw($treeRaw)
+                        ->groupBy(DB::raw('1'))
+                        ->orderBy(DB::raw('1'))
+                        ->get();
+                }
+                else{
+                    $monthlyTreeSeq = DB::Table('institutionbatchplant')
+                        ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
+                        ->groupBy(DB::raw('1'))
+                        ->orderBy(DB::raw('1'))
+                        ->get();
+                }
+            }
+            else{
             $monthlyTreeSeq = DB::Table('institutionbatchplant')
                 ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
                 ->groupBy(DB::raw('1'))
@@ -518,6 +681,7 @@
                  ->groupBy(DB::raw('1'))
                  ->orderBy(DB::raw('1'), 'asc')
                  ->get();
+            }
             $red = 0;
             $yellow = 0;
             $green = 0;
@@ -603,10 +767,20 @@
         }
     </style>
     @endsection @section('content')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
+    <script type="text/javascript" src="http://www.amcharts.com/lib/3/exporting/amexport_combined.js"></script>
+    <script>
+    var takeScreenshot = function(){
+        html2canvas(document.getElementById('chartdiv2')).then(function(canvas) {
+            document.getElementById('chartdiv2').appendChild(canvas);
+    });
+    };
+    </script>
+
     <div ng-app="myapp">
      <br>
-      <h5>&nbsp; Dashboard > Reports <?php if(isset($data)){
+      <h5>&nbsp; Dashboard > Reports <?php if(isset($data['reportName'])){
     echo "> ";
     switch($data['reportName']){
         case "vehicleUsage": {echo "Vehicle Usage Report"; break;}
@@ -617,15 +791,23 @@
         case "emission": {echo "Emission Report"; break;}
         default: 
     }
-    echo '<br><br><button onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export Table to CSV</button>';
-} ?></h5>
+    echo '<br><br><button class="button-primary" onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export to CSV</button>
+    <form method="post" action="{{ route(\'reports-process\') }}">';} ?>
+    {{ csrf_field() }}
+    <?php if(isset($data['reportName'])){
+    echo '
+    <input type="hidden" name="downloadedReport" value="true" />
+    <input type="submit" class="button button-primary" value="Export To PDF">
+    </form>';
+    
+} ?><button onclick="takeScreenshot()">Export</button></h5>
        <?php
             if($showChartDiv){
                 if(isset($regressionLine)){
                     $div = "twelve";
                 }
                 else $div = "eight";
-                echo '<div class="row">
+                echo '<div class="row" id="content">
                 <div class="'.$div.' columns">
                         <div id="chartdiv2" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div></div>';
                 if(!isset($regressionLine)){
@@ -826,7 +1008,7 @@
                                   <tr>
                                       <th style="text-align: center">Month-Year</th>
                                       <th style="text-align: center">Emission</th>
-                                      <th style="text-align: center">Regression Point</th>
+                                      <th style="text-align: center">Forecasted Value</th>
                                   </tr>
                               </thead>
                               <tbody>';
@@ -926,7 +1108,7 @@
         echo "<br>";
         ?>
         <div ng-controller="MyController">
-                <form method="post" action="{{ route('reports-process') }}" ng-init="showSchoolFilter = <?php echo $schoolSort; ?>"> {{ csrf_field() }}
+                <form method="post" action="{{ route('reports-process') }}" ng-init="showSchoolFilter = <?php echo isset($institutionID); ?>"> {{ csrf_field() }}
                     <input type="hidden" name="isFiltered" value="<?php echo " {{showFilter}} "?>">
                     <input type="hidden" name="isRecurrFiltered" value="<?php echo " {{showRecurrFilter}} "?>">
                     <input type="hidden" name="reportName" value='<?php echo "{{reportName}}"?>'>
@@ -1066,8 +1248,6 @@
                 </form>
         </div>
     </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js" type="text/javascript"></script>
     <!--angular js script-->
     <script>
         var app = angular
@@ -1111,7 +1291,6 @@
                 };
             });
     </script>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <!--angular js script-->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
@@ -1226,51 +1405,13 @@
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/serial.js"></script>
     <script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-    <script src="cdn.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <link  type="text/css" href="cdn.amcharts.com/lib/3/plugins/export/export.css" rel="stylesheet">
-    <script>
-    function demoFromHTML() {
-        var pdf = new jsPDF('p', 'pt', 'letter');
-        source = $('#report')[0];
-
-        specialElementHandlers = {
-            // element with id of "bypass" - jQuery style selector
-            '#bypassme': function(element, renderer) {
-                // true = "handled elsewhere, bypass text extraction"
-                return true
-            }
-        };
-        margins = {
-            top: 80,
-            bottom: 60,
-            left: 40,
-            width: 522
-        };
-        // all coords and widths are in jsPDF instance's declared units
-        // 'inches' in this case
-        pdf.fromHTML(
-            source, // HTML string or DOM elem ref.
-            margins.left, // x coord
-            margins.top, { // y coord
-                'width': margins.width, // max width of content on PDF
-                'elementHandlers': specialElementHandlers
-            },
-
-            function(dispose) {
-                // dispose: object with X, Y of the last line add to the PDF 
-                //          this allow the insertion of new lines after html
-                pdf.save('<?php 
-                         if(isset($data)){
-                             echo $data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s');
-                         }
-                         ?>');
-            }, margins);
-    }
-    </script>
+    <script src="https://.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <link  type="text/css" href="https://.amcharts.com/lib/3/plugins/export/export.css" rel="stylesheet">
     <?php 
         if(isset($tripData)){
             echo '<script type="text/javascript">
-			AmCharts.makeChart("chartdiv",
+			var chart;
+            var chart = AmCharts.makeChart("chartdiv",
 				{
 					"type": "serial",
 					"categoryField": "tripDate",
@@ -1318,10 +1459,21 @@
             echo '
 				}
 			);
+            
+            
+        var btn = document.getElementById(\'exportToPDF\');
+        btn.onclick = function() {
+            var exp = new AmCharts.AmExport(chart);
+            exp.init();
+            exp.output({
+                format: \'png\'
+            });
+        };
 		</script>';
         
         echo '<script type="text/javascript">
-			AmCharts.makeChart("chartdiv2",
+			var chart;
+            var chart = AmCharts.makeChart("chartdiv2",
 				{
 					"type": "serial",
 					"categoryField": "tripDate",
@@ -1370,6 +1522,15 @@
             echo '
 				}
 			);
+            
+             var btn = document.getElementById(\'exportToPDF\');
+        btn.onclick = function() {
+            var exp = new AmCharts.AmExport(chart);
+            exp.init();
+            exp.output({
+                format: \'png\'
+            });
+        };
 		</script>';
         }
         elseif(isset($vehicleData)){ 
@@ -1428,6 +1589,15 @@ var chart = AmCharts.makeChart("chartdiv2", {
   }
 });
 
+ var btn = document.getElementById(\'exportToPDF\');
+        btn.onclick = function() {
+            var exp = new AmCharts.AmExport(chart);
+            exp.init();
+            exp.output({
+                format: \'png\'
+            });
+        };
+
 chart.addListener("clickGraphItem", function(event) {
   if (\'object\' === typeof event.item.dataContext.tripRows) {
 
@@ -1470,7 +1640,8 @@ function resetChart() {
         }
         elseif(isset($regressionLine)){
             echo '<script type="text/javascript">
-			AmCharts.makeChart("chartdiv2",
+			var chart;
+            var chart = AmCharts.makeChart("chartdiv2",
 				{
 					"type": "serial",
 					"categoryField": "monthYear",
@@ -1495,7 +1666,7 @@ function resetChart() {
 							"bullet": "round",
 							"id": "AmGraph-2",
 							"lineThickness": 2,
-							"title": "Regression point",
+							"title": "Forecasted Value",
 							"valueField": "forecastPoint"
 						}
 					],
@@ -1525,11 +1696,21 @@ function resetChart() {
 					"dataProvider": '.json_encode($forecastData).'
 				}
 			);
+            
+             var btn = document.getElementById(\'exportToPDF\');
+        btn.onclick = function() {
+            var exp = new AmCharts.AmExport(chart);
+            exp.init();
+            exp.output({
+                format: \'png\'
+            });
+        };
 		</script>';
         }
         elseif(isset($monthlyEmissions)){
             echo '<script type="text/javascript">
-			AmCharts.makeChart("chartdiv2",
+			var chart;
+            var chart = AmCharts.makeChart("chartdiv2",
 				{
 					"type": "serial",
 					"categoryField": "monthYear",
@@ -1593,6 +1774,14 @@ function resetChart() {
 					"dataProvider": '.json_encode($monthlyEmissions).'
 				}
 			);
+             var btn = document.getElementById(\'exportToPDF\');
+        btn.onclick = function() {
+            var exp = new AmCharts.AmExport(chart);
+            exp.init();
+            exp.output({
+                format: \'png\'
+            });
+        };
 		</script>';
         }
     ?>

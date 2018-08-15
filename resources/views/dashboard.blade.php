@@ -4,7 +4,8 @@
     $filter = false;
     $filterPost = false;
     $emptySet = true;
-    $dataSet = false;
+    $emptySetFromDB = true;
+    $executeNoFilter = true;
         
     $fuelTypes = DB::table('fueltype_ref')->get();
     $carTypes = DB::table('cartype_ref')->get();
@@ -30,76 +31,44 @@
         if($filterPost){
             if($data['datePreset']==0){   
                 if($data['fromDate'] != null && $data['toDate'] != null){
-                    if($add){
-                        $rawDB .= " AND ";
-                        $filterMessage .= " dated ";
-                    }
                     $add = true;
                     $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
-                    $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+                    $filterMessage .= "From " .$data['toDate']. " to ". $data['fromDate'];
                 }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
-                    if($add){
-                        $rawDB .= " AND ";
-                        $filterMessage .= " dated ";
-                    }
                     $add = true;
                     $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
-                    $filterMessage .= "before ".$data['toDate'];
+                    $filterMessage .= "Before ".$data['toDate'];
                 }elseif($data['fromDate'] != null && !isset($data['toDate'])){
-                    if($add){
-                        $rawDB .= " AND ";
-                        $filterMessage .= " dated  ";
-                    }
                     $add = true;
                     $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
-                    $filterMessage .= "after ".$data['fromDate'];
+                    $filterMessage .= "After ".$data['fromDate'];
                 }
             }
             else{
                 switch($data['datePreset']){
                     case "1": {
-                            if($add){
-                            $rawDB .= " AND ";
-                            $filterMessage .= " dated ";
-                        }
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
-                        $filterMessage .= "from 2 weeks ago";
+                        $filterMessage .= "From 2 weeks ago";
                         break;
                     }
                     case "2": {
-                        if($add){
-                            $rawDB .= " AND ";
-                            $filterMessage .= " dated ";
-                        }
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
-                        $filterMessage .= "from 1 month ago";
+                        $filterMessage .= "From 1 month ago";
                         break;
                     } 
                     case "3": {
-                        if($add){
-                            $rawDB .= " AND ";
-                            $filterMessage .= " dated ";
-                        }
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
-                        $filterMessage .= "from 3 month ago";
+                        $filterMessage .= "From 3 months ago";
                         break;
                     }
                     case "4": {
-                        if($add){
-                            $rawDB .= " AND ";
-                            $filterMessage .= " dated ";
-                        }
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
-                        $filterMessage .= "from 6 month ago";
+                        $filterMessage .= "From 6 months ago";
                         break;
                     }
                     case "5": {
-                        if($add){
-                            $rawDB .= " AND ";
-                            $filterMessage .= " dated ";
-                        }
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
-                        $filterMessage .= "from 1 year ago";
+                        $filterMessage .= "From 1 year ago";
                         break;
                     }
                     default: $rawDB .= "";
@@ -111,24 +80,30 @@
             if($data['carTypeID']!=null){
                 if($add){
                         $rawDB .= " AND ";
-                        $filterMessage .= " by " . $data['carTypeID'];
+                        $filterMessage .= ", ";
                     }
+                $temp = DB::table('cartype_ref')->select('carTypeName')->whereRaw('carTypeID = '.$data['carTypeID'])->get();
+                    $filterMessage .= $temp[0]->carTypeName;
                     $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
                     $add = true;
             }
             if($data['fuelTypeID']!=null){
                 if($add){
+                        $filterMessage .= ", ";
                         $rawDB .= " AND ";
-                        $filterMessage .= " by " . $data['fuelTypeID'];
                     }
+                $temp =  DB::table('fueltype_ref')->select('fuelTypeName')->whereRaw('fuelTypeID = '.$data['fuelTypeID'])->get();
+                    $filterMessage .= $temp[0]->fuelTypeName;
                     $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
                     $add = true;
             }
             if($data['carBrandID']!=null){
                 if($add){
+                        $filterMessage .= ", ";
                         $rawDB .= " AND ";
-                        $filterMessage .= " by " . $data['carBrandID'];
                     }
+                $temp = DB::table('carbrand_ref')->select('carBrandName')->whereRaw('carBrandID = '.$data['carBrandID'])->get();
+                    $filterMessage .= $temp[0]->carBrandName;
                     $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
                     $add = true;
             }
@@ -136,16 +111,40 @@
         if(isset($institutionID)){
             if($add){
                 $rawDB .= " AND ";
-                $filterMessage .= " by " . $data['carTypeID'];
+                $filterMessage .= " by " . $institutionID;
             }
             $rawDB .= "institutions.institutionID = ".$institutionID;
+        }
+        $trips = DB::table('trips')->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+            ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+            ->select(DB::raw('count(emissions) as ctr'))
+            ->whereRaw($rawDB)->get();
+        if($trips[0]->ctr > 0){
+            $emptySetFromDB = false;
+        }
+    }
+    else{
+        $trips = DB::table('trips')
+            ->select(DB::raw('count(emissions) as ctr'))
+            ->get();
+        if($trips[0]->ctr > 0){
+            $emptySetFromDB = false;
         }
     }
     }
     //table fetch
     {
+    
     //Filtered queries
-    if($filter || $filterPost){
+    if(($filter || $filterPost) && !$emptySetFromDB){
+        $executeNoFilter = false;
+        if($emptySetFromDB){
+            $executeNoFilter = true;
+        }
         $column = "SUM(trips.emissions) as percentage";
         
         $institutionEmissions = DB::table('trips')
@@ -408,9 +407,58 @@
             ->select(DB::raw('count(emissions) as totalCount'))
             ->whereRaw($rawDB)
             ->get();
-        if(isset($institutionID)){
-            $treeRaw = "institutionID = ".$institutionID;
+            
+        $treeRaw = "";
+        $add = false;
+        $treeFilter = false;
         
+        if($data['datePreset']==0){   
+                $treeFilter = true;
+                if($data['fromDate'] != null && $data['toDate'] != null){
+                    $add = true;
+                    $treeRaw .= "institutionbatchplant.datePlanted BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
+                }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                    $add = true;
+                    $treeRaw .= "institutionbatchplant.datePlanted <= '" . $data['toDate'] . "'";
+                }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                    $add = true;
+                    $treeRaw .= "institutionbatchplant.datePlanted >= '" . $data['fromDate'] . "'";
+                }
+            }
+            else{
+                $treeFilter = true;
+                switch($data['datePreset']){
+                    case "1": {
+                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 2 WEEK";
+                        break;
+                    }
+                    case "2": {
+                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 1 MONTH";
+                        break;
+                    } 
+                    case "3": {
+                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 3 MONTH";
+                        break;
+                    }
+                    case "4": {
+                        $treeRaw .= "trinstitutionbatchplantips.datePlanted >= NOW() - INTERVAL 6 MONTH";
+                        break;
+                    }
+                    case "5": {
+                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 1 YEAR";
+                        break;
+                    }
+                    default: $treeRaw .= "";
+                }
+            }
+        if(isset($institutionID)){
+            $treeFilter = true;
+            if($add){
+                $treeRaw .= " AND ";
+            }
+            $treeRaw .= "institutionID = ".$institutionID;
+        }
+        if($treeFilter){
             $seqTotal = DB::table('institutionbatchplant')
                 ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
                 ->whereRaw($treeRaw)
@@ -452,10 +500,17 @@
             ->orderBy('trips.tripDate', 'asc')
             ->get();
         
+        $seq = 0;
+        for($x = 0; $x < count($totalTreesPlanted); $x++){
+            $seq += $totalTreesPlanted[$x]->monthsPlanted * $totalTreesPlanted[$x]->totalPlanted * 0.00183;
+        }
+        
+        $seq = round($seq, 4);
+        
         if(count($emissionData)==0){
             $start = 0;
         }else{
-            $start = $totalTreesPlanted->get(0)->totalPlanted * 22 * 0.001;
+            $start = $seq;
         }
         
             $green = $thresholds->get(0)->value;
@@ -468,7 +523,8 @@
             $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
     }
     //no filter
-    else{
+    
+    if($executeNoFilter){
         $column = "SUM(trips.emissions) as percentage";
         
         $institutionEmissions = DB::table('trips')
@@ -639,18 +695,26 @@
         $thresholds = DB::table('thresholds_ref')
             ->select(DB::raw('*'))
             ->get();
+        $seq = 0;
+        for($x = 0; $x < count($totalTreesPlanted); $x++){
+            $seq += $totalTreesPlanted[$x]->monthsPlanted * $totalTreesPlanted[$x]->totalPlanted * 0.00183;
+        }
+        
+        $seq = round($seq, 4);
 
-        $start = $totalTreesPlanted->get(0)->totalPlanted * 22 * 0.001;
+        $start = $seq;
 
         $green = $thresholds->get(0)->value;
         $orange = $thresholds->get(1)->value;
         $red = $thresholds->get(2)->value;
         $yellow = $thresholds->get(3)->value;
+        
+        $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
+        $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
 
         $tillOrange = ($red * $totalEmissions->get(0)->totalEmissions) - $start;
         $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
         $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
-
         $emissionData = DB::table('trips')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
             ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
@@ -663,19 +727,19 @@
         }
     }
     //empty set checker
-    {
-        if(count($emissionData)>0){
-            $emptySet = false;
+    {  
+        if(!$emptySetFromDB){
+            if(count($emissionData)>0){
+                $emptySet = false;
+            }
         }
     }
-
     //debuggers
     {
         //dd($notifications);
         //dd($rawDB);
         //dd($min);
     }
-    
 ?>
     @extends('layouts.main') 
     @section('styling')
@@ -712,27 +776,32 @@
     <div ng-app="myapp">
         <div ng-controller="MyController">
             <div ng-hide="<?php echo $emptySet; ?>">
-                <div class="row" ng-show="showFilter">
-                    <form method="post" action="{{ route('dashboard-process') }}" <?php if($userType <=2 ){ echo "ng-init=\"nonschool=true;\""; } ?>> {{ csrf_field() }}
-                        <input type="hidden" name="filter" value="<?php echo "{{showFilter}}"; ?>">
-                        <div class="two columns" ng-hide="<?php echo isset($institutionID) ?>">
-                            <select name="institutionID" id="institutionID" style="color: black;">
+                <form method="post" action="{{ route('dashboard-process') }}" <?php if($userType <=2 ){ echo "ng-init=\"nonschool=true;\""; } ?>> {{ csrf_field() }}
+                <br>
+                   <div ng-hide="showFilter">
+                    <div class="row">
+                        <div class="three columns" ng-hide="<?php echo $userType > 2 ?>">
+                            <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
                                <option value="">All Institutions</option>
                                 @foreach($institutions as $institution)
                                   <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="two columns" ng-hide="datePreset">
-                            <p style="text-align: left;" ng-hide="datePreset">From </p>
+                        <div class="one column" ng-hide="datePreset" ng-show="!datePreset">
+                            <p style="text-align: right;"><strong>From:</strong></p>
+                        </div>
+                        <div class="two columns" ng-hide="datePreset" ng-show="!datePreset">
                             <input class="u-full-width" type="date" name="fromDate" id="fromDate" max="<?php echo "{{max}}"; ?>" ng-model="min" ng-hide="datePreset">
                         </div>
-                        <div class="two columns" ng-hide="datePreset">
-                            <p style="text-align: left;"  ng-hide="datePreset">To: </p>
+                        <div class="one column" ng-hide="datePreset" ng-show="!datePreset">
+                            <p style="text-align: right;"><strong>To:</strong></p>
+                        </div>
+                        <div class="two columns" ng-hide="datePreset" ng-show="!datePreset">
                             <input class="u-full-width" type="date" name="toDate" id="toDate" ng-model="max" min="<?php echo "{{min}}"; ?>" ng-hide="datePreset">
                         </div>
-                        <div class="four columns" ng-show="datePreset">
-                            <select name="datePreset" id="">
+                        <div class="four columns" ng-show="datePreset" ng-hide="!datePreset">
+                            <select class="u-full-width" name="datePreset" id="">
                                 <option value="0" selected>Select Date Preset</option>
                                 <option value="1">2 Weeks</option>
                                 <option value="2">Last Month</option>
@@ -741,7 +810,9 @@
                                 <option value="5">Last 1 Year</option>
                             </select>
                         </div>
-                        <div class="two columns">
+                    </div>
+                    <div class="row">
+                        <div class="three columns">
                             <select class="u-full-width" name="carTypeID" id="carTypeID" style="color: black; width: 100%">
                                <option value="">All Car Types</option>
                                 @foreach($carTypes as $carType)
@@ -749,7 +820,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="two columns">
+                        <div class="three columns">
                             <select class="u-full-width" name="fuelTypeID" id="fuelTypeID" style="color: black; width: 100%">
                                  <option value="">All Fuel Types</option>
                                   @foreach($fuelTypes as $fuelType)
@@ -757,7 +828,7 @@
                                   @endforeach
                             </select>
                         </div>
-                        <div class="two columns">
+                        <div class="three columns">
                             <select class="u-full-width" name="carBrandID" id="carbrandID" style="color: black; width: 100%">
                                  <option value="">All Car Brands</option>
                                   @foreach($carBrands as $carBrand)
@@ -765,15 +836,30 @@
                                   @endforeach
                             </select>
                         </div>
-                        <div class="one column">
-                            <input class="button-primary" type="submit">
+                        <div class="two columns">
+                            <a class="button" ng-click="togglePreset(); valueNull(); " style="width: 100%; ">Date Filter</a>
                         </div>
-                    </form>
-                </div>
+                        <div class="one column">
+                            <input class="button-primary" ng-click="toggleFilter();" type="submit">
+                        </div>
+                    </div>
+                    </div>
+                    <?php
+                        if(isset($filterMessage)){
+                            echo '<div class="row">
+                                    <h6>Filters Active: '.$filterMessage.'</h6>
+                                </div>';
+                        }
+                    ?>
+                <input type="hidden" name="filter" value="<?php echo "{{showFilter}}"; ?>">
+                </form>
                 <div class="row">
-                    <div class="four columns offset-by-one"><h5>Total Emissions: &nbsp;<strong><?php echo round($totalEmissions[0]->totalEmissions, 4);?> MT</strong></h5></div>
-                    <div class="three columns"><h5>Total Trips: &nbsp;<strong><?php echo $tripCountTotal[0]->totalCount;?></strong></h5></div>
-                    <div class="four columns"><h5>Total Sequestration: <strong><?php echo ($seqTotal[0]->totalSeq)*22*0.001;?> MT</strong></h5></div>
+                    <div class="four columns"><h5>Total Emissions: &nbsp;<strong style="color:red"><?php echo round($totalEmissions[0]->totalEmissions, 4);?> MT C02</strong></h5></div>
+                    <div class="three columns" style="text-align:center"><h5>Total Trips: &nbsp;<strong><?php echo $tripCountTotal[0]->totalCount;?></strong></h5></div>
+                    <div class="four columns"><h5>Sequestration: <strong style="color:#579529"><?php echo $seq; ?> MT C02</strong></h5></div>
+                    <div class="one column">
+                        <button ng-click="toggleFilter();"><?php echo "{{plusMinus}}"; ?> Filters</button>
+                    </div>
                 </div>
                 <div class="row" ng-init="showGenChartDiv=<?php echo !$emptySet;?>">
                     <div class="six columns" style="text-align: center;" ng-show="showGenChartDiv">
@@ -785,26 +871,111 @@
                     </div>
                     <div class="six columns" style="text-align: center;">
                         <h5>Emissions to Sequestration Ratio</h5>    
+                        <div class="row">
+                           <label for=timeFrame>Select a Time Frame for Tree Calculation:</label>
+                            <select class="u-full-width" ng-model="timeFilter" id="timeFrame" name="timeFrame">
+                                <option value="1" selected>1 Month</option>
+                                <option value="2">3 Months</option>
+                                <option value="3">6 Months</option>
+                                <option value="4">1 Year</option>
+                            </select>
+                        </div>
                         <div>
                             <canvas class="u-full-width" id="foo"></canvas>
-                            </div>
-                            <?php
-                                //add change time period
-                                //add change threshold values
-                                if($tillOrange > 0 ){
-                                    $treesLeft = ($tillOrange / 0.001) / 22; //number of trees to catch up in a year
-                                    echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Orange Zone (" . $red * 100 . '%)</p>';
-                                }
-                                if($tillYellow > 0 ){
-                                    $treesLeft = ($tillYellow / 0.001) / 22; //number of trees to catch up in a year
-                                    echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Yellow Zone (" . $orange * 100 . '%)</p>';
-                                }
-                                if($tillGreen > 0 ){
-                                    $treesLeft = ($tillGreen / 0.001) / 22; //number of trees to catch up in a year
-                                    echo '<br><p>You need to plant at least ' . round($treesLeft) . " trees to reach the Green Zone (" . $yellow * 100 . '%)</p>';
-                                }        
-                            ?>
                         </div>
+                        <?php
+                            $currentZone = 0;
+                            if($seq <= $red * $totalEmissions->get(0)->totalEmissions){
+                                $currentZone = 1;
+                            }elseif($seq > $red * $totalEmissions->get(0)->totalEmissions && $seq <= $orange * $totalEmissions->get(0)->totalEmissions){
+                                $currentZone = 2;
+                            }elseif($seq > $orange * $totalEmissions->get(0)->totalEmissions && $seq <= $yellow * $totalEmissions->get(0)->totalEmissions){
+                                $currentZone = 3;
+                            }else{
+                                $currentZone = 4;
+                            }
+                            if($tillOrange > 0 ){
+                                $treesLeft = ($tillOrange / 0.001) / (22 / 12); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'1\'"><p style="color:orange">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Orange Zone (" . $red * 100 . '%) in a month</p></div>';
+
+                                $treesLeft = ($tillOrange / 0.001) / (22 / 4); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'2\'"><p style="color:orange">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Orange Zone (" . $red * 100 . '%) in 3 months</p></div>';
+
+                                $treesLeft = ($tillOrange / 0.001) / (22 / 2); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'3\'"><p style="color:orange">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Orange Zone (" . $red * 100 . '%) in 6 months</p></div>';
+
+                                $treesLeft = ($tillOrange / 0.001) / (22); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'4\'"><p style="color:orange">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Orange Zone (" . $red * 100 . '%) in a year</p></div>';
+                            }
+                            if($tillOrange <= 0 ){
+                                $treesLeft = ($tillOrange / 0.001); //number of trees to catch up in a year
+                                echo '<br><p style="color:red">It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the Red Zone (" . $red * 100 . '%)</p>';
+                            }
+                            if($tillYellow > 0 ){
+                                $treesLeft = ($tillYellow / 0.001) / (22 / 12); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'1\'"><p style="color:#d8d515">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Yellow Zone (" . $orange * 100 . '%) in a month.</p></div>';
+
+                                $treesLeft = ($tillYellow / 0.001) / (22 / 4); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'2\'"><p style="color:#d8d515">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Yellow Zone (" . $orange * 100 . '%) in 3 months.</p></div>';
+
+                                $treesLeft = ($tillYellow / 0.001) / (22 / 2); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'3\'"><p style="color:#d8d515">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Yellow Zone (" . $orange * 100 . '%) in 6 months.</p></div>';
+
+                                $treesLeft = ($tillYellow / 0.001) / (22); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'4\'"><p style="color:#d8d515">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Yellow Zone (" . $orange * 100 . '%) in a year.</p></div>';
+                            }
+                            if($tillYellow <= 0 ){
+                                $treesLeft = ($tillYellow / 0.001); //number of trees to catch up in a year
+                                echo '<br><p style="color:orange">It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the Orange Zone (" . $orange * 100 . '%)</p>';
+                            }
+                            if($tillGreen > 0 ){
+                                $treesLeft = ($tillGreen / 0.001) / (22 / 12); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'1\'"><p style="color:#579529">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Green Zone (" . $yellow * 100 . '%) in a month.</p></div>';
+
+                                $treesLeft = ($tillGreen / 0.001) / (22 / 4); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'2\'"><p style="color:#579529">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Green Zone (" . $yellow * 100 . '%) in 3 months.</p></div>';
+
+                                $treesLeft = ($tillGreen / 0.001) / (22 / 2); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'3\'"><p style="color:#579529">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Green Zone (" . $yellow * 100 . '%) in 6 months.</p></div>';
+
+                                $treesLeft = ($tillGreen / 0.001) / (22 / 1); //number of trees to catch up in a year
+                                echo '<div class="row" ng-hide="timeFilter!=\'4\'"><p style="color:#579529">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Green Zone (" . $yellow * 100 . '%) in a year.</p></div>';
+                            }
+                            if($tillGreen <= 0 ){
+                                $treesLeft = ($tillGreen / 0.001); //number of trees to catch up in a year
+                                echo '<br><p style="color:#d8d515">It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the Yellow Zone (" . $yellow * 100 . '%)</p>';
+                            }     
+                        ?>
+                    <div class="row">
+                    <?php
+                    echo '<br>';
+                    switch($currentZone){
+                        case 1:{
+                            echo '<span style="background-color: #8c1f13; color="#FFFFFF"><strong>You are in the RED zone. </strong></span>&nbsp;';
+                            $message = 'Plant Trees Now!';
+                        }
+                        break;
+                        case 2:{
+                            echo '<span style="background-color: #f7c820"><strong>You are in the ORANGE zone. </strong></span>&nbsp;';
+                            $message = 'Plant Trees Now!';
+                        }
+                        break;
+                        case 3:{
+                            echo '<span style="background-color: #ffff87"><strong>You are in the YELLOW zone. </strong></span>&nbsp';
+                            $message = 'Plant Trees Now!';
+                        }
+                        break;
+                        case 4:{
+                            echo '<span style="background-color: #579529; color: #FFFFFF"><strong>You are in the Green zone. </strong></span>&nbsp';
+                            $message = 'Plant More Trees to keep it going!';
+                        }
+                            break;
+                    }
+                    ?>
+                <a href="{{ route('tree-view') }}"><?php echo $message; ?></a>
+                    </div>
+                    <br>
+                    </div>
                     </div>
                 <div class="row">
                     <div class="four columns" style="text-align: center;"><div id="carTypePieChart" style="min-width: 100%; height: 400px; max-width: 100%; margin: 0 auto"></div></div>
@@ -812,7 +983,7 @@
                     <div class="four columns" style="text-align: center;"><div id="carBrandPieChart" style="min-width: 100%; height: 400px; max-width: 100%; margin: 0 auto"></div></div>
                 </div>
             </div>
-            <div ng-show="<?php echo $emptySet; ?>"><h4><br><div class="row" style="text-align: center"><?php echo "No Data Available"?><br><a href="{{ route('dashboard') }}" class="button button-primary">Go Back</a></div></h4></div>
+            <div ng-show="<?php echo $emptySet; ?>"><h4><br><div class="row" style="text-align: center"><?php echo "No Trip Data Available"?><br><a href="{{ route('dashboard') }}" class="button button-primary">Go Back</a></div></h4></div>
         </div>
     </div>
 
@@ -834,11 +1005,13 @@
                 $scope.nonschool = false;
                 $scope.showFilter = true;
                 $scope.datePreset = false;
-                $scope.min = new Date("<?php echo $min; ?>");
-                $scope.max = new Date("<?php echo $max; ?>");
-                    
+                $scope.plusMinus = "+";
+
                 $scope.toggleFilter = function() {
                     $scope.showFilter = !$scope.showFilter
+                    if($scope.showFilter){
+                        $scope.plusMinus = "+";
+                    }else $scope.plusMinus = "-";
                 };
                 
                 $scope.togglePreset = function() {
