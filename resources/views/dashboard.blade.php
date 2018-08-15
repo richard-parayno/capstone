@@ -712,27 +712,37 @@
     <div ng-app="myapp">
         <div ng-controller="MyController">
             <div ng-hide="<?php echo $emptySet; ?>">
-                <div class="row" ng-show="showFilter">
-                    <form method="post" action="{{ route('dashboard-process') }}" <?php if($userType <=2 ){ echo "ng-init=\"nonschool=true;\""; } ?>> {{ csrf_field() }}
-                        <input type="hidden" name="filter" value="<?php echo "{{showFilter}}"; ?>">
-                        <div class="two columns" ng-hide="<?php echo isset($institutionID) ?>">
-                            <select name="institutionID" id="institutionID" style="color: black;">
+                <form method="post" action="{{ route('dashboard-process') }}" <?php if($userType <=2 ){ echo "ng-init=\"nonschool=true;\""; } ?>> {{ csrf_field() }}
+                <br>
+                    <div class="row">
+                        <div class="four columns" ng-hide="<?php echo $userType > 2 ?>">
+                            <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
                                <option value="">All Institutions</option>
                                 @foreach($institutions as $institution)
                                   <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="two columns" ng-hide="datePreset">
-                            <p style="text-align: left;" ng-hide="datePreset">From </p>
-                            <input class="u-full-width" type="date" name="fromDate" id="fromDate" max="<?php echo "{{max}}"; ?>" ng-model="min" ng-hide="datePreset">
+                        <div class="two columns offset-by-one">
+                            <a class="button" ng-click="toggleFilter();" style="width: 100%"><?php echo "{{plusMinus}}"; ?> Filters</a>
                         </div>
-                        <div class="two columns" ng-hide="datePreset">
+                        <div class="one column offset-by-four">
+                            <input class="button-primary" type="submit">
+                        </div>
+                    </div>
+                    <div class="row" ng-show="showFilter">
+                        <div class="four columns" ng-hide="datePreset">
+                            <div class="six columns">
+                                <p style="text-align: left;" ng-hide="datePreset">From </p>
+                                <input class="u-full-width" type="date" name="fromDate" id="fromDate" max="<?php echo "{{max}}"; ?>" ng-model="min" ng-hide="datePreset">
+                            </div>
+                            <div class="six columns">
                             <p style="text-align: left;"  ng-hide="datePreset">To: </p>
                             <input class="u-full-width" type="date" name="toDate" id="toDate" ng-model="max" min="<?php echo "{{min}}"; ?>" ng-hide="datePreset">
                         </div>
+                        </div>
                         <div class="four columns" ng-show="datePreset">
-                            <select name="datePreset" id="">
+                            <select class="u-full-width" name="datePreset" id="">
                                 <option value="0" selected>Select Date Preset</option>
                                 <option value="1">2 Weeks</option>
                                 <option value="2">Last Month</option>
@@ -740,6 +750,9 @@
                                 <option value="4">Last 6 Months</option>
                                 <option value="5">Last 1 Year</option>
                             </select>
+                        </div>
+                        <div class="two columns">
+                            <a class="button" ng-click="togglePreset(); valueNull(); " style="width: 100%; text-align: left;">Date Filter</a>
                         </div>
                         <div class="two columns">
                             <select class="u-full-width" name="carTypeID" id="carTypeID" style="color: black; width: 100%">
@@ -765,11 +778,9 @@
                                   @endforeach
                             </select>
                         </div>
-                        <div class="one column">
-                            <input class="button-primary" type="submit">
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                <input type="hidden" name="filter" value="<?php echo "{{showFilter}}"; ?>">
+                </form>
                 <div class="row">
                     <div class="four columns offset-by-one"><h5>Total Emissions: &nbsp;<strong><?php echo round($totalEmissions[0]->totalEmissions, 4);?> MT</strong></h5></div>
                     <div class="three columns"><h5>Total Trips: &nbsp;<strong><?php echo $tripCountTotal[0]->totalCount;?></strong></h5></div>
@@ -832,13 +843,15 @@
             .controller("MyController", function($scope) {
                 $scope.dboardType = ['Emissions', 'Number of Trips'];
                 $scope.nonschool = false;
-                $scope.showFilter = true;
+                $scope.showFilter = false;
                 $scope.datePreset = false;
-                $scope.min = new Date("<?php echo $min; ?>");
-                $scope.max = new Date("<?php echo $max; ?>");
-                    
+                $scope.plusMinus = "+";
+
                 $scope.toggleFilter = function() {
                     $scope.showFilter = !$scope.showFilter
+                    if($scope.showFilter){
+                        $scope.plusMinus = "-";
+                    }else $scope.plusMinus = "+";
                 };
                 
                 $scope.togglePreset = function() {

@@ -26,22 +26,37 @@
 
 @section('content')
 <?php
-    /*
-    get total emissions for institutionID of user
-    get all trees planted by institution
-    start = total trees planted * 22
-    max val = total emission
-    get all threshold data
-    threshold * total emissions = thresholds
-    if start > total emission * 1.5
-        maxVal = start;
-    else maxVal = total emission * 1.5
-    */
-    
-    $totalTreesPlanted = DB::table('institutionbatchplant')
-        ->select(DB::raw('SUM(numOfPlantedTrees) as totalPlanted'))
-        ->whereRaw('institutionID = 1') //dapat institutionID ng naka log in
-        ->get();
+    $userType = Auth::user()->userTypeID;
+    if($userType > 2){
+        $institutionID = Auth::user()->institutionID;
+        $filter = true;
+    }
+
+    if(isset($institutionID)){
+            $treeRaw = "institutionID = ".$institutionID;
+        
+            $seqTotal = DB::table('institutionbatchplant')
+                ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                ->whereRaw($treeRaw)
+                ->get();
+
+            $totalTreesPlanted = DB::table('institutionbatchplant')
+                ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
+                ->whereRaw($treeRaw)
+                ->groupBy(DB::raw('1'))
+                ->get();
+        }
+        else{
+            $seqTotal = DB::table('institutionbatchplant')
+                ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                ->get();
+
+            $totalTreesPlanted = DB::table('institutionbatchplant')
+                ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
+                ->groupBy(DB::raw('1'))
+                ->get();
+        }
+        
     
     $totalEmissions = DB::table('monthlyemissionsperschool')
         ->select(DB::raw('SUM(emission) as totalEmissions'))
@@ -56,17 +71,29 @@
     $thresholds = DB::table('thresholds_ref')
         ->select(DB::raw('*'))
         ->get();
-    
-    $start = $totalTreesPlanted->get(0)->totalPlanted * 22 * 0.001;
+        
+        $emissionData = DB::table('trips')
+            ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
+            ->select('trips.tripDate', 'trips.tripTime', 'deptsperinstitution.deptName' , 'trips.plateNumber', 
+                    'trips.kilometerReading', 'trips.remarks', 'trips.emissions', 'fueltype_ref.fuelTypeName', 'cartype_ref.carTypeName', 'vehicles_mv.modelName', 'vehicles_mv.active') 
+            ->whereRaw($rawDB)
+            ->orderBy('trips.tripDate', 'asc')
+            ->get();
+        
+        if(count($emissionData)==0){
+            $start = 0;
+        }else{
+            $start = $totalTreesPlanted->get(0)->totalPlanted * 22 * 0.001;
+        }
 
-    $green = $thresholds->get(0)->value;
-    $orange = $thresholds->get(1)->value;
-    $red = $thresholds->get(2)->value;
-    $yellow = $thresholds->get(3)->value;
+        $green = $thresholds->get(0)->value;
+        $orange = $thresholds->get(1)->value;
+        $red = $thresholds->get(2)->value;
+        $yellow = $thresholds->get(3)->value;
 
-    $tillOrange = ($red * $totalEmissions->get(0)->totalEmissions) - $start;
-    $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
-    $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
+        $tillOrange = ($red * $totalEmissions->get(0)->totalEmissions) - $start;
+        $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
+        $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
 ?>
 <div class="six columns offset-by-one" id="box-form">
     <h1>We Planted Trees</h1>
