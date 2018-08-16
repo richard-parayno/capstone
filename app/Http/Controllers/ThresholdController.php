@@ -23,17 +23,22 @@ class ThresholdController extends Controller
         $redThreshold = ThresholdsRef::find("RED");
         $yellowThreshold = ThresholdsRef::find("YELLOW");
 
-        if (isset($data['greenThreshold'])) {
-            $greenThreshold->value = $data['greenThreshold'];
+        $greenInput = $request->input('greenThreshold');
+        $orangeInput = $request->input('orangeThreshold');
+        $redInput = $request->input('redThreshold');
+        $yellowInput = $request->input('yellowThreshold');
+
+        if (isset($greenInput)) {
+            $greenThreshold->value = $greenInput;
         }
-        if (isset($data['orangeThreshold'])) {
-            $orangeThreshold->value = $data['orangeThreshold'];
+        if (isset($orangeInput)) {
+            $orangeThreshold->value = $orangeInput;
         }
-        if (isset($data['redThreshold'])) {
-            $redThreshold->value = $data['redThreshold'];
+        if (isset($redInput)) {
+            $redThreshold->value = $redInput;
         }
-        if (isset($data['yellowThreshold'])) {
-            $yellowThreshold->value =$data['yellowThreshold'];
+        if (isset($yellowInput)) {
+            $yellowThreshold->value =$yellowInput;
         }
 
         $greenThreshold->save();

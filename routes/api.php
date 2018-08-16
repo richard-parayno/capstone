@@ -57,3 +57,4 @@ Route::get('/tree/{tree}', 'TreeController@show');
 
 /** Threshold API */
 Route::get('/thresholds', 'ThresholdController@index');
+Route::post('/thresholds/update', 'ThresholdController@update');
