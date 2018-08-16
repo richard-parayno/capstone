@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -58,6 +59,29 @@ class UserController extends Controller
     public function update(Request $request) {
       $data = $request->all();
       $originalUser = User::find($data['originalUser']);
+
+      $this->validate($request, [
+        'accountName' => [
+          'required',
+        ],
+        'username' => [
+          'required',
+          Rule::unique('users')->ignore($originalUser->id, 'id')
+        ],
+        'email' => [
+          'required',
+        ],
+        'password' => [
+          'required',
+        ]
+        ], [
+          'accountName.required' => 'The \'Update Account Name\' field is required.', 
+          'username.required' => 'The \'Update Username\' field is required.', 
+          'username.unique' => 'This Username has already been taken.', 
+          'email.required' => 'The \'Update Email\' field is required.', 
+          'password.required' => 'The \'Update Password\' field is required.', 
+        ]);
+
 
       if (isset($data['accountName'])) {
         $originalUser->accountName = $data['accountName'];

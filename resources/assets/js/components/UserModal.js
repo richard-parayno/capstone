@@ -45,20 +45,32 @@ export default class UserModal extends Component {
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
                     this.setState({ errorMessages: error.response.data.errors });
-                    if (this.state.errorMessages.deptName) {
-                        toast.error(this.state.errorMessages.deptName[0], {
+                    if (this.state.errorMessages.accountName) {
+                        toast.error(this.state.errorMessages.accountName[0], {
                             position: toast.POSITION.TOP_RIGHT,
                             autoClose: false
                         })
                     }
-                    if (this.state.errorMessages.institutionID) {
-                        toast.error(this.state.errorMessages.institutionID[0], {
+                    if (this.state.errorMessages.username) {
+                        toast.error(this.state.errorMessages.username[0], {
                             position: toast.POSITION.TOP_RIGHT,
                             autoClose: false
                         })
                     }
-                    if (this.state.errorMessages.motherDeptID) {
-                        toast.error(this.state.errorMessages.motherDeptID[0], {
+                    if (this.state.errorMessages.userTypeName) {
+                        toast.error(this.state.errorMessages.userTypeName[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.email) {
+                        toast.error(this.state.errorMessages.email[0], {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: false
+                        })
+                    }
+                    if (this.state.errorMessages.password) {
+                        toast.error(this.state.errorMessages.password[0], {
                             position: toast.POSITION.TOP_RIGHT,
                             autoClose: false
                         })
@@ -138,7 +150,7 @@ export default class UserModal extends Component {
                     <form onSubmit={this.handleSubmit}>
                         <div className="six columns">
                             <label htmlFor="accountName">Update Account Name</label>
-                            <input className="u-full-width" type="text" name="first-name" id="first-name" defaultValue="Richard Lance" />
+                            <input className="u-full-width" type="text" name="accountName" id="accountName" defaultValue="Richard Lance" />
                         </div>
                         <div className="six columns">
                             <label htmlFor="username">Update Userame</label>
