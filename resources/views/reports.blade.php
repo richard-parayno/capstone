@@ -800,7 +800,7 @@
     <input type="submit" class="button button-primary" value="Export To PDF">
     </form>';
     
-} ?><button onclick="takeScreenshot()">Export</button></h5>
+} ?><?php //<button onclick="takeScreenshot()">Export</button> ?></h5>
        <?php
             if($showChartDiv){
                 if(isset($regressionLine)){

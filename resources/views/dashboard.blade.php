@@ -6,6 +6,8 @@
     $emptySet = true;
     $emptySetFromDB = true;
     $executeNoFilter = true;
+    $showSchoolFilter = true;
+    $filterMessage = "";
         
     $fuelTypes = DB::table('fueltype_ref')->get();
     $carTypes = DB::table('cartype_ref')->get();
@@ -14,11 +16,16 @@
     if($userType > 2){
         $institutionID = Auth::user()->institutionID;
         $filter = true;
+        $showSchoolFilter = false;
     }
 
     if(isset($data)){
         if($data['filter']=='true'){
             $filterPost = true;
+            if($data['institutionID']==null && $data['fromDate']==null && $data['toDate']==null && $data['carTypeID']==null && $data['fuelTypeID']==null && $data['carBrandID']==null && $data['datePreset']==0 && $data['filter']==true){
+                $filter = false;
+                $filterPost = false;
+            }
         }
     }
     }
@@ -107,11 +114,65 @@
                     $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
                     $add = true;
             }
+            if($data['datePreset']==0){   
+                if($data['fromDate'] != null && $data['toDate'] != null){
+                    $treeFilter = true;
+                    $add = true;
+                    $treeRaw .= "institutionbatchplant.datePlanted BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
+                }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                    $treeFilter = true;
+                    $add = true;
+                    $treeRaw .= "institutionbatchplant.datePlanted <= '" . $data['toDate'] . "'";
+                }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                    $treeFilter = true;
+                    $add = true;
+                    $treeRaw .= "institutionbatchplant.datePlanted >= '" . $data['fromDate'] . "'";
+                }
+            }
+            else{
+                $treeFilter = true;
+                switch($data['datePreset']){
+                    case "1": {
+                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 2 WEEK";
+                        break;
+                    }
+                    case "2": {
+                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 1 MONTH";
+                        break;
+                    } 
+                    case "3": {
+                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 3 MONTH";
+                        break;
+                    }
+                    case "4": {
+                        $treeRaw .= "trinstitutionbatchplantips.datePlanted >= NOW() - INTERVAL 6 MONTH";
+                        break;
+                    }
+                    case "5": {
+                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 1 YEAR";
+                        break;
+                    }
+                    default: $treeRaw .= "";
+                }
+            }
+        if(isset($institutionID)){
+            $treeFilter = true;
+            if($add){
+                $treeRaw .= " AND ";
+            }
+            $treeRaw .= "institutionID = ".$institutionID;
+        }
         }
         if(isset($institutionID)){
             if($add){
                 $rawDB .= " AND ";
-                $filterMessage .= " by " . $institutionID;
+                if($showSchoolFilter){
+                    $filterMessage .= ", ";
+                }
+            }
+            $temp = DB::table('institutions')->select('institutionName')->whereRaw('institutionID = '. $institutionID)->get();
+            if($showSchoolFilter){
+                $filterMessage .= $temp[0]->institutionName;
             }
             $rawDB .= "institutions.institutionID = ".$institutionID;
         }
@@ -385,18 +446,6 @@
             ->whereRaw($rawDB)
             ->get();
             
-        $monthCount = DB::table('trips')
-            ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
-            ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
-            ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
-            ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->join('fueltype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
-            ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-            ->select(DB::raw('EXTRACT(YEAR_MONTH FROM tripDate) as monthYear'))
-            ->whereRaw($rawDB)
-            ->groupby(DB::raw('1'))
-            ->get();
-            
         $tripCountTotal = DB::table('trips')
             ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
             ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
@@ -412,67 +461,25 @@
         $add = false;
         $treeFilter = false;
         
-        if($data['datePreset']==0){   
-                $treeFilter = true;
-                if($data['fromDate'] != null && $data['toDate'] != null){
-                    $add = true;
-                    $treeRaw .= "institutionbatchplant.datePlanted BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
-                }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
-                    $add = true;
-                    $treeRaw .= "institutionbatchplant.datePlanted <= '" . $data['toDate'] . "'";
-                }elseif($data['fromDate'] != null && !isset($data['toDate'])){
-                    $add = true;
-                    $treeRaw .= "institutionbatchplant.datePlanted >= '" . $data['fromDate'] . "'";
-                }
-            }
-            else{
-                $treeFilter = true;
-                switch($data['datePreset']){
-                    case "1": {
-                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 2 WEEK";
-                        break;
-                    }
-                    case "2": {
-                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 1 MONTH";
-                        break;
-                    } 
-                    case "3": {
-                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 3 MONTH";
-                        break;
-                    }
-                    case "4": {
-                        $treeRaw .= "trinstitutionbatchplantips.datePlanted >= NOW() - INTERVAL 6 MONTH";
-                        break;
-                    }
-                    case "5": {
-                        $treeRaw .= "institutionbatchplant.datePlanted >= NOW() - INTERVAL 1 YEAR";
-                        break;
-                    }
-                    default: $treeRaw .= "";
-                }
-            }
-        if(isset($institutionID)){
-            $treeFilter = true;
-            if($add){
-                $treeRaw .= " AND ";
-            }
-            $treeRaw .= "institutionID = ".$institutionID;
-        }
         if($treeFilter){
-            $seqTotal = DB::table('institutionbatchplant')
-                ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
-                ->whereRaw($treeRaw)
-                ->get();
 
             $totalTreesPlanted = DB::table('institutionbatchplant')
                 ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPlanted'))
                 ->whereRaw($treeRaw)
                 ->groupBy(DB::raw('1'))
                 ->get();
+            $totalEmissions = DB::table('trips')
+                ->select(DB::raw('SUM(emissions) as totalEmissions'))
+                ->whereRaw($treeRaw)
+                ->get();
         }
         else{
             $seqTotal = DB::table('institutionbatchplant')
                 ->select(DB::raw('sum(numOfPlantedTrees) as totalSeq'))
+                ->get();
+            
+             $totalEmissions = DB::table('trips')
+                ->select(DB::raw('SUM(emissions) as totalEmissions'))
                 ->get();
 
             $totalTreesPlanted = DB::table('institutionbatchplant')
@@ -845,7 +852,7 @@
                     </div>
                     </div>
                     <?php
-                        if(isset($filterMessage)){
+                        if(!$filterMessage==""){
                             echo '<div class="row">
                                     <h6>Filters Active: '.$filterMessage.'</h6>
                                 </div>';
@@ -884,74 +891,74 @@
                             <canvas class="u-full-width" id="foo"></canvas>
                         </div>
                         <?php
-                            $currentZone = 0;
-                            if($seq <= $red * $totalEmissions->get(0)->totalEmissions){
-                                $currentZone = 1;
-                            }elseif($seq > $red * $totalEmissions->get(0)->totalEmissions && $seq <= $orange * $totalEmissions->get(0)->totalEmissions){
-                                $currentZone = 2;
-                            }elseif($seq > $orange * $totalEmissions->get(0)->totalEmissions && $seq <= $yellow * $totalEmissions->get(0)->totalEmissions){
-                                $currentZone = 3;
-                            }else{
-                                $currentZone = 4;
-                            }
-                            if($tillOrange > 0 ){
-                                $treesLeft = ($tillOrange / 0.001) / (22 / 12); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'1\'"><p style="color:orange">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Orange Zone (" . $red * 100 . '%) in a month</p></div>';
-
-                                $treesLeft = ($tillOrange / 0.001) / (22 / 4); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'2\'"><p style="color:orange">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Orange Zone (" . $red * 100 . '%) in 3 months</p></div>';
-
-                                $treesLeft = ($tillOrange / 0.001) / (22 / 2); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'3\'"><p style="color:orange">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Orange Zone (" . $red * 100 . '%) in 6 months</p></div>';
-
-                                $treesLeft = ($tillOrange / 0.001) / (22); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'4\'"><p style="color:orange">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Orange Zone (" . $red * 100 . '%) in a year</p></div>';
-                            }
-                            if($tillOrange <= 0 ){
-                                $treesLeft = ($tillOrange / 0.001); //number of trees to catch up in a year
-                                echo '<br><p style="color:red">It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the Red Zone (" . $red * 100 . '%)</p>';
-                            }
-                            if($tillYellow > 0 ){
-                                $treesLeft = ($tillYellow / 0.001) / (22 / 12); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'1\'"><p style="color:#d8d515">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Yellow Zone (" . $orange * 100 . '%) in a month.</p></div>';
-
-                                $treesLeft = ($tillYellow / 0.001) / (22 / 4); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'2\'"><p style="color:#d8d515">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Yellow Zone (" . $orange * 100 . '%) in 3 months.</p></div>';
-
-                                $treesLeft = ($tillYellow / 0.001) / (22 / 2); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'3\'"><p style="color:#d8d515">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Yellow Zone (" . $orange * 100 . '%) in 6 months.</p></div>';
-
-                                $treesLeft = ($tillYellow / 0.001) / (22); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'4\'"><p style="color:#d8d515">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Yellow Zone (" . $orange * 100 . '%) in a year.</p></div>';
-                            }
-                            if($tillYellow <= 0 ){
-                                $treesLeft = ($tillYellow / 0.001); //number of trees to catch up in a year
-                                echo '<br><p style="color:orange">It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the Orange Zone (" . $orange * 100 . '%)</p>';
-                            }
-                            if($tillGreen > 0 ){
-                                $treesLeft = ($tillGreen / 0.001) / (22 / 12); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'1\'"><p style="color:#579529">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Green Zone (" . $yellow * 100 . '%) in a month.</p></div>';
-
-                                $treesLeft = ($tillGreen / 0.001) / (22 / 4); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'2\'"><p style="color:#579529">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Green Zone (" . $yellow * 100 . '%) in 3 months.</p></div>';
-
-                                $treesLeft = ($tillGreen / 0.001) / (22 / 2); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'3\'"><p style="color:#579529">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Green Zone (" . $yellow * 100 . '%) in 6 months.</p></div>';
-
-                                $treesLeft = ($tillGreen / 0.001) / (22 / 1); //number of trees to catch up in a year
-                                echo '<div class="row" ng-hide="timeFilter!=\'4\'"><p style="color:#579529">You need to plant at least ' . round($treesLeft) . " tree/s to reach the Green Zone (" . $yellow * 100 . '%) in a year.</p></div>';
-                            }
-                            if($tillGreen <= 0 ){
-                                $treesLeft = ($tillGreen / 0.001); //number of trees to catch up in a year
-                                echo '<br><p style="color:#d8d515">It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the Yellow Zone (" . $yellow * 100 . '%)</p>';
-                            }     
-                        ?>
+        $currentZone = 0;
+        if($seq <= $red * $totalEmissions->get(0)->totalEmissions){
+            $currentZone = 1;
+        }elseif($seq > $red * $totalEmissions->get(0)->totalEmissions && $seq <= $orange * $totalEmissions->get(0)->totalEmissions){
+            $currentZone = 2;
+        }elseif($seq > $orange * $totalEmissions->get(0)->totalEmissions && $seq <= $yellow * $totalEmissions->get(0)->totalEmissions){
+            $currentZone = 3;
+        }else{
+            $currentZone = 4;
+        }
+        if($tillOrange > 0 ){
+            $treesLeft = ($tillOrange / 0.001) / (22 / 12); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'1\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the<p style=\"color:orange\"> Orange Zone (" . $red * 100 . '%) in a month</p></div>';
+            
+            $treesLeft = ($tillOrange / 0.001) / (22 / 4); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'2\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the<p style=\"color:orange\"> Orange Zone (" . $red * 100 . '%) in 3 months</p></div>';
+            
+            $treesLeft = ($tillOrange / 0.001) / (22 / 2); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'3\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the<p style=\"color:orange\"> Orange Zone (" . $red * 100 . '%) in 6 months</p></div>';
+            
+            $treesLeft = ($tillOrange / 0.001) / (22); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'4\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the<p style=\"color:orange\"> Orange Zone (" . $red * 100 . '%) in a year</p></div>';
+        }
+        if($tillOrange <= 0 ){
+            $treesLeft = ($tillOrange / 0.001); //number of trees to catch up in a year
+            echo '<br>It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the <p style=\"color:red\"> Red Zone (" . $red * 100 . '%)</p>';
+        }
+        if($tillYellow > 0 ){
+            $treesLeft = ($tillYellow / 0.001) / (22 / 12); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'1\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the <p style=\"color:#d8d515\"> Yellow Zone (" . $orange * 100 . '%) in a month.</p></div>';
+            
+            $treesLeft = ($tillYellow / 0.001) / (22 / 4); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'2\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the <p style=\"color:#d8d515\"> Yellow Zone (" . $orange * 100 . '%) in 3 months.</p></div>';
+            
+            $treesLeft = ($tillYellow / 0.001) / (22 / 2); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'3\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the <p style=\"color:#d8d515\"> Yellow Zone (" . $orange * 100 . '%) in 6 months.</p></div>';
+            
+            $treesLeft = ($tillYellow / 0.001) / (22); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'4\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the <p style=\"color:#d8d515\"> Yellow Zone (" . $orange * 100 . '%) in a year.</p></div>';
+        }
+        if($tillYellow <= 0 ){
+            $treesLeft = ($tillYellow / 0.001); //number of trees to catch up in a year
+            echo '<br>It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the<p style=\"color:orange\"> Orange Zone (" . $orange * 100 . '%)</p>';
+        }
+        if($tillGreen > 0 ){
+            $treesLeft = ($tillGreen / 0.001) / (22 / 12); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'1\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the<p style=\"color:#579529\"> Green Zone (" . $yellow * 100 . '%) in a month.</p></div>';
+            
+            $treesLeft = ($tillGreen / 0.001) / (22 / 4); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'2\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the<p style=\"color:#579529\"> Green Zone (" . $yellow * 100 . '%) in 3 months.</p></div>';
+            
+            $treesLeft = ($tillGreen / 0.001) / (22 / 2); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'3\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the<p style=\"color:#579529\"> Green Zone (" . $yellow * 100 . '%) in 6 months.</p></div>';
+            
+            $treesLeft = ($tillGreen / 0.001) / (22 / 1); //number of trees to catch up in a year
+            echo '<div class="row" ng-hide="timeFilter!=\'4\'">You need to plant at least ' . round($treesLeft) . " tree/s to reach the<p style=\"color:#579529\"> Green Zone (" . $yellow * 100 . '%) in a year.</p></div>';
+        }
+        if($tillGreen <= 0 ){
+            $treesLeft = ($tillGreen / 0.001); //number of trees to catch up in a year
+            echo '<br>It will only take <strong>' . abs(round($treesLeft,2)) . "</strong> MT of C02 to go back to the<p style=\"color:#d8d515\"> Yellow Zone (" . $yellow * 100 . '%)</p>';
+        }        
+    ?>
                     <div class="row">
                     <?php
                     echo '<br>';
                     switch($currentZone){
                         case 1:{
-                            echo '<span style="background-color: #8c1f13; color="#FFFFFF"><strong>You are in the RED zone. </strong></span>&nbsp;';
+                            echo '<span style="background-color: #8c1f13; color: #FFFFFF"><strong>You are in the RED zone. </strong></span>&nbsp;';
                             $message = 'Plant Trees Now!';
                         }
                         break;
