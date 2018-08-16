@@ -22,6 +22,12 @@
 @endsection
 
 @section('content')
+<?php
+    $userType = Auth::user()->userTypeID;
+    if($userType > 2){
+        $institutionID = Auth::user()->institutionID;
+    }
+?>
 <div class="eight columns offset-by-two" id="box-form">
   <!-- TODO: Process add-user logic after submitting form. -->
   <h1>Add Vehicle</h1>    
@@ -32,14 +38,22 @@
           <strong>Success! </strong> {{ Session::get('message', '') }}
       </div>
     @endif
-    <div class="twelve columns">
-      <label for="institutionID">Select Campus/Institute</label>
-      <select class="u-full-width" name="institutionID" id="institutionID">
-      @foreach($institutions as $institution)
-        <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
-      @endforeach
-      </select>
-    </div>
+     <?php
+            if(!isset($institutionID)){
+                echo '
+                <div class="twelve columns">
+                    <label for="institutionID">Choose a Campus</label>
+                    <select class="u-full-width" name="institutionID" id="institution">';
+                        foreach($institutions as $institution){
+                            echo '<option value="'.$institution->institutionID.'">'.$institution->institutionName.'</option>';
+                        }
+                    echo '</select>
+                </div>
+                ';
+            }else{
+                echo '<input type="hidden" name="institutionID" value="'.$institutionID.'">';
+            }
+        ?>
     <div class="twelve columns">
       <label for="carTypeID">Select Car Type</label>
       <select class="u-full-width" name="carTypeID" id="carTypeID">

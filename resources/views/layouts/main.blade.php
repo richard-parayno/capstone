@@ -41,7 +41,7 @@ $mytime = Carbon\Carbon::now();
 <script src="https://www.amcharts.com/lib/3/plugins/export/export.js" type="text/javascript"></script>
 <link href="https://www.amcharts.com/lib/3/plugins/export/export.css" rel="stylesheet" type="text/css">
   <script src="http://bernii.github.io/gauge.js/dist/gauge.min.js"></script>  
-  
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js" type="text/javascript"></script>
 
   <script>
     (function(){
@@ -78,7 +78,6 @@ $mytime = Carbon\Carbon::now();
       document.addEventListener('DOMContentLoaded', loadbar, false);
     }());
   </script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js" type="text/javascript"></script>
 </head>
 
 @section('styling')
