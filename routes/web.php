@@ -131,3 +131,8 @@ Route::get('/search-process','SearchController@search')->name('search-process');
 /*Decision Support*/
 Route::get('/tree-decision-support', 'DecisionSupportController@index')->name('tree-decision-support')->middleware('auth');
 
+/* Threshold control */
+Route::get('/thresholds', function() {
+    return view('thresholds');
+})->name('thresholds')->middleware('auth');
+

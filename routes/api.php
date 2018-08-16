@@ -54,3 +54,6 @@ Route::post('/trip/process/prepexport', 'UploadedTripController@prepareForExport
 /** We Planted Trees APIs */
 Route::get('/tree', 'TreeController@index');
 Route::get('/tree/{tree}', 'TreeController@show');
+
+/** Threshold API */
+Route::get('/thresholds', 'ThresholdController@index');

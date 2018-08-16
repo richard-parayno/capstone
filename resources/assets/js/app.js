@@ -43,3 +43,6 @@ require('./components/UploadedTrip');
 
 // Sidebar
 require('./components/SidebarMain');
+
+// Thresholds
+require('./components/ThresholdsMain');
