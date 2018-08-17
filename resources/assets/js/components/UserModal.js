@@ -8,7 +8,8 @@ export default class UserModal extends Component {
     constructor() {
         super();
         this.state = {
-            user: []
+            user: [],
+            errorMessages: []
         }
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -153,19 +154,35 @@ export default class UserModal extends Component {
                     <form onSubmit={this.handleSubmit}>
                         <div className="six columns">
                             <label htmlFor="accountName">Update Account Name</label>
-                            <input className="u-full-width" type="text" name="accountName" id="accountName" defaultValue="Richard Lance" />
+                            {typeof this.state.errorMessages.accountName != undefined ?
+                                <input className="u-full-width" type="text" name="accountName" id="accountName" defaultValue="Richard Lance" />
+                                :
+                                <input className="u-full-width" type="text" name="accountName" id="accountName" defaultValue="Richard Lance" style={{border: "1px red solid"}}/>
+                            }
                         </div>
                         <div className="six columns">
                             <label htmlFor="username">Update Userame</label>
-                            <input className="u-full-width" type="text" name="username" id="username" defaultValue="richard.lance" />
+                            {typeof this.state.errorMessages.username != undefined ?
+                                <input className="u-full-width" type="text" name="username" id="username" defaultValue="richard.lance" />
+                                :
+                                <input className="u-full-width" type="text" name="username" id="username" defaultValue="richard.lance" style={{border: "1px red solid"}}/>
+                            }
                         </div>
                         <div className="six columns" style={{marginLeft: 0}}>
                             <label htmlFor="email">Update E-mail</label>
-                            <input className="u-full-width" type="email" name="email" id="email" defaultValue="richard_parayno@dlsu.edu.ph" />
+                            {typeof this.state.errorMessages.email != undefined ?
+                                <input className="u-full-width" type="email" name="email" id="email" defaultValue="richard_parayno@dlsu.edu.ph" />
+                                :
+                                <input className="u-full-width" type="email" name="email" id="email" defaultValue="richard_parayno@dlsu.edu.ph" style={{border: "1px red solid"}}/>
+                            }
                         </div>
                         <div className="six columns">
                             <label htmlFor="password">Update Password</label>
-                            <input className="u-full-width" type="password" name="password" id="password"/>
+                            {typeof this.state.errorMessages.password != undefined ?
+                                <input className="u-full-width" type="password" name="password" id="password"/>
+                                :
+                                <input className="u-full-width" type="password" name="password" id="password" style={{border: "1px red solid"}}/>
+                            }
                         </div>
                         <div className="twelve columns">
                             <input type="submit" className="button-primary u-pull-right" onClick={this.dismissAll} />
