@@ -32,6 +32,7 @@
     //filtering
     {
     if($filter || $filterPost){
+        $treeRaw = "";  
         $filterMessage = "";
         $rawDB = "";
         $add = false;

@@ -766,18 +766,17 @@
             visibility: visible;
         }
     </style>
+    <style>
+        #chartdiv2 {
+            width: 100%;
+            height: 500px;
+        }
+        .amcharts-export-menu {
+            display: none;
+        }
+    </style>
     @endsection @section('content')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
-    <script type="text/javascript" src="http://www.amcharts.com/lib/3/exporting/amexport_combined.js"></script>
-    <script>
-    var takeScreenshot = function(){
-        html2canvas(document.getElementById('chartdiv2')).then(function(canvas) {
-            document.getElementById('chartdiv2').appendChild(canvas);
-    });
-    };
-    </script>
-
     <div ng-app="myapp">
      <br>
       <h5>&nbsp; Dashboard > Reports <?php if(isset($data['reportName'])){
@@ -791,16 +790,25 @@
         case "emission": {echo "Emission Report"; break;}
         default: 
     }
-    echo '<br><br><button class="button-primary" onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export to CSV</button>
-    <form method="post" action="{{ route(\'reports-process\') }}">';} ?>
-    {{ csrf_field() }}
-    <?php if(isset($data['reportName'])){
-    echo '
-    <input type="hidden" name="downloadedReport" value="true" />
-    <input type="submit" class="button button-primary" value="Export To PDF">
-    </form>';
-    
-} ?><?php //<button onclick="takeScreenshot()">Export</button> ?></h5>
+    echo '<br><br><div class="row"><div class="two columns"><button class="button-primary" onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export to CSV</button>
+    </div>
+   <div class="two columns">
+    <button id="cmd">Show Printable Report</button></div></div>';} ?>
+    </h5>
+      <div class="row" id="printDiv" style="border:1px solid black;">
+             <br>
+            <div class="row">
+             <div class="one column offset-by-one">
+                <img src="{{ URL::asset('/images/dlsp.png') }}" width="120" height="120">
+             </div>
+            <div class="one column offset-by-one" style="vertical-align: text-top;">
+                <img src="{{ URL::asset('/images/life.jpg') }}" width="130" height="130">
+             </div>
+             <div class="three columns offset-by-two" style="text-align:right; vertical-align: text-bottom;">
+                 <br><br><strong>REPORT TITLE</strong>
+             </div>
+         </div>
+      </div>
        <?php
             if($showChartDiv){
                 if(isset($regressionLine)){
@@ -809,7 +817,7 @@
                 else $div = "eight";
                 echo '<div class="row" id="content">
                 <div class="'.$div.' columns">
-                        <div id="chartdiv2" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div></div>';
+                        <div id="chartdiv2" style="background-color: #FFFFFF;" ></div></div>';
                 if(!isset($regressionLine)){
                 echo '<div class="four columns">
                         <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;">';
@@ -1402,11 +1410,6 @@
             }
         };
     </script>
-    <script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-    <script type="text/javascript" src="https://www.amcharts.com/lib/3/serial.js"></script>
-    <script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-    <script src="https://.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <link  type="text/css" href="https://.amcharts.com/lib/3/plugins/export/export.css" rel="stylesheet">
     <?php 
         if(isset($tripData)){
             echo '<script type="text/javascript">
@@ -1785,5 +1788,231 @@ function resetChart() {
 		</script>';
         }
     ?>
+    <script>
+        $(document).ready(function() {
+            $('#cmd').click(function() {
+                $("svg").attr("id", "svg") //Assign ID to SCG tag
+
+                // first convert your svg to png
+                exportInlineSVG(svg, function(data, canvas) {
+                    svg.parentNode.replaceChild(canvas, svg);
+                     html2canvas(document.getElementById('chartdiv2')).then(function(can) {
+                        can.id = 'canvas'; document.getElementById('printDiv').appendChild(can);
+                    });
+        
+                });
+                function exportInlineSVG(svg, receiver, params, quality) {
+                    if (!svg || !svg.nodeName || svg.nodeName !== 'svg') {
+                        console.error('Wrong arguments : should be \n exportSVG(SVGElement, function([dataURL],[canvasElement]) || IMGElement || CanvasElement [, String_toDataURL_Params, Float_Params_quality])')
+                        return;
+                    }
+
+                    var xlinkNS = "http://www.w3.org/1999/xlink";
+                    var clone;
+                    // This will convert an external image to a dataURL
+                    var toDataURL = function(image) {
+
+                        var img = new Image();
+                        // CORS workaround, this won't work in IE<11
+                        // If you are sure you don't need it, remove the next line and the double onerror handler
+                        // First try with crossorigin set, it should fire an error if not needed
+                        img.crossOrigin = 'Anonymous';
+
+                        img.onload = function() {
+                            // we should now be able to draw it without tainting the canvas
+                            var canvas = document.createElement('canvas');
+                            var bbox = image.getBBox();
+                            canvas.width = bbox.width;
+                            canvas.height = bbox.height;
+                            // draw the loaded image
+                            canvas.getContext('2d').drawImage(this, 0, 0, bbox.width, bbox.height);
+                            // set our original <image>'s href attribute to the dataURL of our canvas
+                            image.setAttributeNS(xlinkNS, 'href', canvas.toDataURL());
+                            // that was the last one
+                            if (++encoded === total) exportDoc()
+                        }
+
+                        // No CORS set in the response		
+                        img.onerror = function() {
+                            // save the src
+                            var oldSrc = this.src;
+                            // there is an other problem
+                            this.onerror = function() {
+                                console.warn('failed to load an image at : ', this.src);
+                                if (--total === encoded && encoded > 0) exportDoc();
+                            }
+                            // remove the crossorigin attribute
+                            this.removeAttribute('crossorigin');
+                            // retry
+                            this.src = '';
+                            this.src = oldSrc;
+                        }
+                        // load our external image into our img
+                        img.src = image.getAttributeNS(xlinkNS, 'href');
+                    }
+
+                    // The final function that will export our svgNode to our receiver
+                    var exportDoc = function() {
+                        // check if our svgNode has width and height properties set to absolute values
+                        // otherwise, canvas won't be able to draw it
+                        var bbox = svg.getBBox();
+                        // avoid modifying the original one
+                        clone = svg.cloneNode(true);
+                        if (svg.width.baseVal.unitType !== 1) clone.setAttribute('width', bbox.width);
+                        if (svg.height.baseVal.unitType !== 1) clone.setAttribute('height', bbox.height);
+
+                        parseStyles();
+
+                        // serialize our node
+                        var svgData = (new XMLSerializer()).serializeToString(clone);
+                        // remember to encode special chars
+                        var svgURL = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgData);
+
+                        var svgImg = new Image();
+
+                        svgImg.onload = function() {
+                            // if we set a canvas as receiver, then use it
+                            // otherwise create a new one
+                            var canvas = (receiver && receiver.nodeName === 'CANVAS') ? receiver : document.createElement('canvas');
+                            // IE11 doesn't set a width on svg images...
+                            canvas.width = this.width || bbox.width;
+                            canvas.height = this.height || bbox.height;
+                            canvas.getContext('2d').drawImage(this, 0, 0, canvas.width, canvas.height);
+
+                            // try to catch IE
+                            try {
+                                // if we set an <img> as receiver
+                                if (receiver.nodeName === 'IMG') {
+                                    // make the img looks like the svg
+                                    receiver.setAttribute('style', getSVGStyles(receiver));
+                                    receiver.src = canvas.toDataURL(params, quality);
+                                } else {
+                                    // make the canvas looks like the canvas
+                                    canvas.setAttribute('style', getSVGStyles(canvas));
+                                    // a container element
+                                    if (receiver.appendChild && receiver !== canvas)
+                                        receiver.appendChild(canvas);
+                                    // if we set a function
+                                    else if (typeof receiver === 'function')
+                                        receiver(canvas.toDataURL(params, quality), canvas);
+                                }
+                            } catch (ie) {
+                                console.warn("Your ~browser~ has tainted the canvas.\n The canvas is returned");
+                                if (receiver.nodeName === 'IMG') receiver.parentNode.replaceChild(canvas, receiver);
+                                else receiver(null, canvas);
+                            }
+                        }
+                        svgImg.onerror = function(e) {
+                            if (svg._cleanedNS) {
+                                console.error("Couldn't export svg, please check that the svgElement passed is a valid svg document.");
+                                return;
+                            }
+                            // Some non-standard NameSpaces can cause this issues
+                            // This will remove them all
+                            function cleanNS(el) {
+                                var attr = el.attributes;
+                                for (var i = 0; i < attr.length; i++) {
+                                    if (attr[i].name.indexOf(':') > -1) el.removeAttribute(attr[i].name)
+                                }
+                            }
+                            cleanNS(svg);
+                            for (var i = 0; i < svg.children.length; i++)
+                                cleanNS(svg.children[i]);
+                            svg._cleanedNS = true;
+                            // retry the export
+                            exportDoc();
+                        }
+                        svgImg.src = svgURL;
+                    }
+                    // ToDo : find a way to get only usefull rules
+                    var parseStyles = function() {
+                        var styleS = [],
+                            i;
+                        // transform the live StyleSheetList to an array to avoid endless loop
+                        for (i = 0; i < document.styleSheets.length; i++)
+                            styleS.push(document.styleSheets[i]);
+                        // Do we have a `<defs>` element already ?
+                        var defs = clone.querySelector('defs') || document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                        if (!defs.parentNode)
+                            clone.insertBefore(defs, clone.firstElementChild);
+
+                        // iterate through all document's stylesheets
+                        for (i = 0; i < styleS.length; i++) {
+                            var style = document.createElement('style');
+                            var rules = styleS[i].cssRules,
+                                l = rules.length;
+                            for (var j = 0; j < l; j++)
+                                style.innerHTML += rules[j].cssText + '\n';
+
+                            defs.appendChild(style);
+                        }
+                        // small hack to avoid border and margins being applied inside the <img>
+                        var s = clone.style;
+                        s.border = s.padding = s.margin = 0;
+                        s.transform = 'initial';
+                    }
+                    var getSVGStyles = function(node) {
+                        var dest = node.cloneNode(true);
+                        svg.parentNode.insertBefore(dest, svg);
+                        var dest_comp = getComputedStyle(dest);
+                        var svg_comp = getComputedStyle(svg);
+                        var mods = "";
+                        for (var i = 0; i < svg_comp.length; i++) {
+                            if (svg_comp[svg_comp[i]] !== dest_comp[svg_comp[i]])
+                                mods += svg_comp[i] + ':' + svg_comp[svg_comp[i]] + ';';
+                        }
+                        svg.parentNode.removeChild(dest);
+                        return mods;
+                    }
+
+                    var images = svg.querySelectorAll('image'),
+                        total = images.length,
+                        encoded = 0;
+                    // Loop through all our <images> elements
+                    for (var i = 0; i < images.length; i++) {
+                        // check if the image is external
+                        if (images[i].getAttributeNS(xlinkNS, 'href').indexOf('data:image') < 0)
+                            toDataURL(images[i]);
+                        // else increment our counter
+                        else if (++encoded === total) exportDoc()
+                    }
+                    // if there were no <image> element
+                    if (total === 0) exportDoc();
+                }
+            })
+
+        })
+    </script>
+    <script>
+        $(function() {
+        
+
+          $("#btnSave2").click(function() {
+            html2canvas(document.getElementById('context')).then(function(canvas) {
+                saveAs(canvas.toDataURL(), 'canvas.png');
+              }
+            );
+          });
+
+          function saveAs(uri, filename) {
+            var link = document.createElement('a');
+            if (typeof link.download === 'string') {
+              link.href = uri;
+              link.download = filename;
+
+              //Firefox requires the link to be in the body
+              document.body.appendChild(link);
+
+              //simulate click
+              link.click();
+
+              //remove the link when done
+              document.body.removeChild(link);
+            } else {
+              window.open(uri);
+            }
+          }
+        });
+    </script>
 
     @endsection
