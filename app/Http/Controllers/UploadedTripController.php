@@ -158,10 +158,14 @@ class UploadedTripController extends Controller
         $cleanThis = $request->all();
         $y = count($cleanThis);
         $holdCount = 0;
+
+        
+
         
         $throw = array();
         for ($x = 0; $x < $y; $x++) {
-            $checkerPlate = DB::table('vehicles_mv')->where('plateNumber', $cleanThis[$x]['Plate Number'])->first();
+            $plateNumber = str_replace(' ', '', $cleanThis[$x]['Plate Number']);
+            $checkerPlate = DB::table('vehicles_mv')->where('plateNumber', $plateNumber)->first();
             $checkerDept = DB::table('deptsperinstitution')->where('deptName', $cleanThis[$x]['Requesting Department'])->first();
 
             if ($checkerPlate == null || $checkerDept == null) {
@@ -180,7 +184,7 @@ class UploadedTripController extends Controller
                     'Departure Time' => $cleanThis[$x]['Departure Time'], 
                     'Destinations' => $cleanThis[$x]['Destinations'], 
                     'Kilometer Reading' => $cleanThis[$x]['Kilometer Reading'], 
-                    'Plate Number' => $cleanThis[$x]['Plate Number'], 
+                    'Plate Number' => $plateNumber, 
                     'Requesting Department' => $cleanThis[$x]['Requesting Department'], 
                     'plateNull' => $plateNull, 
                     'deptNull' => $deptNull
@@ -190,7 +194,7 @@ class UploadedTripController extends Controller
                 $clean[$holdCount]['Departure Time'] = $cleanThis[$x]['Departure Time'];
                 $clean[$holdCount]['Destinations'] = $cleanThis[$x]['Destinations'];
                 $clean[$holdCount]['Kilometer Reading'] = $cleanThis[$x]['Kilometer Reading'];
-                $clean[$holdCount]['Plate Number'] = $cleanThis[$x]['Plate Number'];
+                $clean[$holdCount]['Plate Number'] = $plateNumber;
                 $clean[$holdCount]['Requesting Department'] = $cleanThis[$x]['Requesting Department'];
             }
         }
@@ -206,7 +210,8 @@ class UploadedTripController extends Controller
 
         $clean = array();
         for ($x = 0; $x < $y; $x++) {
-            $checkerPlate = DB::table('vehicles_mv')->where('plateNumber', $cleanThis[$x]['Plate Number'])->first();
+            $plateNumber = str_replace(' ', '', $cleanThis[$x]['Plate Number']);
+            $checkerPlate = DB::table('vehicles_mv')->where('plateNumber', $plateNumber)->first();
             $checkerDept = DB::table('deptsperinstitution')->where('deptName', $cleanThis[$x]['Requesting Department'])->first();
             
 
@@ -215,7 +220,7 @@ class UploadedTripController extends Controller
                 $throw[$holdCount]['Departure Time'] = $cleanThis[$x]['Departure Time'];
                 $throw[$holdCount]['Destinations'] = $cleanThis[$x]['Destinations'];
                 $throw[$holdCount]['Kilometer Reading'] = $cleanThis[$x]['Kilometer Reading'];
-                $throw[$holdCount]['Plate Number'] = $cleanThis[$x]['Plate Number'];
+                $throw[$holdCount]['Plate Number'] = $plateNumber;
                 $throw[$holdCount]['Requesting Department'] = $cleanThis[$x]['Requesting Department'];
             } else {
                 $checkerInstitution = Institution::where('institutionID', $checkerDept->institutionID)->first();
@@ -273,8 +278,8 @@ class UploadedTripController extends Controller
 
         for ($x = 0; $x < $y ; $x++) {
             //compute emissions
-               
-            $vehicle = DB::table('vehicles_mv')->where('plateNumber', $request[$x]['Plate Number'])->first();
+            $plateNumber = str_replace(' ', '', $request[$x]['Plate Number']);            
+            $vehicle = DB::table('vehicles_mv')->where('plateNumber', $plateNumber)->first();
             $selectedFuelType = DB::table('fueltype_ref')->where('fuelTypeID', $vehicle->fuelTypeID)->value('fuelTypeID');
             $selectedCarTypeMPG = DB::table('cartype_ref')->where('carTypeID', $vehicle->carTypeID)->value('mpg');
 
@@ -298,7 +303,7 @@ class UploadedTripController extends Controller
             $trip->tripTime = $request[$x]['Departure Time'];
             $trip->kilometerReading = $request[$x]['Kilometer Reading'];
             $trip->remarks = $request[$x]['Destinations'];
-            $trip->plateNumber = $request[$x]['Plate Number'];
+            $trip->plateNumber = $plateNumber;
             $trip->batch = 1;
             if (isset($dieselEmissionInTonnes)){
                 $trip->emissions = $dieselEmissionInTonnes;
