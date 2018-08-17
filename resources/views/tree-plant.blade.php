@@ -114,7 +114,7 @@
         @endif
         <div class="twelve columns">
             <label for="numOfPlantedTrees">Number of Trees Planted</label>
-            <input class="u-full-width" type="text" name="numOfPlantedTrees" id="numOfPlantedTrees">
+            <input class="u-full-width" type="number" name="numOfPlantedTrees" id="numOfPlantedTrees">
         </div>
         @if ($errors->has('numOfPlantedTrees'))
             <span class="help-block">

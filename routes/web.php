@@ -139,3 +139,6 @@ Route::get('/thresholds', function() {
     return view('thresholds');
 })->name('thresholds')->middleware('auth');
 
+Route::get('/notifications-view', function(){
+    return view('notifications-view');
+})->name('notifications-view')->middleware('auth');

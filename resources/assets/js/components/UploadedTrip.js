@@ -14,42 +14,48 @@ export default class UploadedTrip extends Component {
             accessor: 'tripDate', // String-based value accessors!
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['tripDate'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Departure Time',
             id: 'tripTime',
             accessor: 'tripTime',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['tripTime'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Requesting Department',
             id: 'departmentName',
             accessor: 'departmentName',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['departmentName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Plate Number',
             id: 'plateNumber',
             accessor: 'plateNumber',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['plateNumber'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Kilometer Reading',
             id: 'kilometerReading',
             accessor: 'kilometerReading',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['kilometerReading'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Destinations',
             id: 'remarks',
             accessor: 'remarks',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['remarks'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           },]; 
           
         

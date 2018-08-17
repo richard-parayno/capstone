@@ -89,7 +89,15 @@ export default class ExcelUploadMain extends Component {
 
                 })
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+            console.log(error.message);
+            if (error.response.status == 500) {
+                toast.error("Trip Data Upload Failed! Please check if you are uploading the correct file and using the correct file and table formats.", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: false
+                })
+            }
+        })
     }
 
     exportFile() {
@@ -117,15 +125,20 @@ export default class ExcelUploadMain extends Component {
             return (
                 <div>
                     <div className={"twelve columns"} style={{textAlign: 'center'}}>
+                        <p>You can upload an excel file containing the recorded trip data here.</p>
+                        <p><strong>Accepted File Formats: .xlsx, .csv</strong></p> <br/>
                         <ExcelUploadInput handleFile={this.handleFile} />
                     </div>
                     <div className={"twelve columns"}>
                         <h1>No Trip Errors</h1>
+                        <p>Trips listed here are ready to be uploaded to the system.</p> <br/>
                         <ExcelUploadConfirmTable data={this.state.excelFileClean} />
                         <br/>
                     </div>
                     <div className={"twelve columns"}>
                         <h1>Contains Trip Errors</h1>
+                        <p>Trips listed here have data input errors. These errors are highlighted in RED.</p>
+                        <p>Possible Issues: Typographical Errors, Missing Requesting Department/Plate Number</p> <br/>
                         <ExcelUploadConfirmTable data={this.state.excelFileErrors} />
                         <br/>
                     </div>
@@ -139,7 +152,10 @@ export default class ExcelUploadMain extends Component {
         } else {
             return (
                 <div className={"twelve columns"} style={{textAlign: 'center'}}>
+                    <p>You can upload an excel file containing the recorded trip data here.</p>
+                    <p><strong>Accepted File Formats: .xlsx, .csv</strong></p> <br/>
                     <ExcelUploadInput handleFile={this.handleFile} />
+                    <ToastContainer />
                 </div>  
             );
         }

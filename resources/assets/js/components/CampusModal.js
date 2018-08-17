@@ -120,10 +120,24 @@ export default class CampusModal extends Component {
         return (
             <div>
                 <h1 style={{textAlign: "center"}}>Update Campus Info</h1>
-                <p><strong>Selected Campus:</strong> {originalInstitution.institutionName}</p>
-                <p><strong>Campus Location:</strong> {originalInstitution.location}</p>
-                <p><strong>Campus Classification:</strong> {originalInstitution.schoolTypeName}</p>
-                <br/>      
+                <p><strong>Selected Campus Details:</strong></p>
+                <table style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Classification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{originalInstitution.institutionName}</td>    
+                            <td>{originalInstitution.location}</td>    
+                            <td>{originalInstitution.schoolTypeName}</td>    
+                        </tr>    
+                    </tbody>
+                </table>
+                <br/>  
                 <form onSubmit={this.handleSubmit}>
                     <div className="twelve columns">
                         <label htmlFor="institutionName">Update Campus Name</label>

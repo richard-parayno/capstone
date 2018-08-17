@@ -41,6 +41,65 @@ class UploadedTripController extends Controller
         return response()->json($trips);
     }
 
+    public function showSpecificCampus(Request $request) {
+        $data = $request->all();
+        $institutionID = $data['institutionID'];
+
+        //$matchedDepartments = DB::table('deptsperinstitution')->where('institutionID', $institutionID)->get();
+
+        $matchedTrips = DB::table('trips')->where('institutionID', $institutionID)->get();
+
+        
+        foreach ($matchedTrips as $x) {
+          $departments = DB::table('deptsperinstitution')->where('deptID', $x->deptID)->first();
+          $institution = DB::table('institutions')->where('institutionID', $x->institutionID)->first();
+          
+          if ($departments != null) {
+              $x->departmentName = $departments->deptName;
+          } else {
+              $x->departmentName = "N/A";
+          }
+          if ($institution != null) {
+              $x->institutionName = $institution->institutionName;
+          } else {
+              $x->institutionName = "N/A";
+          }
+          
+        }
+  
+        return response()->json($matchedTrips);
+    }
+
+    public function showSpecificDate(Request $request) {
+        $data = $request->all();
+        $institutionID = $data['institutionID'];
+        $uploadedAt = $data['uploadedAt'];
+
+        //$matchedDepartments = DB::table('deptsperinstitution')->where('institutionID', $institutionID)->get();
+
+        $matchedTrips = DB::table('trips')->where('institutionID', $institutionID)->where('uploaded_at', $uploadedAt)->get();
+
+        
+        foreach ($matchedTrips as $x) {
+          $departments = DB::table('deptsperinstitution')->where('deptID', $x->deptID)->first();
+          $institution = DB::table('institutions')->where('institutionID', $x->institutionID)->first();
+          
+          if ($departments != null) {
+              $x->departmentName = $departments->deptName;
+          } else {
+              $x->departmentName = "N/A";
+          }
+          if ($institution != null) {
+              $x->institutionName = $institution->institutionName;
+          } else {
+              $x->institutionName = "N/A";
+          }
+          
+        }
+  
+        return response()->json($matchedTrips);
+    }
+
     public function show(Trip $trip) {
         $departments = DB::table('deptsperinstitution')->where('deptID', $trip->deptID)->first();
         $institution = DB::table('institutions')->where('institutionID', $trip->institutionID)->first();

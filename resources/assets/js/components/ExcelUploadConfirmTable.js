@@ -86,7 +86,7 @@ export default class ExcelUploadConfirmTable extends Component {
             
             <ReactTable
                 minRows={5}
-                pageSize={5}
+                defaultPageSize={5}
                 filterable
                 defaultFilterMethod={(filter, row) =>
                     String(row[filter.id]) === filter.value}

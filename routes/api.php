@@ -44,6 +44,8 @@ Route::post('/vehicle/update/{vehicle}', 'VehicleController@update');
 
 /** Upload Excel File APIs */
 Route::get('/trip', 'UploadedTripController@index');
+Route::post('/trip/specific', 'UploadedTripController@showSpecificCampus');
+Route::post('/trip/specific/date', 'UploadedTripController@showSpecificDate');
 Route::get('/trip/{trip}', 'UploadedTripController@show');
 Route::post('/trip/process', 'UploadedTripController@preProcess');
 Route::post('/trip/process/upload', 'UploadedTripController@uploadToDb');
@@ -58,3 +60,8 @@ Route::get('/tree/{tree}', 'TreeController@show');
 /** Threshold API */
 Route::get('/thresholds', 'ThresholdController@index');
 Route::post('/thresholds/update', 'ThresholdController@update');
+
+/** Notification API */
+Route::post('/notifications', 'NotificationController@index');
+Route::post('/notifications/all', 'NotificationController@all');
+Route::post('/notifications/update', 'NotificationController@update');
