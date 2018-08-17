@@ -64,7 +64,7 @@ export default class Department extends Component {
             filterAll: true,
             style: {'whiteSpace': 'unset'}
           }, {
-            Header: 'From',
+            Header: 'Under',
             id: 'motherDeptName',
             accessor: 'motherDeptName',
             filterMethod: (filter, rows) =>

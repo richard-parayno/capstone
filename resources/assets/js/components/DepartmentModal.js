@@ -163,10 +163,24 @@ export default class DepartmentModal extends Component {
             return (
                 <div>
                     <h1 style={{textAlign: "center"}}>Update Department Info</h1>
-                    <p><strong>Selected Department:</strong> {originalDept.deptName}</p>
-                    <p><strong>From Campus:</strong> {originalDept.institutionName}</p>
-                    <p><strong>Mother Department:</strong> {originalDept.motherDeptName}</p>
-                    <br/>      
+                    <p><strong>Selected Department Details:</strong></p>
+                    <table style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Campus</th>
+                                <th>Under</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{originalDept.deptName}</td>    
+                                <td>{originalDept.institutionName}</td>    
+                                <td>{originalDept.motherDeptName}</td>    
+                            </tr>    
+                        </tbody>
+                    </table>
+                    <br/>     
                     <form onSubmit={this.handleSubmit}>
                         <div className="twelve columns">
                             <label htmlFor="deptName">Update Department Name</label>

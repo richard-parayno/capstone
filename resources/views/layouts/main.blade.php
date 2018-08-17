@@ -115,7 +115,9 @@ $mytime = Carbon\Carbon::now();
       <strong><p style="text-align: center; margin: 0px;">De La Salle Philippines Carbon Emission Dashboard</p></strong>     
       <strong><p style="text-align: center; margin: 0px;">@php echo $user->accountName @endphp - @php echo $userType->userTypeName @endphp</p></strong>      
       <strong><p style="text-align: center; margin: 0px;">@php echo $mytime->toDateString(); @endphp</p></strong>      
-      <div style="position: absolute; right: 0px; top: 0; width: 100%; height: 100%;margin-top: 20px; margin-right: 50px; cursor: pointer; color: white;" id="notifications"></div>      
+      @if (Route::currentRouteName() != 'notifications-view')
+      <div style="position: absolute; right: 0px; top: 0; width: 100%; height: 100%;margin-top: 20px; margin-right: 50px; cursor: pointer; color: white;" id="notifications"></div>  
+      @endif    
     </div>
   </div>
   @else
