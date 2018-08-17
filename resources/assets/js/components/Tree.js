@@ -9,26 +9,29 @@ export default class Tree extends Component {
         const trees = this.props.trees;
 
         const columns = [{
-            Header: 'Institution',
+            Header: 'Planted By',
             id: 'institutionName',
             accessor: 'institutionName', // String-based value accessors!
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['institutionName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Number of Planted Trees',
             id: 'numOfPlantedTrees',
             accessor: 'numOfPlantedTrees',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['numOfPlantedTrees'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}            
           }, {
             Header: 'Date Planted',
             id: 'datePlanted',
             accessor: 'datePlanted',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['datePlanted'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }]; 
           
         
@@ -36,7 +39,7 @@ export default class Tree extends Component {
         return (
             <ReactTable
                 minRows={5}
-                pageSize={5}
+                defaultPageSize={5}
                 filterable
                 defaultFilterMethod={(filter, row) =>
                     String(row[filter.id]) === filter.value}

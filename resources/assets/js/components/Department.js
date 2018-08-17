@@ -88,6 +88,7 @@ export default class Department extends Component {
         return (
             <div >
                 <ReactTable
+                    defaultPageSize={10}
                     filterable
                     defaultFilterMethod={(filter, row) =>
                         String(row[filter.id]) === filter.value}

@@ -68,6 +68,7 @@ export default class Campus extends Component {
         return (
             <div>
                 <ReactTable
+                    defaultPageSize={5}
                     filterable
                     defaultFilterMethod={(filter, row) =>
                         String(row[filter.id]) === filter.value}
