@@ -56,15 +56,22 @@ export default class NotificationsPopover extends Component {
     render() {
         const notifications = this.state.notifs;
 
-        const notificationsItems = notifications.slice(0, 5).map((notifications) =>{
-            return <div key={notifications.notifID} style={{paddingTop: 10, borderBottom: 1, borderColor: 'black', borderBottomStyle: 'solid'}}>
-                <p><strong>{notifications.fromUser}</strong></p>
-                <p>{notifications.actionName}:</p>
-                <p>{notifications.remarks}</p>
-                <p>{notifications.readableDate}</p>
-                <a href="#" style={{textDecoration: 'none' }} onClick={() => this.markAsRead(notifications.notifID)}>Mark as Read</a>
-            </div>
-        });
+        let notificationsItems
+
+        if (notifications.length > 0) {
+            notificationsItems = notifications.slice(0, 5).map((notifications) =>{
+                return <div key={notifications.notifID} style={{paddingTop: 10, borderBottom: 1, borderColor: 'black', borderBottomStyle: 'solid'}}>
+                    <p><strong>{notifications.fromUser}</strong></p>
+                    <p>{notifications.actionName}:</p>
+                    <p>{notifications.remarks}</p>
+                    <p>{notifications.readableDate}</p>
+                    <a href="#" style={{textDecoration: 'none' }} onClick={() => this.markAsRead(notifications.notifID)}>Mark as Read</a>
+                </div>
+            });
+        } else {
+            notificationsItems = <p>You have no unread notifications!</p>;
+        }
+
 
         return (
             <div className="u-pull-right">
@@ -74,9 +81,10 @@ export default class NotificationsPopover extends Component {
                 <div>
                     <div style={{borderBottom: 1, borderColor: 'black', borderBottomStyle: 'solid'}}>
                         <p><strong>Unread Notifications</strong></p>
-                        <a href="#" style={{textDecoration: 'none'}}>View All Notifications</a>
+                        <a href={window.notificationsView} style={{textDecoration: 'none'}}>View All Notifications</a>
                     </div>
                     {notificationsItems}
+                    
                 </div>
                 </Popover>
             </div>
