@@ -37,11 +37,21 @@
         $rawDB = "";
         $add = false;
         if($filterPost){
-            if($data['datePreset']==0){   
+            if($data['datePreset']==0){
                 if($data['fromDate'] != null && $data['toDate'] != null){
+                    $from = strtotime($data['fromDate']);
+                    $to = strtotime($data['toDate']);
+                    $fromNew = date('d/m/Y', $from);
+                    $toNew = date('d/m/Y', $to);
+
+                    if($fromNew > $toNew){
+                        $temp = $data['toDate'];
+                        $data['toDate'] = $data['fromDate'];
+                        $data['fromDate'] = $temp;
+                    }
                     $add = true;
                     $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
-                    $filterMessage .= "From " .$data['toDate']. " to ". $data['fromDate'];
+                    $filterMessage .= "From " .$data['fromDate']. " to ". $data['toDate'];
                 }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
                     $add = true;
                     $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
@@ -1256,7 +1266,7 @@
 					"startDuration": 1,
 					"categoryAxis": {
 						"gridPosition": "start",
-						"parseDates": true
+						"Dates": true
 					},
 					"chartCursor": {
 						"enabled": true

@@ -76,6 +76,9 @@ Route::get('/department-view-search', 'ViewUserController@viewDepartmentsSearch'
 Route::get('/department-search','ViewUserController@viewDepartmentsProcess')->name('department-search')->middleware('auth');
 
 
+Route::get('/reportexport','reportExport@transfer')->name('reportexport')->middleware('auth');
+
+
 
 
 /* Add New Department/Offices */

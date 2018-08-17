@@ -97,3 +97,6 @@
                 "forecastPoint": 0.1184
             }]
         });
+        
+        <div class="row"><div class="two columns"><button class="button-primary" onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export to CSV</button>
+    </div>
