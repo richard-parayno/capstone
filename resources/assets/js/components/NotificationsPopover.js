@@ -69,7 +69,7 @@ export default class NotificationsPopover extends Component {
                 </div>
             });
         } else {
-            notificationsItems = <p>You have no unread notifications!</p>;
+            notificationsItems = <div style={{paddingTop: 10, borderBottom: 1, borderColor: 'black', borderBottomStyle: 'solid'}}><p>You have no unread notifications!</p></div>;
         }
 
 
