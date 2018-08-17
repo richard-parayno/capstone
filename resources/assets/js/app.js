@@ -46,3 +46,6 @@ require('./components/SidebarMain');
 
 // Thresholds
 require('./components/ThresholdsMain');
+
+// Notifications
+require('./components/NotificationsPopover');

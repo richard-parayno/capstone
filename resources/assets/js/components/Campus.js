@@ -58,7 +58,9 @@ export default class Campus extends Component {
             Header: 'Actions', // Custom header components!
             accessor: 'institutionID',
             Cell: row => (
-                <a onClick={() => this.onOpenModal(row.value)} href="#update">Update</a>
+                <div style={{textAlign: "center"}}>
+                    <a onClick={() => this.onOpenModal(row.value)} href="#update">Update</a>
+                </div>
             ),
             filterable: false
           }]; 

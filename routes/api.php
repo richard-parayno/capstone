@@ -59,3 +59,7 @@ Route::get('/tree/{tree}', 'TreeController@show');
 /** Threshold API */
 Route::get('/thresholds', 'ThresholdController@index');
 Route::post('/thresholds/update', 'ThresholdController@update');
+
+/** Notification API */
+Route::post('/notifications', 'NotificationController@index');
+Route::post('notifications/update', 'NotificationController@update');
