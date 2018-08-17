@@ -93,6 +93,9 @@ export default class UserModal extends Component {
         this.populateForm();
     }
 
+    dismissAll(){
+        toast.dismiss();
+    }
    
     render() {
         const userInfo = this.props.userInfo;
@@ -165,7 +168,7 @@ export default class UserModal extends Component {
                             <input className="u-full-width" type="password" name="password" id="password"/>
                         </div>
                         <div className="twelve columns">
-                            <input type="submit" className="button-primary u-pull-right" />
+                            <input type="submit" className="button-primary u-pull-right" onClick={this.dismissAll} />
                         </div>
                     </form>
                     </div>

@@ -44,6 +44,7 @@ Route::post('/vehicle/update/{vehicle}', 'VehicleController@update');
 
 /** Upload Excel File APIs */
 Route::get('/trip', 'UploadedTripController@index');
+Route::post('/trip/specific', 'UploadedTripController@showSpecificCampus');
 Route::get('/trip/{trip}', 'UploadedTripController@show');
 Route::post('/trip/process', 'UploadedTripController@preProcess');
 Route::post('/trip/process/upload', 'UploadedTripController@uploadToDb');
