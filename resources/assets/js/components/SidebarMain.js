@@ -60,6 +60,7 @@ export default class SidebarMain extends Component {
                     <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
                     <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
                     <li key="thresholdControl" className="menu-item--small" href=""><a href={window.thresholdControl} style={{color: 'white'}}>Threshold Settings</a></li>,
+                    <li key="notificationsView" className="menu-item--small" href=""><a href={window.notificationsView} style={{color: 'white'}}>Notifications</a></li>,
                 ];
         
                 accountItems = [
@@ -84,6 +85,7 @@ export default class SidebarMain extends Component {
                     <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
                     <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
                     <li key="thresholdControl" className="menu-item--small" href=""><a href={window.thresholdControl} style={{color: 'white'}}>Threshold Settings</a></li>,
+                    <li key="notificationsView" className="menu-item--small" href=""><a href={window.notificationsView} style={{color: 'white'}}>Notifications</a></li>,
                 ];
         
                 accountItems = [];
@@ -103,6 +105,7 @@ export default class SidebarMain extends Component {
                     <li key="dashboard" id="home" className="menu-item" ><a href={window.dashboard} style={{color: 'white'}}>Dashboard</a></li>,
                     <li key="reports" id="about" className="menu-item" href="/about"><a href={window.reports} style={{color: 'white'}}>Reports</a></li>,
                     <li key="treePlant" className="menu-item--small" href=""><a href={window.wePlantedTrees} style={{color: 'white'}}>We Planted Trees</a></li>,
+                    <li key="notificationsView" className="menu-item--small" href=""><a href={window.notificationsView} style={{color: 'white'}}>Notifications</a></li>,
                 ];
         
                 accountItems = [];
@@ -116,6 +119,7 @@ export default class SidebarMain extends Component {
                     <p key="home"><strong>Home</strong></p>,
                     <li key="dashboard" id="home" className="menu-item" ><a href={window.dashboard} style={{color: 'white'}}>Dashboard</a></li>,
                     <li key="tripData" id="contact" className="menu-item" href="/contact"><a href={window.tripData} style={{color: 'white'}}>Trip Data</a></li>,
+                    <li key="notificationsView" className="menu-item--small" href=""><a href={window.notificationsView} style={{color: 'white'}}>Notifications</a></li>,
                 ];
         
                 accountItems = [];
@@ -131,6 +135,7 @@ export default class SidebarMain extends Component {
                 homeItems = [
                     <p key="home"><strong>Home</strong></p>,
                     <li key="reports" id="about" className="menu-item" href="/about"><a href={window.reports} style={{color: 'white'}}>Reports</a></li>,
+                    <li key="notificationsView" className="menu-item--small" href=""><a href={window.notificationsView} style={{color: 'white'}}>Notifications</a></li>,
                 ];
         
                 accountItems = [];

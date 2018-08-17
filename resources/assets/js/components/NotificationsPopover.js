@@ -58,10 +58,10 @@ export default class NotificationsPopover extends Component {
 
         const notificationsItems = notifications.slice(0, 5).map((notifications) =>{
             return <div key={notifications.notifID} style={{paddingTop: 10, borderBottom: 1, borderColor: 'black', borderBottomStyle: 'solid'}}>
-                <p><strong>Notification From {notifications.fromUser}!</strong></p>
-                <p>{notifications.readableDate}</p>
+                <p><strong>{notifications.fromUser}</strong></p>
                 <p>{notifications.actionName}:</p>
                 <p>{notifications.remarks}</p>
+                <p>{notifications.readableDate}</p>
                 <a href="#" style={{textDecoration: 'none' }} onClick={() => this.markAsRead(notifications.notifID)}>Mark as Read</a>
             </div>
         });

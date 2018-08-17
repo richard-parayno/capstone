@@ -62,4 +62,5 @@ Route::post('/thresholds/update', 'ThresholdController@update');
 
 /** Notification API */
 Route::post('/notifications', 'NotificationController@index');
-Route::post('notifications/update', 'NotificationController@update');
+Route::post('/notifications/all', 'NotificationController@all');
+Route::post('/notifications/update', 'NotificationController@update');

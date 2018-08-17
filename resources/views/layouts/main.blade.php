@@ -154,6 +154,7 @@ $mytime = Carbon\Carbon::now();
 window.currentUserID = "<?php echo Auth::user()->id ?>"
 </script>
 <script>
+window.notificationsView = "{{ route('notifications-view') }}";
 window.thresholdControl = "{{ route('thresholds') }}";
 window.logOut = "{{ route('logout') }}";
 window.dashboard = "{{ route('dashboard') }}";
