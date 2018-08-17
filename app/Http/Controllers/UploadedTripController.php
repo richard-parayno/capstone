@@ -239,7 +239,7 @@ class UploadedTripController extends Controller
                     'Departure Time' => $cleanThis[$x]['Departure Time'], 
                     'Destinations' => $cleanThis[$x]['Destinations'], 
                     'Kilometer Reading' => $cleanThis[$x]['Kilometer Reading'], 
-                    'Plate Number' => $cleanThis[$x]['Plate Number'], 
+                    'Plate Number' => $plateNumber, 
                     'Requesting Department' => $cleanThis[$x]['Requesting Department'],
                     'plateNull' => $plateNull, 
                     'deptNull' => $deptNull,
