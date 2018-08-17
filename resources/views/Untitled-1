@@ -1,306 +1,102 @@
-
-
-
-<?php 
-        /*
-    <div class="container u-pull-right" id="analytics-sidebar">
-        <form method="post" action="{{ route('dashboard-process') }}">
-            {{ csrf_field() }}
-            <div class="twelve column bar">
-                <p><strong>Campus</strong></p>
-                <br>
-                <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <select class="u-full-width" name="institutionID" id="institutionID" style="color: black;">
-                       <option value="">All Institutions</option>
-                        @foreach($institutions as $institution)
-                          <option value="{{ $institution->institutionID }}">{{ $institution->institutionName }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="twelve column bar">
-                <p><strong>Date</strong></p>
-                <div style="padding-left: 5px; padding-right: 5px; border: none;">
-                    <p style="text-align: left;">From: </p>
-                    <input class="u-full-width" type="date" name="fromDate" id="fromDate">
-                    <p style="text-align: left;">Until: </p>
-                    <input class="u-full-width" type="date" name="toDate" id="toDate">
-                </div>
-            </div>
-            <div class="twelve column bar">
-                <input class="button-primary" type="submit">
-            </div>
-        </form>
+{
+            "type": "serial",
+            "categoryField": "monthYear",
+            "startDuration": 1,
+            "theme": "light",
+            "categoryAxis": {
+                "gridPosition": "start"
+            },
+            "trendLines": [],
+            "graphs": [{
+                    "balloonText": "[[title]]: [[value]]",
+                    "fillAlphas": 1,
+                    "id": "AmGraph-1",
+                    "labelText": "[[value]]",
+                    "title": "Emission",
+                    "type": "column",
+                    "valueField": "emission"
+                },
+                {
+                    "balloonText": "[[title]]: [[value]]",
+                    "bullet": "round",
+                    "id": "AmGraph-2",
+                    "lineThickness": 2,
+                    "title": "Regression point",
+                    "valueField": "forecastPoint"
+                }
+            ],
+            "guides": [],
+            "export": {
+                "enabled": true,
+                "fileName": "report1",
+                "menuReviver": function(item, li) {
+                    if (item.format === "PNG") {
+                        item.fileName = "LOL";
+                    }
+                    return li;
+                }
+            },
+            "valueAxes": [{
+                "id": "ValueAxis-1",
+                "title": "C02 Emission in MT"
+            }],
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "enabled": true,
+                "useGraphSettings": true
+            },
+            "titles": [{
+                "id": "Title-1",
+                "size": 15,
+                "text": "Emissions and Forecasted Value"
+            }],
+            "dataProvider": [{
+                "monthYear": 201701,
+                "emission": "0.0779",
+                "forecastPoint": 0.1745
+            }, {
+                "monthYear": 201702,
+                "emission": "0.2584",
+                "forecastPoint": 0.1689
+            }, {
+                "monthYear": 201703,
+                "emission": "0.0792",
+                "forecastPoint": 0.1633
+            }, {
+                "monthYear": 201704,
+                "emission": "0.0473",
+                "forecastPoint": 0.1577
+            }, {
+                "monthYear": 201705,
+                "emission": "0.4350",
+                "forecastPoint": 0.1521
+            }, {
+                "monthYear": 201706,
+                "emission": "0.3267",
+                "forecastPoint": 0.1465
+            }, {
+                "monthYear": 201708,
+                "emission": "0.0113",
+                "forecastPoint": 0.1408
+            }, {
+                "monthYear": 201710,
+                "emission": "0.0245",
+                "forecastPoint": 0.1352
+            }, {
+                "monthYear": 201711,
+                "emission": "0.0094",
+                "forecastPoint": 0.1296
+            }, {
+                "monthYear": 201712,
+                "emission": "0.2230",
+                "forecastPoint": 0.124
+            }, {
+                "monthYear": "Forecast",
+                "emission": 0.1184,
+                "forecastPoint": 0.1184
+            }]
+        });
+        
+        <div class="row"><div class="two columns"><button class="button-primary" onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export to CSV</button>
     </div>
-    */
-?>
-_____________________________
-/*
-                $scope.operate = function(input) {
-                    $scope.holder = $scope.answer;
-                    $scope.operation = input;
-                    $scope.reset();
-                };
-
-                $scope.equals = function() {
-                    switch ($scope.operation) {
-                        case '+':
-                            {
-                                $scope.answer = $scope.holder + $scope.answer;
-                                break;
-                            }
-                        case '-':
-                            {
-                                $scope.answer = $scope.holder - $scope.answer;
-                                break;
-                            }
-                        case '*':
-                            {
-                                $scope.answer = $scope.holder * $scope.answer;
-                                break;
-                            }
-                        case '/':
-                            {
-                                $scope.answer = $scope.holder / $scope.answer;
-                                break;
-                            }
-                        default:
-                            {
-                                $scope.reset();
-                            }
-                    }
-                };
-
-                //cart functions
-                $scope.itemList = [];
-                $scope.cart = [];
-                $scope.name = "";
-                $scope.price = "";
-
-                //adds item x quantity to inventory
-                $scope.addItem = function(name, priceEach) {
-                    $scope.itemList.push({
-                        itemName: name,
-                        priceEach: priceEach
-                    });
-                    $scope.name = "";
-                    $scope.price = "";
-                };
-
-                //adds item and quantity to cart
-                $scope.addToCart = function(name, priceeach, quantity) {
-                    $scope.cart.push({
-                        itemName: name,
-                        priceEach: priceeach,
-                        itemQuantity: quantity
-                    });
-                };
-
-                //totals all in cart
-                $scope.totalCart = 0;
-                $scope.checkout = function() {
-                    for (var x = 0; x < $scope.cart.length; x++) {
-                        $scope.totalCart += $scope.cart[x].priceEach * $scope.cart[x].itemQuantity;
-                    }
-                };
-
-                //resets all in cart
-                $scope.resetCart = function() {
-                    $scope.cart = [];
-                };
-                */
-_____________________________
-
-/*
-    get total emissions for institutionID of user
-    get all trees planted by institution
-    start = total trees planted * 22
-    max val = total emission
-    get all threshold data
-    threshold * total emissions = thresholds
-    if start > total emission * 1.5
-        maxVal = start;
-    else maxVal = total emission * 1.5
-    */
-    
-    $totalTreesPlanted = DB::table('institutionbatchplant')
-        ->select(DB::raw('SUM(numOfPlantedTrees) as totalPlanted'))
-        ->whereRaw('institutionID = 1') //dapat institutionID ng naka log in
-        ->get();
-    
-    $totalEmissions = DB::table('monthlyemissionsperschool')
-        ->select(DB::raw('SUM(emission) as totalEmissions'))
-        ->whereRaw('institutionID = 1')
-        ->get();
-    
-    $monthCount = DB::table('monthlyemissionsperschool')
-        ->select(DB::raw('count(emission) as monthcount'))
-        ->whereRaw('institutionID = 1')
-        ->get();
-    
-    $thresholds = DB::table('thresholds_ref')
-        ->select(DB::raw('*'))
-        ->get();
-    
-    $start = $totalTreesPlanted->get(0)->totalPlanted * 22 * 0.001;
-
-    $green = $thresholds->get(0)->value;
-    $orange = $thresholds->get(1)->value;
-    $red = $thresholds->get(2)->value;
-    $yellow = $thresholds->get(3)->value;
-
-    $tillOrange = ($red * $totalEmissions->get(0)->totalEmissions) - $start;
-    $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
-    $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
-    
-    _______
-    
-    /*
-    get total emissions for institutionID of user
-    get all trees planted by institution
-    start = total trees planted * 22
-    max val = total emission
-    get all threshold data
-    threshold * total emissions = thresholds
-    if start > total emission * 1.5
-        maxVal = start;
-    else maxVal = total emission * 1.5
-    */
-    
-    $totalTreesPlanted = DB::table('institutionbatchplant')
-        ->select(DB::raw('ROUND(DATEDIFF(now(), datePlanted)*0.0328767) as monthsPlanted, sum(numOfPlantedTrees) as totalPLanted'))
-        ->groupBy(DB::raw('1'))
-        ->get();
-    
-    $totalEmissions = DB::table('trips')
-        ->select(DB::raw('SUM(emissions) as totalEmissions'))
-        ->get();
-    
-    $monthCount = DB::table('trips')
-        ->select(DB::raw('EXTRACT(YEAR_MONTH FROM tripDate) as monthYear'))
-        ->groupby(DB::raw('1'))
-        ->get();
-
-    $thresholds = DB::table('thresholds_ref')
-        ->select(DB::raw('*'))
-        ->get();
-    
-    $start = $totalTreesPlanted->get(0)->totalPlanted * 22 * 0.001;
-
-    $green = $thresholds->get(0)->value;
-    $orange = $thresholds->get(1)->value;
-    $red = $thresholds->get(2)->value;
-    $yellow = $thresholds->get(3)->value;
-
-    $tillOrange = ($red * $totalEmissions->get(0)->totalEmissions) - $start;
-    $tillYellow = ($orange * $totalEmissions->get(0)->totalEmissions) - $start;
-    $tillGreen = ($yellow * $totalEmissions->get(0)->totalEmissions) - $start;
-    
-    ___________
-    
-    $columnTable = DB::table('trips')
-            ->select(DB::raw('sum(trips.emissions) as emissions'))
-            ->get();
-        if($columnTable[0]->emissions!=null){
-        $column = "round((SUM(trips.emissions) * 100 / ".$columnTable[0]->emissions."),2) as percentage";
-        
-        $institutionEmissions = DB::table('trips')
-        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
-        ->select('institutions.institutionName', DB::raw($column))
-        ->orderByRaw('2 DESC')
-        ->groupBy(DB::raw('1'))
-        ->limit(2)
-        ->get();
-        
-    //get most vehicle type contributions (emission total)
-    $vehicleContributions = DB::table('trips')
-        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
-        ->join('cartype_ref', 'cartype_ref.carTypeID','=', 'vehicles_mv.carTypeID')
-        ->select('cartype_ref.carTypeName', DB::raw($column))
-        ->groupBy('carTypeName')
-        ->orderByRaw('2 DESC')
-        ->limit(2)
-        ->get();
-        
-    $deptContributions = DB::table('trips')
-        ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
-         ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
-        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
-        ->groupBy('deptsperinstitution.deptID')
-        ->orderByRaw('2 DESC')
-        ->limit(2)
-        ->get();
-
-    //get most car type contributions (emission total)
-    $carContributions = DB::table('trips')
-        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
-        ->join('institutions', 'institutions.institutionID','=', 'vehicles_mv.institutionID')
-        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
-        ->groupBy(DB::raw('1'))
-        ->orderByRaw('2 DESC')
-        ->limit(2)
-        ->get();
-        
-     //get most car brand type contributions (emission total)
-    $carBrandContributions = DB::table('trips')
-        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
-        ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
-        ->select('carbrand_ref.carBrandName', DB::raw($column))
-        ->groupBy('carbrand_ref.carbrandName')
-        ->orderByRaw('2 DESC')
-        ->limit(2)
-        ->get();
-
-    $columnTable = DB::table('trips')
-        ->select(DB::raw('count(trips.emissions) as tripCount'))
-        ->get();
-    $column = "count(trips.emissions) as percentage";    
-        
-     $institutionTripNumber = DB::table('trips')
-        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
-        ->select('institutions.institutionName', DB::raw($column))
-        ->orderByRaw('2 DESC')
-        ->groupBy(DB::raw('1'))
-        ->limit(2)
-        ->get();
-        
-    //trip number
-    //get most car brand type contributions (trip number)
-     $carBrandTripNumber = DB::table('trips')
-        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
-        ->join('carbrand_ref', 'carbrand_ref.carbrandID','=', 'vehicles_mv.carbrandID')
-        ->select('carbrand_ref.carbrandName', DB::raw($column))
-        ->groupBy(DB::raw('1'))
-        ->orderByRaw('2 DESC')
-        ->limit(2)
-        ->get();
-        
-    //get most car contributions (trip number)
-    $carTripNumber = DB::table('trips')
-        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
-        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
-        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))  
-        ->groupBy(DB::raw('1'))
-        ->orderByRaw('2 desc')
-        ->limit(2)
-        ->get();
-        
-    //get most vehicle type contributions (trip number)
-    $vehicleTripNumber = DB::table('trips')
-        ->join('vehicles_mv', 'vehicles_mv.plateNumber', '=', 'trips.plateNumber')
-        ->join('cartype_ref', 'cartype_ref.carTypeID','=', 'vehicles_mv.carTypeID')
-        ->select('cartype_ref.carTypeName', DB::raw($column))
-        ->groupBy('carTypeName')
-        ->orderByRaw('2 DESC')
-        ->limit(2)
-        ->get();
-    
-    //get most department type contributions (trip number)
-    $deptTripNumber = DB::table('trips')
-        ->join('institutions', 'trips.institutionID', '=', 'institutions.institutionID')
-        ->join('deptsperinstitution', 'deptsperinstitution.deptID', '=', 'trips.deptID')
-        ->select(DB::raw('CONCAT(institutions.institutionName, ", ", deptsperinstitution.deptName) as deptName'), DB::raw($column))
-        ->groupBy(DB::raw('1'))
-        ->orderByRaw('2 DESC')
-        ->limit(2)
-        ->get();
