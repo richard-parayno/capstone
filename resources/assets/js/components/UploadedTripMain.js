@@ -12,7 +12,6 @@ export default class UploadedTripMain extends Component {
         this.state = {
             trip: [],
             institutions: [],
-            dynamicCount: null,
         };
     }
 
@@ -29,7 +28,6 @@ export default class UploadedTripMain extends Component {
         axios.get('api/institution')
             .then(institutions => {
                 let allInstitutions = institutions.data;
-                let counter = 0;
                 console.log(allInstitutions);
                 this.setState({institutions: allInstitutions});
                 allInstitutions.forEach(element => {
@@ -37,9 +35,8 @@ export default class UploadedTripMain extends Component {
                     return axios.post('api/trip/specific', {institutionID: institutionID})
                                 .then(trip => {
                                     let stateName = "specific"+institutionID;
-                                    counter += 1;
                                     trip = trip.data;
-                                    this.setState({ [stateName]: trip, dynamicCount: counter })
+                                    this.setState({ [stateName]: trip,})
                                 })
                 });
             })

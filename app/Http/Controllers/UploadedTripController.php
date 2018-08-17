@@ -100,6 +100,26 @@ class UploadedTripController extends Controller
         return response()->json($matchedTrips);
     }
 
+    public function getDates() {
+        $trips = DB::table('trips')->orderBy('uploaded_at', 'desc')->get();
+        $trips->toArray();
+
+        $dates = array();
+
+        foreach ($trips as $x) {
+            $convertedDate = new Carbon($x->uploaded_at);
+            if (!in_array(array('uploadedAt' => $convertedDate->toDateString()), $dates)) {
+                $dates[] = array(
+                    'uploadedAt' => $convertedDate->toDateString(),
+                );
+            }
+            
+
+        }
+
+        return response()->json($dates);
+    }
+
     public function show(Trip $trip) {
         $departments = DB::table('deptsperinstitution')->where('deptID', $trip->deptID)->first();
         $institution = DB::table('institutions')->where('institutionID', $trip->institutionID)->first();
@@ -251,7 +271,6 @@ class UploadedTripController extends Controller
 
         $y = count($request);
 
-
         for ($x = 0; $x < $y ; $x++) {
             //compute emissions
                
@@ -288,10 +307,9 @@ class UploadedTripController extends Controller
                 $trip->emissions = $gasEmissionInTonnes;
             }
             $currentAuditDate = Carbon::now();
-            $formattedCurrentAuditDate = $currentAuditDate->toDateTimeString();
-            $trip->uploaded_at = $formattedCurrentAuditDate;
+            $formattedCurrentAuditDate = $currentAuditDate->toDateString();
+            $trip->uploadedAt = $formattedCurrentAuditDate;
             $trip->save();
-
         }
 
         $allTrips = Trip::all();

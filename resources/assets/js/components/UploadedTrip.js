@@ -25,7 +25,7 @@ export default class UploadedTrip extends Component {
             filterAll: true,
             style: {'whiteSpace': 'unset'}
           }, {
-            Header: 'Requesting Department',
+            Header: 'Requester',
             id: 'departmentName',
             accessor: 'departmentName',
             filterMethod: (filter, rows) =>
@@ -41,7 +41,7 @@ export default class UploadedTrip extends Component {
             filterAll: true,
             style: {'whiteSpace': 'unset'}
           }, {
-            Header: 'Kilometer Reading',
+            Header: 'KM Reading',
             id: 'kilometerReading',
             accessor: 'kilometerReading',
             filterMethod: (filter, rows) =>
@@ -54,6 +54,14 @@ export default class UploadedTrip extends Component {
             accessor: 'remarks',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['remarks'] }),
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
+          },{
+            Header: 'Date Uploaded',
+            id: 'uploadedAt',
+            accessor: 'uploadedAt',
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ['uploadedAt'] }),
             filterAll: true,
             style: {'whiteSpace': 'unset'}
           },]; 
