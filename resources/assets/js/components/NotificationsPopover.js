@@ -13,6 +13,7 @@ export default class NotificationsPopover extends Component {
         };
         this.handleClick = this.handleClick.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.markAsRead = this.markAsRead.bind(this);
     }
 
 
@@ -39,6 +40,14 @@ export default class NotificationsPopover extends Component {
             })
     }
 
+    markAsRead(param) {
+        axios.post('api/notifications/update', {notifID: param})
+            .then(response => {
+                console.log(response);
+                this.getNotifications();
+            })
+    }
+
 
     componentDidMount() {
         this.getNotifications();
@@ -47,21 +56,27 @@ export default class NotificationsPopover extends Component {
     render() {
         const notifications = this.state.notifs;
 
-        const notificationsItems = notifications.map((notifications) =>{
+        const notificationsItems = notifications.slice(0, 5).map((notifications) =>{
             return <div key={notifications.notifID} style={{paddingTop: 10, borderBottom: 1, borderColor: 'black', borderBottomStyle: 'solid'}}>
-                <p><strong>From: {notifications.fromUser}</strong></p>
-                <p>Message: {notifications.actionName} - {notifications.remarks}</p>
+                <p><strong>Notification From {notifications.fromUser}!</strong></p>
+                <p>{notifications.readableDate}</p>
+                <p>{notifications.actionName}:</p>
+                <p>{notifications.remarks}</p>
+                <a href="#" style={{textDecoration: 'none' }} onClick={() => this.markAsRead(notifications.notifID)}>Mark as Read</a>
             </div>
         });
 
         return (
             <div className="u-pull-right">
-                <a href="#" className="button-primary button" onClick={this.handleClick} ref={(node) => { this.target = node }} >Notifications</a>
+                <a href="#" className="button-primary button" onClick={this.handleClick} ref={(node) => { this.target = node }} >Unread Notifications</a>
                 
                 <Popover placement='bottom' show={this.state.open} onHide={this.handleClose} target={this.target}>
                 <div>
-                <p style={{borderBottom: 1, borderColor: 'black', borderBottomStyle: 'solid'}}><strong>Notifications</strong></p>
-                {notificationsItems}
+                    <div style={{borderBottom: 1, borderColor: 'black', borderBottomStyle: 'solid'}}>
+                        <p><strong>Unread Notifications</strong></p>
+                        <a href="#" style={{textDecoration: 'none'}}>View All Notifications</a>
+                    </div>
+                    {notificationsItems}
                 </div>
                 </Popover>
             </div>
