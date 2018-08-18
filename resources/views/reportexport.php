@@ -15,7 +15,6 @@
                 $temp = $data['toDate'];
                 $data['toDate'] = $data['fromDate'];
                 $data['fromDate'] = $temp;
-                dd($data['fromDate']);
             }
         }
         else{
