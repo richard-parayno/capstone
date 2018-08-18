@@ -276,6 +276,8 @@ class UploadedTripController extends Controller
 
         $y = count($request);
 
+        $institutionSave = null;
+
         for ($x = 0; $x < $y ; $x++) {
             //compute emissions
             $plateNumber = str_replace(' ', '', $request[$x]['Plate Number']);            
@@ -315,9 +317,25 @@ class UploadedTripController extends Controller
             $formattedCurrentAuditDate = $currentAuditDate->toDateString();
             $trip->uploadedAt = $formattedCurrentAuditDate;
             $trip->save();
+
+            $institutionSave = $request[$x]['institutionID'];
         }
 
         $allTrips = Trip::all();
+        $now = Carbon::now();
+
+        $counter = DB::table('notifications')->orderBy('notifID', 'desc')->first();
+        $ctr = $counter->notifID;
+
+        $sendNotification = DB::table('notifications')
+            ->insert([
+                'actionID' => 2,
+                'toUserID' => 2, 
+                'fromUserID' => $institutionSave, 
+                'read' => 0, 
+                'remarks' => 'New trips were added on '.$now->toDateString(),
+                'insertedOn' => $now->toDateTimeString()
+            ]);
 
         return response()->json($allTrips);
     }
