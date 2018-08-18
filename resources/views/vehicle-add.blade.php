@@ -80,6 +80,15 @@
     <div class="six columns">
       <label for="carBrandID">Vehicle Brand</label>
       <select class="u-full-width" name="carBrandID" id="carBrandID">
+      <?php
+        for($x = 0; $x < count($brands); $x++){
+            echo '<option value="'.$brands[$x]->carBrandID.'"';
+            if($brands[$x]->discouraged == 1){
+                echo 'style="color:red">(Discouraged) ';
+            }else echo '>';
+            echo $brands[$x]->carBrandName.'</option>';
+        }  
+        ?>
       @foreach($brands as $brand)
         <option value="{{ $brand->carBrandID }}">{{ $brand->carBrandName }}</option>
       @endforeach

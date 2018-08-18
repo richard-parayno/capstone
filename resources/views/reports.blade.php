@@ -29,7 +29,6 @@
                 $temp = $data['toDate'];
                 $data['toDate'] = $data['fromDate'];
                 $data['fromDate'] = $temp;
-                dd($data['fromDate']);
             }
         }
     }
@@ -43,6 +42,12 @@
     $carTypes = DB::table('cartype_ref')->get();
     $carBrands = DB::table('carbrand_ref')->get();
     $tripYears = DB::table('trips')
+    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')    
         ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear'))
         ->groupBy(DB::raw('1'))
         ->orderByRaw('1')
@@ -660,6 +665,193 @@
                 }
             
                 $monthlyEmissions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                     ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear, round(sum(trips.emissions), 4) as emission')) 
+                     ->whereRaw($rawDB)
+                     ->groupBy(DB::raw('1'))
+                     ->orderBy(DB::raw('1'), 'asc')
+                     ->get();
+                if(isset($institutionID)){
+                    $treeRaw = "institutionID = ".$institutionID;
+                    $monthlyTreeSeq = DB::Table('institutionbatchplant')
+                        ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
+                        ->whereRaw($treeRaw)
+                        ->groupBy(DB::raw('1'))
+                        ->orderBy(DB::raw('1'))
+                        ->get();
+                }
+                else{
+                    $monthlyTreeSeq = DB::Table('institutionbatchplant')
+                        ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
+                        ->groupBy(DB::raw('1'))
+                        ->orderBy(DB::raw('1'))
+                        ->get();
+                }
+            }
+            else{
+            $monthlyTreeSeq = DB::Table('institutionbatchplant')
+                ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
+                ->groupBy(DB::raw('1'))
+                ->orderBy(DB::raw('1'))
+                ->get();
+            
+            $monthlyEmissions = DB::table('trips')
+                 ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear, round(sum(trips.emissions), 4) as emission')) 
+                 ->groupBy(DB::raw('1'))
+                 ->orderBy(DB::raw('1'), 'asc')
+                 ->get();
+            }
+            $red = 0;
+            $yellow = 0;
+            $green = 0;
+            for($x = 0; $x < count($monthlyEmissions); $x++){
+                for($y = 0; $y < count($monthlyTreeSeq); $y++){
+                    if($monthlyEmissions[$x]->monthYear==$monthlyTreeSeq[$y]->monthYear){
+                        $monthlyEmissions[$x]->treeSeq = (($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001;
+                        if(((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 < 40){
+                            $red++;
+                        }elseif(((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 >= 40 && ((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 < 80){
+                            $yellow++;
+                        }else $green++;
+                    }
+                }
+            }
+            for($x = 0; $x < count($monthlyEmissions); $x++){
+                if(!isset($monthlyEmissions[$x]->treeSeq)){
+                    $monthlyEmissions[$x]->treeSeq = 0;
+                    $red++;
+                }
+            }
+        }
+        elseif($data['reportName']=='treevsforecast'){
+            if($data['isFiltered']=="true" && ($data['institutionID']!= null || $data['fromDate'] != null || $data['toDate']!=null || $data['datePreset']!="? string: ?" || $data['carTypeID']!=null || $data['fuelTypeID']!=null || $data['carBrandID']!=null)){
+                $filterMessage = "";
+                $rawDB = "";
+                $add = false;
+                if($data['datePreset']==0){   
+                    if($data['fromDate'] != null && $data['toDate'] != null){
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $add = true;
+                        $rawDB .= "trips.tripDate BETWEEN '"  . $data['fromDate'] ."' AND '". $data['toDate'] . "'";
+                        $filterMessage .= $data['toDate']. " to ". $data['fromDate'];
+                    }elseif(!isset($data['fromDate']) && $data['toDate'] != null){
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated ";
+                        }
+                        $add = true;
+                        $rawDB .= "trips.tripDate <= '" . $data['toDate'] . "'";
+                        $filterMessage .= "before ".$data['toDate'];
+                    }elseif($data['fromDate'] != null && !isset($data['toDate'])){
+                        if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " dated  ";
+                        }
+                        $add = true;
+                        $rawDB .= "trips.tripDate >= '" . $data['fromDate'] . "'";
+                        $filterMessage .= "after ".$data['fromDate'];
+                    }
+                }
+                else{
+                    switch($data['datePreset']){
+                        case "1": {
+                                if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
+                            $filterMessage .= "from 2 weeks ago";
+                            break;
+                        }
+                        case "2": {
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
+                            $filterMessage .= "from 1 month ago";
+                            break;
+                        } 
+                        case "3": {
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
+                            $filterMessage .= "from 3 month ago";
+                            break;
+                        }
+                        case "4": {
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
+                            $filterMessage .= "from 6 month ago";
+                            break;
+                        }
+                        case "5": {
+                            if($add){
+                                $rawDB .= " AND ";
+                                $filterMessage .= " dated ";
+                            }
+                            $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 YEAR";
+                            $filterMessage .= "from 1 year ago";
+                            break;
+                        }
+                        default: $rawDB .= "";
+                    }
+                }
+                if($data['institutionID'] != null){
+                        $institutionID = $data['institutionID'];
+                }
+                if($data['carTypeID']!=null){
+                    if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " by " . $data['carTypeID'];
+                        }
+                        $rawDB .= "cartype_ref.carTypeID = ".$data['carTypeID'];
+                        $add = true;
+                }
+                if($data['fuelTypeID']!=null){
+                    if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " by " . $data['fuelTypeID'];
+                        }
+                        $rawDB .= "fueltype_ref.fuelTypeID = ".$data['fuelTypeID'];
+                        $add = true;
+                }
+                if($data['carBrandID']!=null){
+                    if($add){
+                            $rawDB .= " AND ";
+                            $filterMessage .= " by " . $data['carBrandID'];
+                        }
+                        $rawDB .= "carbrand_ref.carBrandID = ".$data['carBrandID'];
+                        $add = true;
+                }            
+                if(isset($institutionID)){
+                    if($add){
+                        $rawDB .= " AND ";
+                        $filterMessage .= " by " . $data['carTypeID'];
+                    }
+                    $rawDB .= "institutions.institutionID = ".$institutionID;
+                }
+            
+                $monthlyEmissions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
                      ->select(DB::raw('EXTRACT(year_month from tripDate) as monthYear, round(sum(trips.emissions), 4) as emission')) 
                      ->whereRaw($rawDB)
                      ->groupBy(DB::raw('1'))
@@ -849,11 +1041,11 @@
             }else echo "";
         }
         if(isset($data['reportName'])){
-            echo '<div class="two columns offset-by-three"><input type="submit" class="button button-primary" value="Export"></div></div>';
+            echo '<div class="two columns"><input type="submit" class="button button-primary" value="Export Report"></form></div>';
+            echo '<div class="two columns offset-by-one"><button class="button-primary" onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export to CSV</button></div></div>';
             echo '<div class="row" style="text-align:center"><h5>'.$reportName.'</h5></div>';
         }
     ?>
-    </form>
     <form method="post" action="{{ route('reports-process') }}">
     {{ csrf_field() }}
     <?php
@@ -863,7 +1055,7 @@
                 }
                 else $div = "eight";
                 echo '<div class="row" id="content">
-                <div class="'.$div.' columns">
+                    <div class="'.$div.' columns">
                         <div id="chartdiv2" style="background-color: #FFFFFF;" ></div></div>';
                 if(!isset($regressionLine)){
                 echo '<div class="four columns">
@@ -885,8 +1077,18 @@
                                   <td>Top Car Brand</td>
                                   <td><strong>'.$carBrandContributions[0]->carBrandName.'</strong></td>
                                   <td>'.$carBrandContributions[0]->emission.' MT C02</td>
+                              </tr>';
+                            if($userType <= 2){
+                                echo '
+                              <tr><td colspan=3 style="text-align:center"><strong>Action Items</strong></td></tr>
+                              <tr>
+                              <td>Ask School to check on top vehicle</td>
+                              <td>Discourage Schools to buy top Car Brand</td>
+                              <td>Remind to Carpool</td>
                               </tr>
-                          </table>';
+                              ';
+                            }
+                          echo '</table>';
                 }
                 elseif(isset($monthlyEmissions)){
                     echo '<br><br><table>
@@ -965,7 +1167,6 @@
                                  echo "<td>".$trip->kilometerReading."</td>";
                                  echo "<td>".$trip->fuelTypeName."</td>";
                                  echo "<td>".$trip->carTypeName."</td>";
-                                 //echo "<td>".$trip->modelName."</td>";
                                  echo "<td>".$trip->remarks."</td>";
                                  echo "<td>".$trip->emission."</td>";
                              echo "</tr>";
@@ -1159,9 +1360,58 @@
                 </div></div>";
                     }
                 }
+            elseif(isset($carBrandContributions1)){
+                //table for excel print
+                    {
+                     echo "<div class=\"row\"><div class=\"eleven columns offset-by-one\"><div ng-hide=\"true\" id=\'report\'>
+                <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\" class='display'>
+                  <thead>
+                      <tr>
+                          <th>
+                            <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
+                            <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
+                          </th>
+                      </tr>
+                  </thead>";
+                    echo "<tr></tr>";
+                    echo "<tr>";
+                    echo "<td>Most Used Car: </td><td>".$carContributions1[0]->modelName."</td>";
+                    echo "<td>Most Used Car Brand: </td><td>".$carBrandContributions1[0]->carBrandName."</td>";
+                    echo "<td>Carpooling More? </td><td></td></tr><tr></tr>";
+                    echo "<tr><td>Month-Year</td><td>Emission</td><td>Tree Sequestration</td></tr>";
+                        echo "<tr><td></td>
+                        </tr>
+                        <tr></tr>
+                </table>
+            </div></div></div>";
+                    }
+                    //table for html print
+                    {
+                    echo "<div class=\"row\" ng-hide=\"false\"><div class=\"twelve columns\">
+                    <table id=\"table_id\" class='display'>
+                      <thead>
+                          <tr>"; 
+                            echo "<th>Type</th><th>Item</th><th>Emission</th><th>Action</th>";
+                          echo "</tr>
+                      </thead><tbody>";
+                      echo "<tr>";
+                    echo "<td>Most Used Car</td>";
+                    echo "<td>".$carContributions1[0]->modelName."</td>";
+                    echo "<td>".$carContributions1[0]->emission."</td>";
+                    echo "<td>Ask School to Investigate</td></tr>";
+                    echo "<tr>";
+                    echo "<td>Most Used Car Brand</td>";
+                    echo "<td>".$carBrandContributions1[0]->carBrandName."</td>";
+                    echo "<td>".$carBrandContributions1[0]->emission."</td><td>Discourage to buy</td></tr><tr></tr>
+                      </tbody>
+                    </table>
+                </div></div>";
+                    }
+                }
             }
         echo "<br>";
         ?>
+            </form>
         <div ng-controller="MyController">
                 <form method="post" action="{{ route('reports-process') }}" ng-init="showSchoolFilter = <?php echo isset($institutionID); ?>"> {{ csrf_field() }}
                     <input type="hidden" name="isFiltered" value="<?php echo " {{showFilter}} "?>">
@@ -1219,7 +1469,7 @@
                                 </div>
                                 <div class="twelve columns tooltip">
                                     <span class="tooltiptext">Show me how vehicles are utilized</span>
-                                    <input type="submit" class="button-primary" ng-click="addReport('vehicleUsage')" value="Vehicle Usage Report" style="width: 100%">
+                                    <input type="submit" class="button-primary" ng-click="addReport('vehicleUsage')" value="Vehicle Utilization Report" style="width: 100%">
                                 </div>
                                 <div class="twelve columns tooltip" ng-hide="true">
                                     <span class="tooltiptext">Let me compare emissions from two different times</span>

@@ -389,6 +389,20 @@
                     ->orderByRaw('2 DESC')
                     ->limit(1)
                     ->get();
+                
+                $carTypeContributions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select(DB::raw('carType_ref.carTypeName'), DB::raw($column))
+                    ->whereRaw($rawDB)
+                    ->groupBy('carType_ref.carTypeName')
+                    ->orderByRaw('2 DESC')
+                    ->limit(1)
+                    ->get();
 
                 //get most car brand type contributions (emission total)
                 $carBrandContributions = DB::table('trips')
@@ -428,6 +442,19 @@
                     ->get();
                 
                 $column = "round(SUM(trips.emissions),4) as emission";
+                
+                $carTypeContributions = DB::table('trips')
+                    ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
+                    ->join('deptsperinstitution', 'trips.deptID', '=', 'deptsperinstitution.deptID')
+                    ->join('vehicles_mv', 'trips.plateNumber', '=', 'vehicles_mv.plateNumber')
+                    ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
+                    ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
+                    ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
+                    ->select(DB::raw('carType_ref.carTypeName'), DB::raw($column))
+                    ->groupBy('carType_ref.carTypeName')
+                    ->orderByRaw('2 DESC')
+                    ->limit(1)
+                    ->get();
                      
                 $fuelContributions = DB::table('trips')
                     ->join('institutions', 'institutions.institutionID', '=', 'trips.institutionID')
@@ -729,8 +756,7 @@
 <body ng-app="myapp">
     <?php $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/'; ?>
    <div ng-controller="MyController">
-    <button id="cmd" ng-click="togglePreset();">Prepare Report</button>
-    <button ng-show="datePreset"> Export CSV Data</button>
+    <button id="cmd" ng-click="togglePreset();" ng-hide="datePreset">Prepare Report</button>
     <button id="btnSave2" ng-show="datePreset">Export Report</button>
     <div id="printDiv" ng-show="datePreset">
         <table frame="box" style="table table-layout: fixed; width: 100%; border-spacing: 5px; object-fit:fill">
@@ -771,6 +797,53 @@
                         
             </td>
             <td></td>
+        </tr>
+        <tr>
+            <?php
+                if(isset($tripData)){
+                    echo '<td></td>
+                        <td colspan=3>Total Trips: </td><td><b>'.count($tripData).'</b></td></tr><tr><td></td><td colspan=3>Total Emissions in MT of C02: </td><td><b>'.$tripEmissionTotal[0]->totalEmissions.'</b></td>';
+                    echo '<tr></tr><tr></tr>';
+                    echo '<tr>
+                        <td></td>
+                        <td colspan=10>In a span of '.date_diff(new DateTime($tripData[0]->tripDate), new DateTime($tripData[count($tripData) - 1]->tripDate))->format('%m month/s and %d day/s').'</b>, the average emission per trip is<b> '.round(($tripEmissionTotal[0]->totalEmissions/count($tripData)), 4).'</b> MT of C02.';
+                        
+                }elseif(isset($vehicleData)){
+                    echo '</tr><tr>
+                        <td></td>
+                        <td colspan=2>Total Distance Covered:</td><td><b>'.$vehicleDataKMTotal[0]->totalKM.' KM</b></td><td></td><td colspan=2>Total Emissions:</td><td><b>'.$vehicleDataEmissionTotal[0]->totalEmissions.' MT of </b>C02</td></tr><tr></tr>
+                        
+                        </tr><tr><td></td>
+                        <td colspan=2>Highest Vehicle Contributor:</td><td><b>'.$carContributions[0]->modelName.'</b></td><td><b>'.$carContributions[0]->emission.' MT C02</b></td><td></td>
+                        <td colspan=2>Highest Car Brand Contributor:</td><td><b>'.$carBrandContributions[0]->carBrandName.'</b></td><td><b>'.$carBrandContributions[0]->emission.' MT C02</b></td></tr>
+                        <tr><td></td>
+                        <td colspan=2>Highest Car Type Contributor:</td><td><b>'.$carTypeContributions[0]->carTypeName.'</b></td><td><b>'.$carTypeContributions[0]->emission.' MT C02</b></td><td></td>
+                        <td colspan=2>Highest Fuel Type Contributor:</td><td><b>'.$fuelContributions[0]->fuelTypeName.'</b></td><td><b>'.$fuelContributions[0]->emission.' MT C02</b></td></tr>';
+                    echo '<tr></tr><tr></tr>
+                        <td></td>
+                        <td colspan=10></td>';
+                }elseif(isset($regressionLine)){
+                    echo '</tr><tr>
+                        <td colspan=2></td>
+                        <td colspan=3>Expected Emission for Next month:</td><td><b>'.$forecastData[count($forecastData) - 1]->forecastPoint.'</b></td></tr><tr><td colspan=2></td><td colspan=7>You need to plant at least <b> '.round((($forecastData[count($forecastData) - 1]->forecastPoint)/ 0.001) / (22)).' Trees</b> to mitigate or cancel out next month\'s expected emissions.</td></tr>';
+                }
+                echo '</tr>
+                        <tr>
+                        <td colspan=8></td>
+                        <td colspan=2>Prepared By: </td>
+                        <td colspan=2><b><u>'.$userType = Auth::user()->accountName.'<u><b></td>
+                        </tr>
+                        <tr>
+                        <td colspan=8></td>
+                        <td colspan=2>Date/Time Prepared: </td>
+                        <td colspan=2><b><u>'.(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'<u><b></td>
+                        </tr>
+                        <tr></tr><tr></tr>
+                        <tr>
+                        <td></td>
+                        <td colspan=10 style="text-align: center"><b><u>**END OF REPORT**<u><b></td>
+                        </tr>';
+            ?>
         </tr>
         </table>
     </div>
@@ -1004,7 +1077,7 @@
           $("#btnSave2").click(function() {
             html2canvas(document.getElementById(\'printDiv\')).then(function(canvas) {
                 saveAs(canvas.toDataURL(), ';
-    echo "'".$data['reportName'].".png'";
+    echo "'".$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').".png'";
         echo ')
               }
             );
@@ -1256,71 +1329,50 @@ chart.animateAgain();
     }
     elseif(isset($regressionLine)){
         echo '<script type="text/javascript">
-        var chart;
-        var chart = AmCharts.makeChart("chartdiv2",
-            {
-                "type": "serial",
-                "categoryField": "monthYear",
-                "startDuration": 1,
-                "theme": "light",
-                "categoryAxis": {
-                    "gridPosition": "start"
-                },
-                "trendLines": [],
-                "graphs": [
-                    {
-                        "balloonText": "[[title]]: [[value]]",
-                        "fillAlphas": 1,
-                        "id": "AmGraph-1",
-                        "labelText": "[[value]]",
-                        "title": "Emission",
-                        "type": "column",
-                        "valueField": "emission"
-                    },
-                    {
-                        "balloonText": "[[title]]: [[value]]",
-                        "bullet": "round",
-                        "id": "AmGraph-2",
-                        "lineThickness": 2,
-                        "title": "Forecasted Value",
-                        "valueField": "forecastPoint"
-                    }
-                ],
-                "guides": [],
-                "export": {
-                    "enabled": true
-                  },
-                "valueAxes": [
-                    {
-                        "id": "ValueAxis-1",
-                        "title": "C02 Emission in MT"
-                    }
-                ],
-                "allLabels": [],
-                "balloon": {},
-                "legend": {
-                    "enabled": true,
-                    "useGraphSettings": true
-                },
-                "titles": [
-                    {
-                        "id": "Title-1",
-                        "size": 15,
-                        "text": "Emissions and Forecasted Value"
-                    }
-                ],
-                "dataProvider": '.json_encode($forecastData).'
-            }
-        );
-
-         var btn = document.getElementById(\'exportToPDF\');
-    btn.onclick = function() {
-        var exp = new AmCharts.AmExport(chart);
-        exp.init();
-        exp.output({
-            format: \'png\'
-        });
-    };
+			AmCharts.makeChart("chartdiv2",
+				{
+					"type": "serial",
+					"categoryField": "monthYear",
+					"startDuration": 1,
+					"theme": "light",
+					"categoryAxis": {
+						"gridPosition": "start"
+					},
+					"chartCursor": {
+						"enabled": true
+					},
+					"chartScrollbar": {
+						"enabled": true
+					},
+					"trendLines": [],
+					"graphs": [
+						{
+							"fillAlphas": 1,
+							"id": "",
+							"title": "Forecast",
+							"type": "column",
+							"valueField": "forecastPoint"
+						}
+					],
+					"guides": [],
+					"valueAxes": [
+						{
+							"id": "ValueAxis-1",
+							"title": "Forcasted Value"
+						}
+					],
+					"allLabels": [],
+					"balloon": {},
+					"titles": [
+						{
+							"id": "Forecast",
+							"size": 15
+						}
+					],
+					"dataProvider": '.json_encode($forecastData).'
+				}
+			);
+		</script>
     </script>';
     }
     elseif(isset($monthlyEmissions)){
@@ -1401,9 +1453,6 @@ chart.animateAgain();
     </script>';
     }
     ?>
-    <script>
-        $(document).load = put();
-    </script>
 </body>
 
 </html>
