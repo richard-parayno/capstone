@@ -194,12 +194,12 @@ export default class DepartmentModal extends Component {
                         <div className="twelve columns">
                             <label htmlFor="motherDept">Select Mother Department (if applicable)</label>
                             {this.state.errorMessages.motherDeptID ? 
-                                <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}  value={originalDept.motherDeptID != null ? originalDept.motherDeptID : 0}>
+                                <select className="u-full-width" name="motherDept" id="motherDept" style={{border: "1px red solid"}}  defaultValue={originalDept.motherDeptID != null ? originalDept.motherDeptID : 0}>
                                     <option value="">N/A</option>    
                                     {specificDeptItems}
                                 </select>   
                                 :
-                                <select className="u-full-width" name="motherDept" id="motherDept" value={originalDept.motherDeptID != null ? originalDept.motherDeptID : 0}>
+                                <select className="u-full-width" name="motherDept" id="motherDept" defaultValue={originalDept.motherDeptID != null ? originalDept.motherDeptID : 0}>
                                     <option value="">N/A</option>    
                                     {specificDeptItems}
                                 </select>
