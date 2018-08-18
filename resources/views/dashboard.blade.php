@@ -881,9 +881,11 @@
                 </div>
                 <div class="row" ng-init="showGenChartDiv=<?php echo !$emptySet;?>">
                     <div class="six columns" style="text-align: center;" ng-show="showGenChartDiv">
-                        <?php 
-
-                        if(!isset($institutionID)) echo '<div id="institutionPieChart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>';
+                        <?php $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
+                        if(!isset($institutionID)) echo '<div id="institutionPieChart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"><div class="one column tooltip">
+                                    <span class="tooltiptext">Click on a report to generate it. You can filter with the filter button if needed.</span>
+                                    <img src="'.$root.'carbon-dash/public/images/dlsp.png" width="20" height="20">
+                                </div></div>';
                         else echo '<div id="chartdiv2" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>';
                         ?>
                     </div>
