@@ -141,18 +141,18 @@ export default class CampusModal extends Component {
                 <form onSubmit={this.handleSubmit}>
                     <div className="twelve columns">
                         <label htmlFor="institutionName">Update Campus Name</label>
-                        {typeof this.state.errorMessages.institutionName != undefined ?
-                            <input className="u-full-width" type="text" name="institutionName" id="institutionName" defaultValue={originalInstitution.institutionName} />
+                        {this.state.errorMessages.institutionName  ?
+                            <input className="u-full-width" type="text" name="institutionName" id="institutionName" defaultValue={originalInstitution.institutionName} style={{border: "1px red solid" }}/>
                             :
-                            <input className="u-full-width" type="text" name="institutionName" id="institutionName" defaultValue={originalInstitution.institutionName} style={{border: "1px red solid" }} onInput={this.checkInputs}/>
+                            <input className="u-full-width" type="text" name="institutionName" id="institutionName" defaultValue={originalInstitution.institutionName}/>
                         }
                     </div>
                     <div className="twelve columns">
                         <label htmlFor="location">Update Location</label>
-                        {typeof this.state.errorMessages.location != undefined ?
-                            <input className="u-full-width" type="text" name="location" id="location" defaultValue={originalInstitution.location} />
+                        {this.state.errorMessages.location  ?
+                            <input className="u-full-width" type="text" name="location" id="location" defaultValue={originalInstitution.location} style={{border: "1px red solid"}}/>
                             :
-                            <input className="u-full-width" type="text" name="location" id="location" defaultValue={originalInstitution.location} style={{border: "1px red solid"}} onInput={this.checkInputs}/>
+                            <input className="u-full-width" type="text" name="location" id="location" defaultValue={originalInstitution.location}  />
                         }
                     </div>
                     <div className="twelve columns">

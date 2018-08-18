@@ -39,21 +39,24 @@ export default class Campus extends Component {
             accessor: 'institutionName', // String-based value accessors!
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['institutionName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Type',
             id: 'schoolTypeName',
             accessor: 'schoolTypeName',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['schoolTypeName'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Location',
             id: 'location',
             accessor: 'location',
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ['location'] }),
-            filterAll: true
+            filterAll: true,
+            style: {'whiteSpace': 'unset'}
           }, {
             Header: 'Actions', // Custom header components!
             accessor: 'institutionID',
@@ -62,7 +65,8 @@ export default class Campus extends Component {
                     <a onClick={() => this.onOpenModal(row.value)} href="#update">Update</a>
                 </div>
             ),
-            filterable: false
+            filterable: false,
+            style: {'whiteSpace': 'unset'}
           }]; 
           
         

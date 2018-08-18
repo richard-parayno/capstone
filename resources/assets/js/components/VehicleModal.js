@@ -12,9 +12,11 @@ export default class VehicleModal extends Component {
             vehicles: [],
             vehicleType: [],
             fuelType: [],
-            vehicleBrand: []
+            vehicleBrand: [],
+            errorMessages: []
         }
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.dismissAll = this.dismissAll.bind(this);
     }
 
     populateForm() {
@@ -71,20 +73,14 @@ export default class VehicleModal extends Component {
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
                     this.setState({ errorMessages: error.response.data.errors });
-                    if (this.state.errorMessages.deptName) {
-                        toast.error(this.state.errorMessages.deptName[0], {
+                    if (this.state.errorMessages.modelName) {
+                        toast.error(this.state.errorMessages.modelName[0], {
                             position: toast.POSITION.TOP_RIGHT,
                             autoClose: false
                         })
                     }
-                    if (this.state.errorMessages.institutionID) {
-                        toast.error(this.state.errorMessages.institutionID[0], {
-                            position: toast.POSITION.TOP_RIGHT,
-                            autoClose: false
-                        })
-                    }
-                    if (this.state.errorMessages.motherDeptID) {
-                        toast.error(this.state.errorMessages.motherDeptID[0], {
+                    if (this.state.errorMessages.plateNumber) {
+                        toast.error(this.state.errorMessages.plateNumber[0], {
                             position: toast.POSITION.TOP_RIGHT,
                             autoClose: false
                         })
@@ -105,6 +101,10 @@ export default class VehicleModal extends Component {
 
     componentDidMount() {
         this.populateForm();
+    }
+
+    dismissAll() {
+        toast.dismiss();
     }
 
    
@@ -188,11 +188,19 @@ export default class VehicleModal extends Component {
                         </div>
                         <div className="six columns">
                             <label htmlFor="modelName">Update Model Name</label>
-                            <input className="u-full-width" type="text" name="modelName" id="modelName" defaultValue={vehicles.modelName} />
+                            {this.state.errorMessages.modelName ?
+                                <input className="u-full-width" type="text" name="modelName" id="modelName" defaultValue={vehicles.modelName} style={{border: "1px red solid"}} />
+                                :
+                                <input className="u-full-width" type="text" name="modelName" id="modelName" defaultValue={vehicles.modelName} />
+                            }
                         </div>
                         <div className="six columns" style={{marginLeft: 0}}>
                             <label htmlFor="plateNumber">Update Plate Number</label>
-                            <input className="u-full-width" type="text" name="plateNumber" id="plateNumber" defaultValue={vehicles.plateNumber} maxLength="6"/>
+                            {this.state.errorMessages.plateNumber ?
+                                <input className="u-full-width" type="text" name="plateNumber" id="plateNumber" defaultValue={vehicles.plateNumber} maxLength="6" style={{border: "1px red solid"}} />
+                                :
+                                <input className="u-full-width" type="text" name="plateNumber" id="plateNumber" defaultValue={vehicles.plateNumber} maxLength="6"/>
+                            }
                         </div>
                         <div className="six columns">
                             <label htmlFor="vehicleChoice">Update Vehicle Status</label>
@@ -202,7 +210,7 @@ export default class VehicleModal extends Component {
                             </select>
                         </div>
                         <div className="twelve columns">
-                            <input type="submit" className="button-primary u-pull-right" />
+                            <input type="submit" className="button-primary u-pull-right" onClick={this.dismissAll}/>
                         </div>
                     </form>
                     <ToastContainer autoClose={1000} />                

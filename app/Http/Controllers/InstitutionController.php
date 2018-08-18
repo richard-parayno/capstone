@@ -23,22 +23,25 @@ class InstitutionController extends Controller
         $data = $request->all();
 
         $validator = Validator::make($data, [
-          'institutionName' => 'required|string|max:45|unique:institutions',
+          'institutionName' => [
+            'required',
+            'string',
+            'max:45',
+            'unique:institutions,institutionName'
+          ],
           'location' => 'required|string|max:45',
           'schoolTypeID' => 'required|int|max:100',
+        ], [
+          'institutionName.required' => 'The Campus Name field is required.',
+          'institutionName.unique' => 'This Campus Name has already been taken.',
+          'location.required' => 'The Location is required',
         ]);
 
         if ($validator->fails()) {
-          return redirect('/campus-view')->withErrors($validator)->withInput();
+          return redirect('/campus-add')->withErrors($validator)->withInput();
         }
 
         else if ($validator->passes()) {
-          /** 
-          $institution = Institution::create([
-            'institutionName' => $data['institutionName'],
-            'location' => $data['location'],
-            'schoolTypeID' => $data['schoolTypeID'],
-          ]); */
 
           $institution = new Institution;
           $institution->institutionName = $data['institutionName'];

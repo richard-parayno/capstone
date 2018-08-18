@@ -185,7 +185,7 @@ export default class DepartmentModal extends Component {
                         <div className="twelve columns">
                             <label htmlFor="deptName">Update Department Name</label>
                             {this.state.errorMessages.deptName ?
-                                <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName} style={{border: "1px red solid" }} onInput={this.checkInputs} /> 
+                                <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName} style={{border: "1px red solid" }} /> 
                                 :
                                 <input className="u-full-width" type="text" name="deptName" id="deptName" defaultValue={originalDept.deptName}/>
                             }

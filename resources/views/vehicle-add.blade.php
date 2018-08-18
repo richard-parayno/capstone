@@ -38,6 +38,13 @@
           <strong>Success! </strong> {{ Session::get('message', '') }}
       </div>
     @endif
+    @if(Session::has('errors'))
+      <div class="twelve columns" id="success-message" style="color: red;">
+          @foreach($errors->all() as $error)
+            <li> {{ $error }} </li>
+          @endforeach
+      </div>
+    @endif
      <?php
             if(!isset($institutionID)){
                 echo '
@@ -62,11 +69,6 @@
       @endforeach
       </select>
     </div>
-    @if ($errors->has('institutionID'))
-      <span class="help-block">
-        <strong>{{ $errors->first('institutionID') }}</strong>
-      </span>
-    @endif
     <div class="six columns" style="margin: 0px;">
       <label for="fuelTypeID">Fuel Type</label>
       <select class="u-full-width" name="fuelTypeID" id="fuelTypeID">
@@ -75,11 +77,6 @@
       @endforeach
       </select>
     </div>
-    @if ($errors->has('fuelTypeID'))
-      <span class="help-block">
-        <strong>{{ $errors->first('fuelTypeID') }}</strong>
-      </span>
-    @endif
     <div class="six columns">
       <label for="carBrandID">Vehicle Brand</label>
       <select class="u-full-width" name="carBrandID" id="carBrandID">
@@ -88,39 +85,15 @@
       @endforeach
       </select>
     </div>
-    @if ($errors->has('carBrandID'))
-      <span class="help-block">
-        <strong>{{ $errors->first('carBrandID') }}</strong>
-      </span>
-    @endif
     <div class="six columns" style="margin: 0px;">
       <label for="modelName">Model Name</label>
       <input class="u-full-width" type="text" name="modelName" id="modelName" placeholder="L300">
     </div>
-    @if ($errors->has('modelName'))
-      <span class="help-block">
-        <strong>{{ $errors->first('modelName') }}</strong>
-      </span>
-    @endif
     <div class="six columns">
       <label for="plateNumber">Plate Number</label>
       <input class="u-full-width" type="text" name="plateNumber" id="plateNumber" placeholder="ABC123">
     </div>
-    @if ($errors->has('plateNumber'))
-      <span class="help-block">
-        <strong>{{ $errors->first('plateNumber') }}</strong>
-      </span>
-    @endif
-
-    @if($errors->any())
-    <div>
-        <ul>
-            @foreach($errors->all() as $error)
-                <li> {{ $error }} </li>
-            @endforeach
-        </ul>
-    </div> 
-    @endif
+   
     <!--<div class="four columns offset-by-six">
       <label for="vehicle-year">Manufacturing Year</label>
       <input class="u-full-width" type="number" name="vehicle-year" id="email" placeholder="2017">

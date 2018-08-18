@@ -29,6 +29,13 @@
           <strong>Success! </strong> {{ Session::get('message', '') }}
       </div>
     @endif
+    @if(Session::has('errors'))
+      <div class="twelve columns" id="success-message" style="color: red;">
+          @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+          @endforeach
+      </div>
+    @endif
     <div class="twelve columns">
       <label for="schoolTypeID">Select Campus Type</label>
       <select class="u-full-width" name="schoolTypeID" id="schoolTypeID" style="color: black;">
@@ -55,11 +62,6 @@
       <label for="ci-location">Location</label>
       <input class="u-full-width" type="text" name="location" id="location" placeholder="2401 Taft Avenue">
     </div>
-    @if ($errors->has('location'))
-      <span class="help-block">
-        <strong>{{ $errors->first('location') }}</strong>
-      </span>
-    @endif
     <input class="button-primary u-pull-right" type="submit" value="Add New Campus" style="color: white;">
     <a class="button button-primary u-pull-left" onClick="goBack()">Go Back</a>    
   </form>

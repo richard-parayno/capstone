@@ -19,12 +19,17 @@ class VehicleController extends Controller
         $data = $request->all();
 
         $validator = Validator::make($data, [
-          'plateNumber' => 'required|string|max:8|unique:vehicles_mv',
+          'plateNumber' => 'required|string|max:6|unique:vehicles_mv,plateNumber',
           'modelName' => 'required|string|max:45',
           'institutionID' => 'required|int|max:100',
           'carTypeID' => 'required|int|max:100',
           'carBrandID' => 'required|int|max:100',
           'fuelTypeID' => 'required|int|max:100',
+        ],[
+          'plateNumber.required' => 'The Plate Number field is required.',
+          'plateNumber.unique' => 'This Plate Number is already taken.',
+          'plateNumber.max' => 'The Plate Number must only have 6 characters.',
+          'modelName.required' => 'The Model Name field is required.',
         ]);
 
         if ($validator->fails()) {

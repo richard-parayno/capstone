@@ -14,10 +14,17 @@ class DepartmentController extends Controller
       if ($request->has('department-mother')) {
         $data = $request->all();
 
+
         $validator = Validator::make($data, [
           'institutionID' => 'required|int|max:100',
-          'deptName' => 'required|string|max:100',
+          'deptName' => [
+            'required',
+            'string',
+            'max:100',
+          ],
           'motherDeptID' => 'nullable|int',
+        ], [
+          'deptName.required' => "The Department Name field is required.",
         ]);
 
         if ($validator->fails()) {
