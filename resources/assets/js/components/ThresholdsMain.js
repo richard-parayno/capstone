@@ -102,7 +102,7 @@ export default class ThresholdsMain extends Component {
         const thresholdItems = thresholds.map((thresholds) =>
             <tr key={thresholds.name}>
                 <td>{thresholds.name}</td>
-                <td>{thresholds.value}</td>
+                <td>{thresholds.value * 100}%</td>
             </tr>
         );
         const thresholdInputs = thresholds.map((thresholds) =>
@@ -118,7 +118,7 @@ export default class ThresholdsMain extends Component {
                         <thead>
                             <tr>
                                 <th>Threshold Type</th>
-                                <th>Value</th>
+                                <th>Converted Value</th>
                             </tr>
                         </thead>
                         <tbody>

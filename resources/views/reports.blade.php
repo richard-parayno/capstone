@@ -94,6 +94,7 @@
                             $rawDB .= " AND ";
                             $filterMessage .= " dated ";
                         }
+                        $add = true;
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 2 WEEK";
                         $filterMessage .= "from 2 weeks ago";
                         break;
@@ -103,6 +104,7 @@
                             $rawDB .= " AND ";
                             $filterMessage .= " dated ";
                         }
+                        $add = true;
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 1 MONTH";
                         $filterMessage .= "from 1 month ago";
                         break;
@@ -112,6 +114,7 @@
                             $rawDB .= " AND ";
                             $filterMessage .= " dated ";
                         }
+                        $add = true;
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 3 MONTH";
                         $filterMessage .= "from 3 month ago";
                         break;
@@ -121,6 +124,7 @@
                             $rawDB .= " AND ";
                             $filterMessage .= " dated ";
                         }
+                        $add = true;
                         $rawDB .= "trips.tripDate >= NOW() - INTERVAL 6 MONTH";
                         $filterMessage .= "from 6 month ago";
                         break;

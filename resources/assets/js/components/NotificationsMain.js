@@ -49,7 +49,7 @@ export default class NotificationsMain extends Component {
         const readNotifs = this.state.readNotifs;
         const unreadNotifs = this.state.unreadNotifs;
 
-        const readItems = readNotifs.map(notifs => 
+        const readItems = readNotifs.slice(0,5).map(notifs => 
             <tr>
                 <td>{notifs.fromUser}</td>
                 <td>{notifs.readableDate}</td>
@@ -58,7 +58,7 @@ export default class NotificationsMain extends Component {
             </tr>
         );
 
-        const unreadItems = unreadNotifs.map(notifs => 
+        const unreadItems = unreadNotifs.slice(0,5).map(notifs => 
             <tr>
                 <td>{notifs.fromUser}</td>
                 <td>{notifs.readableDate}</td>

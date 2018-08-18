@@ -1366,7 +1366,8 @@ chart.animateAgain();
 					"titles": [
 						{
 							"id": "Forecast",
-							"size": 15
+                            "size": 15,
+                            "text": "Forecast Report"
 						}
 					],
 					"dataProvider": '.json_encode($forecastData).'
