@@ -1,4 +1,24 @@
 <?php
+//notifs
+{
+    if(isset($data['plateNumber'])){
+        $useID = DB::table('vehicles_mv')->select('institutionID')->whereRaw('plateNumber =\''. $data['plateNumber'].'\'')->get();
+        DB::table('notifications')->insert(
+            ['actionID' => '6', 'toUserID' => '6', 'fromUserID' => Auth::user()->id , 'remarks' => 'Please check '.$data['plateNumber'].'. May need maintenance. High Emissions', 'insertedOn' => date("Y-m-d H:i:s")]
+        );
+    $data = null;
+    }elseif(isset($data['carBrand'])){
+        DB::table('carbrand_ref')
+            ->where('carbrandID', $data['carBrand'])
+            ->update(['discouraged' => 1]);
+        $data = null;
+    }elseif(isset($data['cpInstitutionID'])){
+        DB::table('notifications')->insert(
+            ['actionID' => '7', 'toUserID' => $useID[0]->institutionID, 'fromUserID' => Auth::user()->institutionID , 'remarks' => 'Please be reminded to carpool/carpool vehicle reservations.']
+        );
+        $data = null;
+    }
+}
      //initialization
     {
     $filter = false;
@@ -403,7 +423,7 @@
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))
+                    ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column.", vehicles_mv.plateNumber"))
                     ->whereRaw($rawDB)
                     ->groupBy('vehicles_mv.modelName')
                     ->orderByRaw('2 DESC')
@@ -470,7 +490,7 @@
                     ->join('cartype_ref', 'vehicles_mv.carTypeID', '=', 'cartype_ref.carTypeID')
                     ->join('fueltype_ref', 'vehicles_mv.fuelTypeID', '=', 'fueltype_ref.fuelTypeID')
                     ->join('carbrand_ref', 'vehicles_mv.carBrandID', '=', 'carbrand_ref.carBrandID')
-                    ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column))
+                    ->select(DB::raw('CONCAT(institutions.institutionName, ", ", vehicles_mv.modelName) as modelName'), DB::raw($column.", vehicles_mv.plateNumber"))
                     ->groupBy('vehicles_mv.modelName')
                     ->orderByRaw('2 DESC')
                     ->limit(1)
@@ -709,8 +729,10 @@
             $red = 0;
             $yellow = 0;
             $green = 0;
+            $treeCount = 0;
             for($x = 0; $x < count($monthlyEmissions); $x++){
                 for($y = 0; $y < count($monthlyTreeSeq); $y++){
+                    $treeCount += $monthlyTreeSeq[$y]->numOfTrees;
                     if($monthlyEmissions[$x]->monthYear==$monthlyTreeSeq[$y]->monthYear){
                         $monthlyEmissions[$x]->treeSeq = (($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001;
                         if(((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 < 40){
@@ -890,8 +912,10 @@
             $red = 0;
             $yellow = 0;
             $green = 0;
+            $treeCount = 0;
             for($x = 0; $x < count($monthlyEmissions); $x++){
                 for($y = 0; $y < count($monthlyTreeSeq); $y++){
+                    $treeCount += $monthlyTreeSeq[$y]->numOfTrees;
                     if($monthlyEmissions[$x]->monthYear==$monthlyTreeSeq[$y]->monthYear){
                         $monthlyEmissions[$x]->treeSeq = (($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001;
                         if(((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 < 40){
@@ -983,7 +1007,7 @@
      <br>
     <form method="get" target="print_popup" action="{{ route('reportexport') }}" onsubmit="var opening = 'width='; window.open('about:blank','print_popup',opening.concat(screen.availWidth, ', height=', screen.availHeight));">
     {{ csrf_field() }}
-        <div class="row"><div class="seven columns "><h5>&nbsp; Dashboard > Generate Reports</h5></div>
+        <div class="row"><div class="four columns"><h5>&nbsp; Dashboard > Generate Reports</h5></div>
     <?php 
         if(isset($data)){
             echo '<input type="hidden" name="isFiltered" value="';
@@ -1041,7 +1065,9 @@
             }else echo "";
         }
         if(isset($data['reportName'])){
-            echo '<div class="two columns"><input type="submit" class="button button-primary" value="Export Report"></form></div>';
+            if($reportName != "Tree Sequestration Report"){
+            echo '<div class="two columns offset-by-one"><strong>Additional Remarks: </strong>&nbsp;<input type="text" name="remarks"></div><div class="two columns offset-by-one"><input type="submit" class="button button-primary" value="Export Report"></form></div>';
+            }else{echo '<div class="six columns"></div>';}
             echo '<div class="two columns offset-by-one"><button class="button-primary" onclick="javascript:xport.toCSV(\''.$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').'\');">Export to CSV</button></div></div>';
             echo '<div class="row" style="text-align:center"><h5>'.$reportName.'</h5></div>';
         }
@@ -1078,16 +1104,6 @@
                                   <td><strong>'.$carBrandContributions[0]->carBrandName.'</strong></td>
                                   <td>'.$carBrandContributions[0]->emission.' MT C02</td>
                               </tr>';
-                            if($userType <= 2){
-                                echo '
-                              <tr><td colspan=3 style="text-align:center"><strong>Action Items</strong></td></tr>
-                              <tr>
-                              <td>Ask School to check on top vehicle</td>
-                              <td>Discourage Schools to buy top Car Brand</td>
-                              <td>Remind to Carpool</td>
-                              </tr>
-                              ';
-                            }
                           echo '</table>';
                 }
                 elseif(isset($monthlyEmissions)){
@@ -1104,6 +1120,9 @@
                                   <td>Green Sequestration Months</td>
                                   <td><strong>'.$green.'</strong></td>
                               </tr>
+                              <tr>
+                                <td>Planted Trees</td>
+                                <td><strong>'.$treeCount.'</strong></td>
                           </table>';
                 }
                 echo '</div></div></div>
@@ -1360,59 +1379,51 @@
                 </div></div>";
                     }
                 }
-            elseif(isset($carBrandContributions1)){
-                //table for excel print
-                    {
-                     echo "<div class=\"row\"><div class=\"eleven columns offset-by-one\"><div ng-hide=\"true\" id=\'report\'>
-                <table id=\"".$data['reportName']."report-".(new DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."\" class='display'>
-                  <thead>
-                      <tr>
-                          <th>
-                            <td>Prepared By: ".$userType = Auth::user()->accountName."</td>
-                            <td>Prepared On: ".(new \DateTime())->add(new DateInterval("PT8H"))->format('Y-m-d H:i:s')."</td>
-                          </th>
-                      </tr>
-                  </thead>";
-                    echo "<tr></tr>";
-                    echo "<tr>";
-                    echo "<td>Most Used Car: </td><td>".$carContributions1[0]->modelName."</td>";
-                    echo "<td>Most Used Car Brand: </td><td>".$carBrandContributions1[0]->carBrandName."</td>";
-                    echo "<td>Carpooling More? </td><td></td></tr><tr></tr>";
-                    echo "<tr><td>Month-Year</td><td>Emission</td><td>Tree Sequestration</td></tr>";
-                        echo "<tr><td></td>
-                        </tr>
-                        <tr></tr>
-                </table>
-            </div></div></div>";
-                    }
-                    //table for html print
-                    {
-                    echo "<div class=\"row\" ng-hide=\"false\"><div class=\"twelve columns\">
-                    <table id=\"table_id\" class='display'>
-                      <thead>
-                          <tr>"; 
-                            echo "<th>Type</th><th>Item</th><th>Emission</th><th>Action</th>";
-                          echo "</tr>
-                      </thead><tbody>";
-                      echo "<tr>";
-                    echo "<td>Most Used Car</td>";
-                    echo "<td>".$carContributions1[0]->modelName."</td>";
-                    echo "<td>".$carContributions1[0]->emission."</td>";
-                    echo "<td>Ask School to Investigate</td></tr>";
-                    echo "<tr>";
-                    echo "<td>Most Used Car Brand</td>";
-                    echo "<td>".$carBrandContributions1[0]->carBrandName."</td>";
-                    echo "<td>".$carBrandContributions1[0]->emission."</td><td>Discourage to buy</td></tr><tr></tr>
-                      </tbody>
-                    </table>
-                </div></div>";
-                    }
-                }
             }
         echo "<br>";
         ?>
             </form>
+            
         <div ng-controller="MyController">
+        <div class="row">
+        <div class="four columns" ng-show="<?php if($userType <= 2 && isset($vehicleData)){
+                                echo 'true';}?>">
+                  <form method="post" action="{{ route('reports-process') }}">
+                      {{ csrf_field() }}
+                      <?php if(isset($carContributions[0]->plateNumber)){
+                        echo '<input type="hidden" name="plateNumber" value="'.$carContributions[0]->plateNumber.'">';
+                        echo '<input type="submit" class="button button-primary" value="Ask School to Inspect Vehicle">';
+                        echo '</form>';
+                    }
+                      ?>
+                  </form>          
+            </div>
+            <div class="four columns" ng-show="<?php if($userType <= 2 && isset($vehicleData)){
+                                echo 'true';}?>">
+                  <form method="post" action="{{ route('reports-process') }}">
+                      {{ csrf_field() }}
+                      <?php if(isset($carBrandContributions[0]->carBrandID)){
+                        echo '<input type="hidden" name="carBrand" value="'.$carBrandContributions[0]->carBrandID.'">';
+                        echo '<input type="submit" class="button button-primary" value="Discourage school from purchasing top brand">';
+                        echo '</form>';
+                    }
+                      ?>
+                  </form>          
+            </div>
+            <div class="four columns" ng-show="<?php if($userType <= 2 && isset($vehicleData)){
+                                echo 'true';}?>">
+                  <form method="post" action="{{ route('reports-process') }}">
+                      {{ csrf_field() }}
+                      <?php if(isset($institutionID)){
+                        echo '<input type="hidden" name="cpInstitutionID" value="'.$institutionID.'">';
+                        echo '<input type="submit" class="button button-primary" value="Remind School/s to carpool">';
+                        echo '</form>';
+                    }
+                      ?>
+                  </form>          
+            </div>
+        </div>
+                            
                 <form method="post" action="{{ route('reports-process') }}" ng-init="showSchoolFilter = <?php echo isset($institutionID); ?>"> {{ csrf_field() }}
                     <input type="hidden" name="isFiltered" value="<?php echo " {{showFilter}} "?>">
                     <input type="hidden" name="reportName" value='<?php echo "{{reportName}}"?>'>
@@ -1543,6 +1554,7 @@
                 $scope.fromRange = "";
                 $scope.preset = "";
                 $scope.plusMinus = "Add ";
+                $scope.showAction = false;
 
                 $scope.toggleFilter = function() {
                     $scope.showFilter = !$scope.showFilter

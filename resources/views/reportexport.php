@@ -1,5 +1,6 @@
 <html>
-<?php if(isset($data)){
+<?php if(isset($data))
+{
    //filtering
     {
         if($data['isFiltered']=='true'){
@@ -710,8 +711,10 @@
             $red = 0;
             $yellow = 0;
             $green = 0;
+            $treeCount = 0;
             for($x = 0; $x < count($monthlyEmissions); $x++){
                 for($y = 0; $y < count($monthlyTreeSeq); $y++){
+                    $treeCount += $monthlyTreeSeq[$y]->numOfTrees;
                     if($monthlyEmissions[$x]->monthYear==$monthlyTreeSeq[$y]->monthYear){
                         $monthlyEmissions[$x]->treeSeq = (($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001;
                         if(((($monthlyTreeSeq[$y]->numOfTrees)*22.6)/12*0.001 / $monthlyEmissions[$x]->emission)*100 < 40){
@@ -741,6 +744,7 @@
     <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
     <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js"></script>
     <style>
         #chartdiv2 {
             width: 80%;
@@ -808,7 +812,8 @@
                         <td></td>
                         <td colspan=10>In a span of '.date_diff(new DateTime($tripData[0]->tripDate), new DateTime($tripData[count($tripData) - 1]->tripDate))->format('%m month/s and %d day/s').'</b>, the average emission per trip is<b> '.round(($tripEmissionTotal[0]->totalEmissions/count($tripData)), 4).'</b> MT of C02.';
                         
-                }elseif(isset($vehicleData)){
+                }
+            elseif(isset($vehicleData)){
                     echo '</tr><tr>
                         <td></td>
                         <td colspan=2>Total Distance Covered:</td><td><b>'.$vehicleDataKMTotal[0]->totalKM.' KM</b></td><td></td><td colspan=2>Total Emissions:</td><td><b>'.$vehicleDataEmissionTotal[0]->totalEmissions.' MT of </b>C02</td></tr><tr></tr>
@@ -822,13 +827,17 @@
                     echo '<tr></tr><tr></tr>
                         <td></td>
                         <td colspan=10></td>';
-                }elseif(isset($regressionLine)){
+                
+            }elseif(isset($regressionLine)){
                     echo '</tr><tr>
                         <td colspan=2></td>
                         <td colspan=3>Expected Emission for Next month:</td><td><b>'.$forecastData[count($forecastData) - 1]->forecastPoint.'</b></td></tr><tr><td colspan=2></td><td colspan=7>You need to plant at least <b> '.round((($forecastData[count($forecastData) - 1]->forecastPoint)/ 0.001) / (22)).' Trees</b> to mitigate or cancel out next month\'s expected emissions.</td></tr>';
                 }
-                echo '</tr>
-                        <tr>
+                echo '</tr>';
+            if(isset($data['remarks'])){
+                echo '<tr></tr><tr><td></td><td>Additional Remarks:</td><td colspan="4">'.($data['remarks']).'</td></tr>';
+            }
+                        echo '<tr>
                         <td colspan=8></td>
                         <td colspan=2>Prepared By: </td>
                         <td colspan=2><b><u>'.$userType = Auth::user()->accountName.'<u><b></td>
@@ -1074,11 +1083,20 @@
     echo '
     <script>
         $(function() {
-          $("#btnSave2").click(function() {
-            html2canvas(document.getElementById(\'printDiv\')).then(function(canvas) {
-                saveAs(canvas.toDataURL(), ';
-    echo "'".$data['reportName']."report-".(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').".png'";
-        echo ')
+          $("#btnSave2").click(function() { 
+            var divheight = document.getElementById(\'printDiv\').clientheight;
+            var divwidth = document.getElementById(\'printDiv\').clientwidth;
+            html2canvas(document.getElementById(\'printDiv\'), {width: divwidth, height: divheight}).then(function(canvas) {
+                var imgData = canvas.toDataURL(\'image/png\');
+                var doc = new jsPDF(\'l\', \'mm\', \'a4\');
+                var width = doc.internal.pageSize.getWidth();
+                var height = doc.internal.pageSize.getHeight();
+                console.log(width);
+                console.log(height);
+                doc.addImage(imgData, \'PNG\', 0, 20, 297, 160);
+                doc.save(';
+         echo "'".$data['reportName'].(new DateTime())->add(new DateInterval('PT8H'))->format('Y-m-d H:i:s').".pdf'";
+        echo ');
               }
             );
           });
