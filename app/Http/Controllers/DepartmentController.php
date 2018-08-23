@@ -21,10 +21,12 @@ class DepartmentController extends Controller
             'required',
             'string',
             'max:100',
+            'unique:deptsperinstitution'
           ],
           'motherDeptID' => 'nullable|int',
         ], [
           'deptName.required' => "The Department Name field is required.",
+          'deptName.unique' => "This Department Name has already been taken.",
         ]);
 
         if ($validator->fails()) {
