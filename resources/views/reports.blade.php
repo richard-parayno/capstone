@@ -721,7 +721,7 @@
             $monthlyTreeSeq = DB::Table('institutionbatchplant')
                 ->select(DB::raw('EXTRACT(year_month from datePlanted) as monthYear, sum(numOfPlantedTrees) as numOfTrees'))
                 ->groupBy(DB::raw('1'))
-                ->orderBy(DB::raw('1'))
+                ->orderBy(DB::raw('1'), 'asc')
                 ->get();
             
             $monthlyEmissions = DB::table('trips')
@@ -729,6 +729,16 @@
                  ->groupBy(DB::raw('1'))
                  ->orderBy(DB::raw('1'), 'asc')
                  ->get();
+            }
+            for($x = 0; $x < count($monthlyEmissions); $x++){
+                $monthlyEmissions[$x]->treesPlanted = 0;
+            }
+            for($x = 0 ; $x < count($monthlyEmissions); $x++){
+                foreach($monthlyTreeSeq as $entry){
+                    if($monthlyEmissions[$x]->monthYear == $entry->monthYear){
+                        $monthlyEmissions[$x]->treesPlanted = $entry->numOfTrees;
+                    }
+                }
             }
             $red = 0;
             $yellow = 0;
@@ -1346,12 +1356,13 @@
                     echo "<td>Red Sequestration Months: </td><td>".$red."</td>";
                     echo "<td>Yellow Sequestration Months: </td><td>".$yellow."</td>";
                     echo "<td>Green Sequestration Months: </td><td>".$green."</td></tr><tr></tr>";
-                    echo "<tr><td>Month-Year</td><td>Emission</td><td>Tree Sequestration</td></tr>";
+                    echo "<tr><td>Month-Year</td><td>Emission</td><td>Tree Sequestration</td><td>Planted Trees</td></tr>";
                      foreach($monthlyEmissions as $month){
                          echo "<tr>";
                              echo "<td style=\"text-align:center\">".$month->monthYear."</td>";
                              echo "<td style=\"text-align:center\">".$month->emission."</td>";
                              echo "<td style=\"text-align:center\">".$month->treeSeq."</td>";
+                             echo "<td style=\"text-align:center\">".$month->treesPlanted."</td>";
                          echo "</tr>";
                         }
                         echo "<tr><td></td>
@@ -1367,7 +1378,7 @@
                     <table id=\"table_id\" class='display'>
                       <thead>
                           <tr>"; 
-                            echo "<tr><td>Month-Year</td><td>Emission</td><td>Tree Sequestration</td></tr>";
+                            echo "<tr><td>Month-Year</td><td>Emission</td><td>Tree Sequestration</td><td>Planted Trees</td></tr>";
                           echo "</tr>
                       </thead>
                       </tbody>";
@@ -1376,6 +1387,7 @@
                              echo "<td>".$month->monthYear."</td>";
                              echo "<td style=\"text-align:right\">".$month->emission."</td>";
                              echo "<td style=\"text-align:right\">".$month->treeSeq."</td>";
+                             echo "<td style=\"text-align:right\">".$month->treesPlanted."</td>";
                          echo "</tr>";
                         }
                             echo "</tbody>
